@@ -1,14 +1,15 @@
 const { upsertContract } = require('../lib/contracts');
 const { generateSchedule, addMonths } = require('../lib/schedule');
 
-// Calls Google's Generative AI API directly (not via Vercel AI Gateway) using
-// a free Google AI Studio key (GOOGLE_GENERATIVE_AI_API_KEY) -- no Vercel
-// billing/credit-card requirement, and Gemini's free tier covers this
-// workload comfortably.
+// Calls Groq's API directly (not via Vercel AI Gateway) using a free Groq
+// API key (GROQ_API_KEY) -- no Vercel billing/credit-card requirement.
+// Llama 3.3 70B Versatile is Groq's flagship instruction-following model,
+// a good fit for structured extraction; swap MODEL below if your Groq
+// console shows a different current model slug.
 //
-// @ai-sdk/google ships ESM-only, which Vercel's Node runtime cannot
-// require() -- it must be loaded via dynamic import().
-const MODEL = 'gemini-3.5-flash';
+// @ai-sdk/groq (like @ai-sdk/google before it) may ship ESM-only, which
+// Vercel's Node runtime cannot require() -- load via dynamic import().
+const MODEL = 'llama-3.3-70b-versatile';
 
 // Keeps a single request's token usage (and cost) bounded. Large sheets
 // should be split into multiple uploads.
@@ -44,13 +45,13 @@ module.exports = async (req, res) => {
     if (rows.length > MAX_ROWS) {
       return res.status(400).json({ error: `This file has ${rows.length} rows; please split it into batches of ${MAX_ROWS} or fewer.` });
     }
-    if (!process.env.GOOGLE_GENERATIVE_AI_API_KEY) {
-      return res.status(503).json({ error: 'GOOGLE_GENERATIVE_AI_API_KEY is not configured yet.' });
+    if (!process.env.GROQ_API_KEY) {
+      return res.status(503).json({ error: 'GROQ_API_KEY is not configured yet.' });
     }
 
-    const [{ generateObject }, { google }, { z }] = await Promise.all([
+    const [{ generateObject }, { groq }, { z }] = await Promise.all([
       import('ai'),
-      import('@ai-sdk/google'),
+      import('@ai-sdk/groq'),
       import('zod'),
     ]);
 
@@ -77,7 +78,7 @@ module.exports = async (req, res) => {
     });
 
     const { object } = await generateObject({
-      model: google(MODEL),
+      model: groq(MODEL),
       schema: ResultSchema,
       system: SYSTEM_PROMPT,
       prompt: `Here are the raw rows (as JSON) from the uploaded file:\n\n${JSON.stringify(rows)}`,
