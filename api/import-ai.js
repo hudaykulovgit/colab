@@ -1,6 +1,3 @@
-const { generateObject } = require('ai');
-const { google } = require('@ai-sdk/google');
-const { z } = require('zod');
 const { upsertContract } = require('../lib/contracts');
 const { generateSchedule, addMonths } = require('../lib/schedule');
 
@@ -8,33 +5,14 @@ const { generateSchedule, addMonths } = require('../lib/schedule');
 // a free Google AI Studio key (GOOGLE_GENERATIVE_AI_API_KEY) -- no Vercel
 // billing/credit-card requirement, and Gemini's free tier covers this
 // workload comfortably.
+//
+// @ai-sdk/google ships ESM-only, which Vercel's Node runtime cannot
+// require() -- it must be loaded via dynamic import().
 const MODEL = 'gemini-3.5-flash';
 
 // Keeps a single request's token usage (and cost) bounded. Large sheets
 // should be split into multiple uploads.
 const MAX_ROWS = 400;
-
-const ContractSchema = z.object({
-  assetType: z.enum(['Car', 'Commercial vehicle', 'Real estate', 'Other']),
-  assetName: z.string().min(1),
-  borrower: z.string().min(1),
-  lender: z.string().nullable(),
-  licensePlate: z.string().nullable(),
-  vehicleYear: z.number().int().nullable(),
-  mileage: z.number().nullable(),
-  assetPrice: z.number().nullable(),
-  contractDate: z.string().describe('ISO date YYYY-MM-DD'),
-  firstDueDate: z.string().nullable().describe('ISO date YYYY-MM-DD, or null if not stated'),
-  termMonths: z.number().int().positive(),
-  principal: z.number().positive(),
-  interestRate: z.number().min(0).describe('Total interest/markup as a percentage, e.g. 25 for 25%'),
-  notes: z.string().nullable(),
-});
-
-const ResultSchema = z.object({
-  contracts: z.array(ContractSchema),
-  issues: z.array(z.string()).describe('One entry per row that was skipped or is ambiguous, explaining why'),
-});
 
 const SYSTEM_PROMPT = `You normalize messy spreadsheet exports of car/asset loan contracts into clean structured records.
 
@@ -66,10 +44,37 @@ module.exports = async (req, res) => {
     if (rows.length > MAX_ROWS) {
       return res.status(400).json({ error: `This file has ${rows.length} rows; please split it into batches of ${MAX_ROWS} or fewer.` });
     }
-
     if (!process.env.GOOGLE_GENERATIVE_AI_API_KEY) {
       return res.status(503).json({ error: 'GOOGLE_GENERATIVE_AI_API_KEY is not configured yet.' });
     }
+
+    const [{ generateObject }, { google }, { z }] = await Promise.all([
+      import('ai'),
+      import('@ai-sdk/google'),
+      import('zod'),
+    ]);
+
+    const ContractSchema = z.object({
+      assetType: z.enum(['Car', 'Commercial vehicle', 'Real estate', 'Other']),
+      assetName: z.string().min(1),
+      borrower: z.string().min(1),
+      lender: z.string().nullable(),
+      licensePlate: z.string().nullable(),
+      vehicleYear: z.number().int().nullable(),
+      mileage: z.number().nullable(),
+      assetPrice: z.number().nullable(),
+      contractDate: z.string().describe('ISO date YYYY-MM-DD'),
+      firstDueDate: z.string().nullable().describe('ISO date YYYY-MM-DD, or null if not stated'),
+      termMonths: z.number().int().positive(),
+      principal: z.number().positive(),
+      interestRate: z.number().min(0).describe('Total interest/markup as a percentage, e.g. 25 for 25%'),
+      notes: z.string().nullable(),
+    });
+
+    const ResultSchema = z.object({
+      contracts: z.array(ContractSchema),
+      issues: z.array(z.string()).describe('One entry per row that was skipped or is ambiguous, explaining why'),
+    });
 
     const { object } = await generateObject({
       model: google(MODEL),
