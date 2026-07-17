@@ -3,13 +3,14 @@ const { generateSchedule, addMonths } = require('../lib/schedule');
 
 // Calls Groq's API directly (not via Vercel AI Gateway) using a free Groq
 // API key (GROQ_API_KEY) -- no Vercel billing/credit-card requirement.
-// Llama 3.3 70B Versatile is Groq's flagship instruction-following model,
-// a good fit for structured extraction; swap MODEL below if your Groq
-// console shows a different current model slug.
+// generateObject requires Groq's json_schema structured-output mode, which
+// only a few Groq-hosted models support (console.groq.com/docs/structured
+// -outputs#supported-models) -- llama-3.3-70b-versatile is NOT one of them
+// and fails at request time. Llama 4 Scout is, and is still genuinely Llama.
 //
 // @ai-sdk/groq (like @ai-sdk/google before it) may ship ESM-only, which
 // Vercel's Node runtime cannot require() -- load via dynamic import().
-const MODEL = 'llama-3.3-70b-versatile';
+const MODEL = 'meta-llama/llama-4-scout-17b-16e-instruct';
 
 // Keeps a single request's token usage (and cost) bounded. Large sheets
 // should be split into multiple uploads.
