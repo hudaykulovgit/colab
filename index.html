@@ -175,13 +175,13 @@
     .chart-value { font-size: 9px; fill: #47445f; font-variant-numeric: tabular-nums; }
     .chart-grid { stroke: #e9e7f5; stroke-width: 1; }
 
-    .risk-card-body { display: grid; grid-template-columns: 168px 1fr; align-items: center; gap: 8px 20px; padding: 10px 20px 22px; }
-    .donut { position: relative; width: 158px; height: 158px; flex: 0 0 auto; margin: 0 auto; }
-    .donut svg { width: 100%; height: 100%; transform: rotate(-90deg); }
-    .donut-center { position: absolute; inset: 0; display: grid; place-content: center; justify-items: center; text-align: center; }
-    .donut-center strong { display: block; font-size: 28px; line-height: 1; letter-spacing: -.04em; }
-    .donut-center span { display: block; color: var(--muted); font-size: 9.5px; line-height: 1.25; margin-top: 6px; max-width: 64px; }
-    .risk-list { display: grid; gap: 13px; }
+    .risk-card-body { display: grid; gap: 18px; padding: 14px 20px 22px; }
+    .risk-hero { display: flex; align-items: baseline; gap: 9px; flex-wrap: wrap; }
+    .risk-hero strong { font-size: 38px; font-weight: 800; letter-spacing: -.03em; color: var(--ink); line-height: 1; }
+    .risk-hero span { color: var(--muted); font-size: 12.5px; }
+    .risk-stack { display: flex; gap: 3px; height: 14px; border-radius: 7px; overflow: hidden; background: #ece9f7; }
+    .risk-stack i { display: block; height: 100%; min-width: 3px; }
+    .risk-list { display: grid; gap: 13px; grid-template-columns: repeat(2, 1fr); }
     .risk-row { display: grid; grid-template-columns: 10px 1fr auto; align-items: center; gap: 10px; font-size: 12px; }
     .risk-row i { width: 10px; height: 10px; border-radius: 50%; box-shadow: 0 0 0 4px color-mix(in srgb, currentColor 16%, transparent); }
     .risk-row span { color: var(--ink); font-weight: 560; }
@@ -347,8 +347,7 @@
       .analytics-grid .wide { grid-column: auto; }
       .card-head { padding: 16px 15px 8px; }
       .card-body { padding: 7px 15px 16px; }
-      .risk-card-body { grid-template-columns: 140px 1fr; padding-inline: 15px; }
-      .donut { width: 138px; height: 138px; }
+      .risk-card-body { padding-inline: 15px; }
       .table-toolbar { padding: 14px; }
       th, td { padding-inline: 13px; }
       #contractsView th:nth-child(2), #contractsView td:nth-child(2),
@@ -382,8 +381,7 @@
       .kpi-label { font-size: 10px; }
       .kpi-value { font-size: 20px; }
       .kpi-foot { font-size: 9px; }
-      .risk-card-body { grid-template-columns: 1fr; justify-items: center; }
-      .risk-list { width: 100%; }
+      .risk-list { grid-template-columns: 1fr; }
       .bar-row { grid-template-columns: 10px 100px 1fr auto; }
     }
     @media print {
@@ -928,14 +926,12 @@
         {name:'At risk', color:'#ea580c', rows:m.open.filter(c=>c.status==='At risk')},
         {name:'Critical', color:'#e11d48', rows:m.open.filter(c=>c.status==='Critical')}
       ];
-      const total = Math.max(1, sum(m.open,'outstanding')), circumference = 2 * Math.PI * 46;
-      let offset = 0, circles = `<circle cx="60" cy="60" r="46" fill="none" stroke="#ece9f7" stroke-width="12"/>`;
-      buckets.forEach(b => {
-        const value = sum(b.rows,'outstanding'), length = value / total * circumference;
-        circles += `<circle cx="60" cy="60" r="46" fill="none" stroke="${b.color}" stroke-width="12" stroke-dasharray="${length} ${circumference-length}" stroke-dashoffset="${-offset}"/>`;
-        offset += length;
-      });
-      document.getElementById('riskDonut').innerHTML = `<div class="donut"><svg viewBox="0 0 120 120">${circles}</svg><div class="donut-center"><strong>${m.activeCount}</strong><span>${t('open_contracts_label')}</span></div></div><div class="risk-list">${buckets.map(b=>`<div class="risk-row"><i style="background:${b.color};color:${b.color}"></i><span>${statusLabel(b.name)}</span><strong>${b.rows.length}<span class="risk-amount-muted"> · ${compactMoney(sum(b.rows,'outstanding'))}</span></strong></div>`).join('')}</div>`;
+      const total = Math.max(1, sum(m.open,'outstanding'));
+      const stack = buckets.filter(b=>b.rows.length).map(b=>`<i style="width:${Math.max(2,sum(b.rows,'outstanding')/total*100)}%;background:${b.color}"></i>`).join('');
+      const hero = `<div class="risk-hero"><strong>${m.activeCount}</strong><span>${t('open_contracts_label')}</span></div>`;
+      const stackEl = `<div class="risk-stack">${stack}</div>`;
+      const list = `<div class="risk-list">${buckets.map(b=>`<div class="risk-row"><i style="background:${b.color};color:${b.color}"></i><span>${statusLabel(b.name)}</span><strong>${b.rows.length}<span class="risk-amount-muted"> · ${compactMoney(sum(b.rows,'outstanding'))}</span></strong></div>`).join('')}</div>`;
+      document.getElementById('riskDonut').innerHTML = hero + stackEl + list;
     }
 
     function renderContracts() {
