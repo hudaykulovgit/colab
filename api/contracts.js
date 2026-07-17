@@ -1,4 +1,4 @@
-const { fetchAllContracts, upsertContract } = require('../lib/contracts');
+const { fetchAllContracts, upsertContract, deleteContract } = require('../lib/contracts');
 
 module.exports = async (req, res) => {
   try {
@@ -28,7 +28,15 @@ module.exports = async (req, res) => {
       return res.status(200).json({ saved: contracts.length });
     }
 
-    res.setHeader('Allow', 'GET, PUT');
+    if (req.method === 'DELETE') {
+      const id = req.query.id;
+      if (!id) return res.status(400).json({ error: 'Missing ?id=' });
+      const existed = await deleteContract(String(id));
+      if (!existed) return res.status(404).json({ error: 'Not found' });
+      return res.status(200).json({ deleted: id });
+    }
+
+    res.setHeader('Allow', 'GET, PUT, DELETE');
     return res.status(405).json({ error: 'Method not allowed' });
   } catch (err) {
     console.error(err);

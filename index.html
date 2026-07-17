@@ -611,7 +611,7 @@
     </form>
   </dialog>
 
-  <dialog id="detailDialog"><div class="modal wide"><div class="modal-head"><div><h2 data-i18n="dt_title">Contract details</h2><p id="detailSubtitle" data-i18n="dt_sub_default">Payment schedule and asset information</p></div><button class="modal-close" type="button" data-close-dialog="detailDialog"><span data-icon="x"></span></button></div><div class="modal-body" id="detailBody"></div><div class="modal-foot"><button class="btn" type="button" data-close-dialog="detailDialog" data-i18n="btn_close">Close</button><button class="btn" id="detailEditBtn" type="button"><span data-icon="edit"></span><span data-i18n="btn_edit_contract">Edit contract</span></button><button class="btn btn-accent" id="detailPaymentBtn" type="button"><span data-icon="wallet"></span><span data-i18n="btn_record_payment">Record payment</span></button></div></div></dialog>
+  <dialog id="detailDialog"><div class="modal wide"><div class="modal-head"><div><h2 data-i18n="dt_title">Contract details</h2><p id="detailSubtitle" data-i18n="dt_sub_default">Payment schedule and asset information</p></div><button class="modal-close" type="button" data-close-dialog="detailDialog"><span data-icon="x"></span></button></div><div class="modal-body" id="detailBody"></div><div class="modal-foot"><button class="btn" type="button" data-close-dialog="detailDialog" data-i18n="btn_close">Close</button><button class="btn btn-danger" id="detailDeleteBtn" type="button"><span data-icon="trash"></span><span data-i18n="btn_delete_contract">Delete contract</span></button><button class="btn" id="detailEditBtn" type="button"><span data-icon="edit"></span><span data-i18n="btn_edit_contract">Edit contract</span></button><button class="btn btn-accent" id="detailPaymentBtn" type="button"><span data-icon="wallet"></span><span data-i18n="btn_record_payment">Record payment</span></button></div></div></dialog>
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
   <input type="file" id="excelImportInput" accept=".xlsx,.xls,.csv" style="display:none">
@@ -643,7 +643,7 @@
         kpi_originated: 'Total originated', kpi_originated_foot: '{n} historical + open contracts', kpi_contracted_profit_foot: 'Markup stated in contracts', kpi_weighted_roi: 'Weighted ROI', kpi_weighted_roi_foot: 'Total markup ÷ total principal', kpi_open_yield: 'Open annualized yield', kpi_open_yield_foot: 'Simple, principal-weighted estimate', kpi_closed: 'Closed contracts', kpi_closed_foot: '{pct}% of contract count', kpi_avg_duration: 'Average duration', kpi_avg_duration_val: '{n} mo', kpi_avg_duration_foot: 'Across all imported contracts',
         overview_subtitle: 'As of {date} · {n} contract sheets normalized from {source}', sidebar_source: '{n} contract sheets · {date}', detail_subtitle: '{id} · {source} · {status}', detail_source_fallback: 'New contract',
         insight_largest_title: 'Largest open exposure: {name}', insight_largest_text: '{amount} represents {pct}% of all open receivables.', insight_delinq_title: 'Longest delinquency: {name}', insight_delinq_text: '{days} days past due with {amount} currently overdue.', insight_return_title: 'Highest contracted return segment: {type}', insight_return_text: '{pct}% weighted simple ROI based on stated markup and principal.', insight_gap_title: 'Operational data gap', insight_gap_text: '{plates} open contracts do not yet contain a license plate, and {mileage} lack mileage. Complete these fields before collateral-risk modeling.',
-        toast_contract_updated: 'Contract information updated.', toast_contract_created: 'Contract {id} created.', toast_payment_recorded: '{amount} recorded for {name}.', toast_export: 'Portfolio data exported.', toast_schedule_updated: 'Payment schedule updated for {name}.', mobile_nav_aria: 'Mobile navigation', default_lender: 'Company owner', manual_entry: 'Manual entry', toast_sync_failed: 'Saved locally, but failed to sync to the database. Check your connection.', btn_import_excel: 'Import Excel', toast_import_summary: 'Imported {n} contracts.{skipped}', toast_import_skipped: ' {n} rows skipped.', toast_import_error: 'Import failed: {error}',
+        toast_contract_updated: 'Contract information updated.', toast_contract_created: 'Contract {id} created.', toast_payment_recorded: '{amount} recorded for {name}.', toast_export: 'Portfolio data exported.', toast_schedule_updated: 'Payment schedule updated for {name}.', mobile_nav_aria: 'Mobile navigation', default_lender: 'Company owner', manual_entry: 'Manual entry', toast_sync_failed: 'Saved locally, but failed to sync to the database. Check your connection.', btn_import_excel: 'Import Excel', toast_import_summary: 'Imported {n} contracts.{skipped}', toast_import_skipped: ' {n} rows skipped.', toast_import_error: 'Import failed: {error}', btn_delete_contract: 'Delete contract', confirm_delete_contract: 'Delete {name} ({id}) permanently? This removes its full payment history and cannot be undone.', toast_contract_deleted: '{name} deleted.', toast_delete_failed: 'Failed to delete: {error}',
       },
       ru: {
         tagline: 'ПОРТФЕЛЬНАЯ СИСТЕМА', nav_workspace: 'Разделы', nav_overview: 'Обзор', nav_contracts: 'Договоры', nav_payments: 'Платежи', nav_risk: 'Мониторинг рисков', nav_risk_short: 'Риски', nav_analytics: 'Аналитика',
@@ -665,7 +665,7 @@
         kpi_originated: 'Всего выдано', kpi_originated_foot: '{n} договоров (вкл. закрытые)', kpi_contracted_profit_foot: 'Наценка по договорам', kpi_weighted_roi: 'Взвешенный ROI', kpi_weighted_roi_foot: 'Наценка ÷ основной долг', kpi_open_yield: 'Годовая доходность', kpi_open_yield_foot: 'Простая оценка, взвешенная по сумме', kpi_closed: 'Закрытые договоры', kpi_closed_foot: '{pct}% от всех договоров', kpi_avg_duration: 'Средний срок', kpi_avg_duration_val: '{n} мес.', kpi_avg_duration_foot: 'По всем договорам',
         overview_subtitle: 'На {date} · {n} договоров из {source}', sidebar_source: '{n} договоров · {date}', detail_subtitle: '{id} · {source} · {status}', detail_source_fallback: 'Новый договор',
         insight_largest_title: 'Крупнейший открытый остаток: {name}', insight_largest_text: '{amount} — это {pct}% от всей открытой задолженности.', insight_delinq_title: 'Самая долгая просрочка: {name}', insight_delinq_text: '{days} дн. просрочки, текущая сумма — {amount}.', insight_return_title: 'Наиболее доходный сегмент: {type}', insight_return_text: '{pct}% взвешенная простая доходность на основе наценки и долга.', insight_gap_title: 'Пробелы в данных', insight_gap_text: 'У {plates} открытых договоров нет госномера, у {mileage} — пробега. Заполните их для оценки залога.',
-        toast_contract_updated: 'Данные договора обновлены.', toast_contract_created: 'Договор {id} создан.', toast_payment_recorded: '{amount} зачислено по договору {name}.', toast_export: 'Данные портфеля экспортированы.', toast_schedule_updated: 'График платежей обновлён для {name}.', mobile_nav_aria: 'Мобильная навигация', default_lender: 'Владелец компании', manual_entry: 'Ручной ввод', toast_sync_failed: 'Сохранено локально, но не удалось синхронизировать с базой данных. Проверьте соединение.', btn_import_excel: 'Импорт из Excel', toast_import_summary: 'Импортировано договоров: {n}.{skipped}', toast_import_skipped: ' Пропущено строк: {n}.', toast_import_error: 'Ошибка импорта: {error}',
+        toast_contract_updated: 'Данные договора обновлены.', toast_contract_created: 'Договор {id} создан.', toast_payment_recorded: '{amount} зачислено по договору {name}.', toast_export: 'Данные портфеля экспортированы.', toast_schedule_updated: 'График платежей обновлён для {name}.', mobile_nav_aria: 'Мобильная навигация', default_lender: 'Владелец компании', manual_entry: 'Ручной ввод', toast_sync_failed: 'Сохранено локально, но не удалось синхронизировать с базой данных. Проверьте соединение.', btn_import_excel: 'Импорт из Excel', toast_import_summary: 'Импортировано договоров: {n}.{skipped}', toast_import_skipped: ' Пропущено строк: {n}.', toast_import_error: 'Ошибка импорта: {error}', btn_delete_contract: 'Удалить договор', confirm_delete_contract: 'Удалить {name} ({id}) навсегда? Вся история платежей будет удалена без возможности восстановления.', toast_contract_deleted: '{name} удалён.', toast_delete_failed: 'Не удалось удалить: {error}',
       }
     };
     let lang = localStorage.getItem(LANG_KEY) === 'ru' ? 'ru' : 'en';
@@ -685,6 +685,7 @@
       search: '<circle cx="11" cy="11" r="7"/><path d="M16 16l5 5"/>',
       download: '<path d="M12 3v12M7 10l5 5 5-5M4 21h16"/>',
       upload: '<path d="M12 21V9M7 14l5-5 5 5M4 3h16"/>',
+      trash: '<path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/>',
       plus: '<path d="M12 5v14M5 12h14"/>',
       x: '<path d="M6 6l12 12M18 6L6 18"/>',
       car: '<path d="M4 16l1-6 2-4h10l2 4 1 6v3h-2v-2H6v2H4z"/><path d="M5 11h14M8 14h.01M16 14h.01"/>',
@@ -1147,6 +1148,22 @@
     ['quickPaymentBtn','overviewPaymentBtn','paymentsRecordBtn'].forEach(id=>document.getElementById(id).addEventListener('click',()=>openPaymentModal()));
     document.getElementById('detailPaymentBtn').addEventListener('click',()=>{document.getElementById('detailDialog').close();openPaymentModal(detailContractId);});
     document.getElementById('detailEditBtn').addEventListener('click',()=>{document.getElementById('detailDialog').close();openContractModal(detailContractId);});
+    document.getElementById('detailDeleteBtn').addEventListener('click',async()=>{
+      const c=contracts.find(x=>x.id===detailContractId); if(!c) return;
+      if(!confirm(t('confirm_delete_contract',{name:c.assetName,id:c.id}))) return;
+      try {
+        const res=await fetch(`/api/contracts?id=${encodeURIComponent(c.id)}`,{method:'DELETE'});
+        if(!res.ok && res.status!==404) throw new Error(`API ${res.status}`);
+        contracts=contracts.filter(x=>x.id!==c.id);
+        localStorage.setItem(STORAGE_KEY,JSON.stringify(contracts));
+        document.getElementById('detailDialog').close();
+        renderAll();
+        showToast(t('toast_contract_deleted',{name:c.assetName}));
+      } catch(err) {
+        console.error(err);
+        showToast(t('toast_delete_failed',{error:err.message}));
+      }
+    });
     document.getElementById('exportBtn').addEventListener('click',exportData);
     document.getElementById('importExcelBtn')?.addEventListener('click',()=>document.getElementById('excelImportInput').click());
     document.getElementById('excelImportInput')?.addEventListener('change',async event=>{
@@ -1157,12 +1174,23 @@
         const workbook=XLSX.read(buffer,{type:'array',cellDates:true});
         const firstSheet=workbook.SheetNames[0];
         const rows=XLSX.utils.sheet_to_json(workbook.Sheets[firstSheet],{defval:''});
-        const res=await fetch('/api/import',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({rows})});
-        if(!res.ok) throw new Error(`API ${res.status}`);
-        const result=await res.json();
+        let result, skippedCount;
+        try {
+          const aiRes=await fetch('/api/import-ai',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({rows})});
+          if(!aiRes.ok) throw new Error(`AI API ${aiRes.status}`);
+          result=await aiRes.json();
+          skippedCount=result.issues?.length||0;
+          if(result.issues && result.issues.length) console.warn('AI import: issues', result.issues);
+        } catch(aiErr) {
+          console.warn('AI import unavailable, falling back to plain import:', aiErr.message);
+          const res=await fetch('/api/import',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({rows})});
+          if(!res.ok) throw new Error(`API ${res.status}`);
+          result=await res.json();
+          skippedCount=result.skippedCount||0;
+          if(result.skipped && result.skipped.length) console.warn('Import: skipped rows', result.skipped);
+        }
         contracts=await loadContracts(); renderAll();
-        showToast(t('toast_import_summary',{n:result.imported, skipped: result.skippedCount ? t('toast_import_skipped',{n:result.skippedCount}) : ''}));
-        if(result.skipped && result.skipped.length) console.warn('Import: skipped rows', result.skipped);
+        showToast(t('toast_import_summary',{n:result.imported, skipped: skippedCount ? t('toast_import_skipped',{n:skippedCount}) : ''}));
       } catch(err) {
         console.error(err);
         showToast(t('toast_import_error',{error:err.message}));

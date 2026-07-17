@@ -6,7 +6,9 @@
     "migrate": "node scripts/migrate.js"
   },
   "dependencies": {
-    "@neondatabase/serverless": "^1.0.2"
+    "@neondatabase/serverless": "^1.0.2",
+    "ai": "^6.0.0",
+    "zod": "^3.24.1"
   },
   "devDependencies": {
     "dotenv-cli": "^7.4.2"
