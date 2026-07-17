@@ -23,7 +23,7 @@ module.exports = async (req, res) => {
     const schema = fs.readFileSync(path.join(process.cwd(), 'db', 'schema.sql'), 'utf8');
     const statements = schema.split(';').map((s) => s.trim()).filter(Boolean);
     for (const statement of statements) {
-      await sql(statement);
+      await sql.query(statement);
     }
 
     const html = fs.readFileSync(path.join(process.cwd(), 'index.html'), 'utf8');

@@ -17,7 +17,7 @@ async function main() {
   const schema = fs.readFileSync(path.join(__dirname, '..', 'db', 'schema.sql'), 'utf8');
   const statements = schema.split(';').map((s) => s.trim()).filter(Boolean);
   for (const statement of statements) {
-    await sql(statement);
+    await sql.query(statement);
   }
 
   console.log('Extracting SEED_DATA from index.html...');
