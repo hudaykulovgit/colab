@@ -20,6 +20,10 @@ module.exports = async (req, res) => {
   }
   try {
     const sql = getSql();
+    if (req.query.cleanupTestImports === '1') {
+      const deleted = await sql`DELETE FROM contracts WHERE id LIKE 'AF-IMP-%' RETURNING id`;
+      return res.status(200).json({ deleted: deleted.map((r) => r.id) });
+    }
     const schema = fs.readFileSync(path.join(process.cwd(), 'db', 'schema.sql'), 'utf8');
     const statements = schema.split(';').map((s) => s.trim()).filter(Boolean);
     for (const statement of statements) {
