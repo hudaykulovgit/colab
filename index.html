@@ -29,6 +29,10 @@
       --danger-soft: #ffe1e8;
       --blue: #0891b2;
       --blue-soft: #cffafe;
+      --type-car: #2a78d6;
+      --type-commercial: #1baf7a;
+      --type-realestate: #4a3aa7;
+      --type-other: #e87ba4;
       --shadow: 0 10px 35px rgba(76, 29, 149, .09);
       --radius: 16px;
       --sidebar: 244px;
@@ -238,11 +242,13 @@
 
     .analytics-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
     .analytics-grid .wide { grid-column: 1 / -1; }
-    .bar-list { display: grid; gap: 13px; padding-top: 7px; }
-    .bar-row { display: grid; grid-template-columns: minmax(100px, 150px) 1fr auto; gap: 10px; align-items: center; font-size: 11px; }
-    .bar-track { height: 8px; border-radius: 99px; background: #ece9f7; overflow: hidden; }
-    .bar-track i { display: block; height: 100%; background: var(--accent-2); border-radius: inherit; }
-    .bar-row strong { font-variant-numeric: tabular-nums; min-width: 54px; text-align: right; }
+    .bar-list { display: grid; gap: 15px; padding-top: 8px; }
+    .bar-row { display: grid; grid-template-columns: 10px minmax(96px, 140px) 1fr auto; gap: 10px; align-items: center; font-size: 12px; }
+    .bar-row > i:first-child { width: 10px; height: 10px; border-radius: 50%; box-shadow: 0 0 0 4px color-mix(in srgb, currentColor 16%, transparent); }
+    .bar-row span { color: var(--ink); font-weight: 560; }
+    .bar-track { height: 12px; border-radius: 99px; background: #ece9f7; overflow: hidden; }
+    .bar-track i { display: block; height: 100%; border-radius: inherit; }
+    .bar-row strong { font-variant-numeric: tabular-nums; min-width: 56px; text-align: right; font-weight: 750; }
     .insight-list { display: grid; gap: 0; }
     .insight { display: grid; grid-template-columns: 36px 1fr; gap: 11px; padding: 13px 0; border-bottom: 1px solid var(--line); }
     .insight:last-child { border: 0; }
@@ -378,7 +384,7 @@
       .kpi-foot { font-size: 9px; }
       .risk-card-body { grid-template-columns: 1fr; justify-items: center; }
       .risk-list { width: 100%; }
-      .bar-row { grid-template-columns: 100px 1fr auto; }
+      .bar-row { grid-template-columns: 10px 100px 1fr auto; }
     }
     @media print {
       .sidebar, .topbar, .mobile-nav, .actions, .filterbar, .table-action { display: none !important; }
@@ -677,6 +683,7 @@
     }
     function statusLabel(status) { return t({Current:'status_current',Watch:'status_watch','At risk':'status_at_risk',Critical:'status_critical',Closed:'status_closed'}[status] || status); }
     function assetTypeLabel(type) { return t({Car:'asset_car','Commercial vehicle':'asset_commercial','Real estate':'asset_realestate',Other:'asset_other'}[type] || type); }
+    function assetTypeColor(type) { return {Car:'#2a78d6','Commercial vehicle':'#1baf7a','Real estate':'#4a3aa7',Other:'#e87ba4'}[type] || '#8a8798'; }
     const ICONS = {
       grid: '<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>',
       file: '<path d="M6 2h8l4 4v16H6z"/><path d="M14 2v5h5M9 12h6M9 16h6"/>',
@@ -889,7 +896,7 @@
     }
 
     function renderCashflowChart(targetId, rows, showActual) {
-      const width = 820, height = 265, left = 48, right = 12, top = 12, bottom = 38;
+      const width = 820, height = 340, left = 48, right = 12, top = 12, bottom = 40;
       const innerW = width - left - right, innerH = height - top - bottom;
       const maxValue = Math.max(1, ...rows.flatMap(r => showActual ? [r.scheduled, r.paid] : [r.scheduled]));
       const scaleMax = Math.ceil(maxValue / 5000) * 5000 || maxValue;
@@ -903,10 +910,10 @@
         const center = left + groupW * i + groupW / 2;
         const sh = row.scheduled / scaleMax * innerH, sy = top + innerH - sh;
         const planX = showActual ? center - barW - 2 : center - barW / 2;
-        svg += `<rect x="${planX}" y="${sy}" width="${barW}" height="${Math.max(0,sh)}" rx="3" fill="#d8d7ec"><title>${row.fullLabel}: scheduled ${money1.format(row.scheduled)}</title></rect>`;
+        svg += `<rect x="${planX}" y="${sy}" width="${barW}" height="${Math.max(0,sh)}" rx="4" fill="#d8d7ec"><title>${row.fullLabel}: scheduled ${money1.format(row.scheduled)}</title></rect>`;
         if (showActual) {
           const ah = row.paid / scaleMax * innerH, ay = top + innerH - ah;
-          svg += `<rect x="${center+2}" y="${ay}" width="${barW}" height="${Math.max(0,ah)}" rx="3" fill="url(#barGradient)"><title>${row.fullLabel}: collected ${money1.format(row.paid)}</title></rect>`;
+          svg += `<rect x="${center+2}" y="${ay}" width="${barW}" height="${Math.max(0,ah)}" rx="4" fill="url(#barGradient)"><title>${row.fullLabel}: collected ${money1.format(row.paid)}</title></rect>`;
         }
         svg += `<text class="chart-label" x="${center}" y="${height-14}" text-anchor="middle">${row.label}</text>`;
       });
@@ -997,8 +1004,8 @@
         kpiCard(t('kpi_avg_duration'), t('kpi_avg_duration_val', { n: avgTerm.toFixed(1) }), t('kpi_avg_duration_foot'), 'blue', 'clock')
       ].join('');
       const groups=groupByType(), maxRoi=Math.max(1,...groups.map(g=>g.roi)), maxPrincipal=Math.max(1,...groups.map(g=>g.principal));
-      document.getElementById('roiBars').innerHTML=groups.map(g=>`<div class="bar-row"><span>${escapeHtml(assetTypeLabel(g.type))}</span><div class="bar-track"><i style="width:${g.roi/maxRoi*100}%"></i></div><strong>${g.roi.toFixed(1)}%</strong></div>`).join('');
-      document.getElementById('mixBars').innerHTML=groups.map(g=>`<div class="bar-row"><span>${escapeHtml(assetTypeLabel(g.type))}</span><div class="bar-track"><i style="width:${g.principal/maxPrincipal*100}%"></i></div><strong>${compactMoney(g.principal)}</strong></div>`).join('');
+      document.getElementById('roiBars').innerHTML=groups.map(g=>`<div class="bar-row"><i style="background:${assetTypeColor(g.type)};color:${assetTypeColor(g.type)}"></i><span>${escapeHtml(assetTypeLabel(g.type))}</span><div class="bar-track"><i style="width:${g.roi/maxRoi*100}%;background:${assetTypeColor(g.type)}"></i></div><strong>${g.roi.toFixed(1)}%</strong></div>`).join('');
+      document.getElementById('mixBars').innerHTML=groups.map(g=>`<div class="bar-row"><i style="background:${assetTypeColor(g.type)};color:${assetTypeColor(g.type)}"></i><span>${escapeHtml(assetTypeLabel(g.type))}</span><div class="bar-track"><i style="width:${g.principal/maxPrincipal*100}%;background:${assetTypeColor(g.type)}"></i></div><strong>${compactMoney(g.principal)}</strong></div>`).join('');
       const largest=[...m.open].sort((a,b)=>b.outstanding-a.outstanding)[0], worst=[...m.open].sort((a,b)=>b.daysLate-a.daysLate)[0], strongest=groups.sort((a,b)=>b.roi-a.roi)[0];
       const concentration=largest&&m.outstanding?largest.outstanding/m.outstanding*100:0;
       document.getElementById('analyticsInsights').innerHTML=[
