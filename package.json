@@ -1,0 +1,14 @@
+{
+  "name": "autofinance",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "migrate": "node scripts/migrate.js"
+  },
+  "dependencies": {
+    "@neondatabase/serverless": "^1.0.2"
+  },
+  "devDependencies": {
+    "dotenv-cli": "^7.4.2"
+  }
+}
