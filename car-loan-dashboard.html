@@ -1,0 +1,1019 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="color-scheme" content="light">
+  <title>Autofinance — Portfolio Dashboard</title>
+  <style>
+    :root {
+      --bg: #f4f6f3;
+      --surface: #ffffff;
+      --surface-2: #f8faf8;
+      --ink: #17211d;
+      --muted: #6f7b75;
+      --faint: #9ba49f;
+      --line: #e2e7e3;
+      --line-strong: #d4dbd6;
+      --nav: #17211d;
+      --nav-muted: #a9b4ae;
+      --accent: #1f6b52;
+      --accent-2: #4d8b75;
+      --accent-soft: #e7f2ed;
+      --amber: #a76616;
+      --amber-soft: #fbf0df;
+      --orange: #b6572b;
+      --orange-soft: #f9e9e1;
+      --danger: #9b3a3a;
+      --danger-soft: #f7e6e6;
+      --blue: #466b8a;
+      --blue-soft: #e9f0f5;
+      --shadow: 0 10px 35px rgba(20, 34, 27, .06);
+      --radius: 16px;
+      --sidebar: 244px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--bg);
+      font: 14px/1.45 Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    button, input, select, textarea { font: inherit; }
+    button { color: inherit; }
+    svg { display: block; }
+    .mono { font-variant-numeric: tabular-nums; }
+    .muted { color: var(--muted); }
+    .subtle { color: var(--faint); }
+    .nowrap { white-space: nowrap; }
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip: rect(0,0,0,0); border: 0; }
+
+    .app-shell { min-height: 100vh; }
+    .sidebar {
+      position: fixed;
+      inset: 0 auto 0 0;
+      width: var(--sidebar);
+      padding: 24px 16px;
+      color: #fff;
+      background: var(--nav);
+      display: flex;
+      flex-direction: column;
+      z-index: 20;
+    }
+    .brand { display: flex; align-items: center; gap: 12px; padding: 0 10px 28px; }
+    .brand-mark {
+      width: 36px; height: 36px; border-radius: 11px;
+      display: grid; place-items: center;
+      background: #f1f6f3; color: var(--nav); font-weight: 900; letter-spacing: -.06em;
+    }
+    .brand-name { font-size: 15px; font-weight: 760; letter-spacing: -.02em; }
+    .brand-name small { display: block; color: var(--nav-muted); font-size: 10px; font-weight: 600; letter-spacing: .12em; margin-top: 1px; }
+    .nav-label { color: #75847c; font-size: 10px; font-weight: 750; letter-spacing: .13em; padding: 0 12px 9px; text-transform: uppercase; }
+    .nav { display: grid; gap: 5px; }
+    .nav-btn {
+      appearance: none; width: 100%; border: 0; border-radius: 11px; padding: 11px 12px;
+      background: transparent; color: var(--nav-muted); display: flex; align-items: center; gap: 11px;
+      cursor: pointer; text-align: left; font-weight: 620; transition: .18s ease;
+    }
+    .nav-btn:hover { color: #fff; background: rgba(255,255,255,.055); }
+    .nav-btn.active { color: #fff; background: rgba(255,255,255,.1); }
+    .nav-btn [data-icon] { opacity: .9; }
+    .sidebar-foot { margin-top: auto; }
+    .source-chip {
+      display: flex; align-items: flex-start; gap: 9px; padding: 12px; border: 1px solid rgba(255,255,255,.09);
+      border-radius: 12px; color: var(--nav-muted); background: rgba(255,255,255,.035); font-size: 11px;
+    }
+    .source-chip strong { display: block; color: #e5ebe7; font-size: 12px; margin-bottom: 2px; }
+    .source-dot { width: 7px; height: 7px; margin-top: 5px; flex: 0 0 auto; border-radius: 50%; background: #78b79d; box-shadow: 0 0 0 3px rgba(120,183,157,.12); }
+
+    .main { min-height: 100vh; margin-left: var(--sidebar); }
+    .topbar {
+      height: 72px; padding: 0 30px; display: flex; align-items: center; gap: 16px;
+      border-bottom: 1px solid var(--line); background: rgba(244,246,243,.92); position: sticky; top: 0; z-index: 15;
+      backdrop-filter: blur(14px);
+    }
+    .global-search { position: relative; width: min(420px, 42vw); }
+    .global-search input {
+      width: 100%; height: 40px; border: 1px solid var(--line); border-radius: 11px; padding: 0 38px;
+      outline: none; background: var(--surface); color: var(--ink); transition: .18s ease;
+    }
+    .global-search input:focus { border-color: #99b8aa; box-shadow: 0 0 0 3px rgba(31,107,82,.08); }
+    .global-search [data-icon] { position: absolute; left: 12px; top: 11px; color: var(--faint); }
+    .keycap { position: absolute; right: 10px; top: 9px; color: var(--faint); border: 1px solid var(--line); border-radius: 5px; font-size: 10px; padding: 2px 5px; background: var(--surface-2); }
+    .topbar-actions { margin-left: auto; display: flex; align-items: center; gap: 9px; }
+    .icon-btn {
+      width: 40px; height: 40px; display: grid; place-items: center; border: 1px solid var(--line); border-radius: 11px;
+      background: var(--surface); cursor: pointer; transition: .18s ease;
+    }
+    .icon-btn:hover { border-color: var(--line-strong); transform: translateY(-1px); }
+    .profile { display: flex; align-items: center; gap: 10px; padding-left: 6px; }
+    .avatar { width: 36px; height: 36px; display: grid; place-items: center; color: #fff; background: var(--accent); border-radius: 50%; font-size: 12px; font-weight: 750; }
+    .profile strong { display: block; font-size: 12px; }
+    .profile span { color: var(--muted); font-size: 10px; }
+
+    .content { padding: 28px 30px 56px; max-width: 1580px; margin: 0 auto; }
+    .view { display: none; }
+    .view.active { display: block; animation: fadeIn .22s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(3px); } to { opacity: 1; transform: none; } }
+    .page-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; margin-bottom: 22px; }
+    .eyebrow { color: var(--accent); font-size: 10px; font-weight: 780; letter-spacing: .12em; text-transform: uppercase; margin-bottom: 5px; }
+    h1, h2, h3, p { margin-top: 0; }
+    h1 { margin-bottom: 5px; font-size: clamp(24px, 2.4vw, 32px); line-height: 1.14; letter-spacing: -.035em; }
+    h2 { font-size: 16px; letter-spacing: -.02em; margin-bottom: 4px; }
+    h3 { font-size: 13px; margin-bottom: 4px; }
+    .page-head p { margin: 0; color: var(--muted); max-width: 720px; }
+    .actions { display: flex; align-items: center; gap: 9px; flex-wrap: wrap; }
+    .btn {
+      min-height: 40px; border: 1px solid var(--line); border-radius: 11px; padding: 0 14px; display: inline-flex;
+      align-items: center; justify-content: center; gap: 8px; background: var(--surface); cursor: pointer; font-weight: 680;
+      box-shadow: 0 1px 0 rgba(20,30,25,.02); transition: .18s ease;
+    }
+    .btn:hover { border-color: var(--line-strong); transform: translateY(-1px); }
+    .btn-primary { background: var(--ink); border-color: var(--ink); color: #fff; }
+    .btn-accent { background: var(--accent); border-color: var(--accent); color: #fff; }
+    .btn-quiet { background: transparent; }
+    .btn-danger { color: var(--danger); }
+    .btn-sm { min-height: 32px; padding: 0 10px; font-size: 12px; border-radius: 9px; }
+
+    .kpi-grid { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 12px; margin-bottom: 16px; }
+    .kpi {
+      min-height: 132px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 17px;
+      box-shadow: var(--shadow); display: flex; flex-direction: column; position: relative; overflow: hidden;
+    }
+    .kpi-label { color: var(--muted); font-size: 11px; font-weight: 650; display: flex; align-items: center; gap: 6px; }
+    .kpi-value { font-size: clamp(20px, 2.1vw, 28px); line-height: 1.1; letter-spacing: -.04em; font-weight: 760; margin: 13px 0 9px; }
+    .kpi-foot { margin-top: auto; color: var(--muted); font-size: 10.5px; display: flex; align-items: center; gap: 6px; }
+    .kpi .tone { position: absolute; width: 48px; height: 3px; top: 0; left: 17px; border-radius: 0 0 3px 3px; background: var(--accent); }
+    .tone.amber { background: var(--amber); }
+    .tone.blue { background: var(--blue); }
+    .tone.orange { background: var(--orange); }
+    .delta { font-weight: 720; color: var(--accent); }
+    .delta.bad { color: var(--danger); }
+
+    .dashboard-grid { display: grid; grid-template-columns: minmax(0, 1.7fr) minmax(300px, .8fr); gap: 16px; margin-bottom: 16px; }
+    .card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); }
+    .card-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; padding: 18px 19px 10px; }
+    .card-head p { margin: 0; color: var(--muted); font-size: 11px; }
+    .card-body { padding: 8px 19px 19px; }
+    .chart-legend { display: flex; gap: 13px; flex-wrap: wrap; color: var(--muted); font-size: 10px; }
+    .legend-key { display: inline-flex; align-items: center; gap: 5px; }
+    .legend-dot { width: 8px; height: 8px; border-radius: 2px; background: var(--accent); }
+    .legend-dot.plan { background: #cbd4cf; }
+    .legend-dot.risk { background: var(--amber); }
+    .chart-wrap { width: 100%; min-height: 250px; }
+    .chart-wrap svg { width: 100%; height: auto; overflow: visible; }
+    .chart-label { font-size: 10px; fill: #7b8781; }
+    .chart-value { font-size: 9px; fill: #4c5953; font-variant-numeric: tabular-nums; }
+    .chart-grid { stroke: #e8ece9; stroke-width: 1; }
+
+    .risk-card-body { display: grid; grid-template-columns: 150px 1fr; align-items: center; gap: 8px 18px; padding: 6px 18px 19px; }
+    .donut { position: relative; width: 142px; height: 142px; }
+    .donut svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+    .donut-center { position: absolute; inset: 0; display: grid; place-content: center; text-align: center; }
+    .donut-center strong { display: block; font-size: 25px; line-height: 1; letter-spacing: -.04em; }
+    .donut-center span { color: var(--muted); font-size: 10px; margin-top: 5px; }
+    .risk-list { display: grid; gap: 10px; }
+    .risk-row { display: grid; grid-template-columns: 9px 1fr auto; align-items: center; gap: 8px; font-size: 11px; }
+    .risk-row i { width: 8px; height: 8px; border-radius: 50%; }
+    .risk-row span { color: var(--muted); }
+    .risk-row strong { font-variant-numeric: tabular-nums; }
+
+    .table-card { overflow: hidden; }
+    .table-toolbar { display: flex; align-items: center; gap: 10px; padding: 16px 18px; border-bottom: 1px solid var(--line); }
+    .table-toolbar h2 { margin: 0 auto 0 0; }
+    .table-wrap { overflow-x: auto; }
+    table { border-collapse: collapse; width: 100%; }
+    th { color: var(--faint); font-size: 9.5px; letter-spacing: .08em; text-transform: uppercase; font-weight: 750; text-align: left; padding: 11px 16px; background: #fbfcfb; border-bottom: 1px solid var(--line); white-space: nowrap; }
+    td { padding: 13px 16px; border-bottom: 1px solid #edf0ee; vertical-align: middle; font-size: 12px; }
+    tbody tr:last-child td { border-bottom: 0; }
+    tbody tr:hover { background: #fafbfa; }
+    .asset-cell { display: flex; align-items: center; gap: 11px; min-width: 210px; }
+    .asset-icon { width: 34px; height: 34px; border-radius: 10px; background: var(--surface-2); border: 1px solid var(--line); color: var(--accent); display: grid; place-items: center; flex: 0 0 auto; }
+    .asset-cell strong { display: block; font-size: 12px; margin-bottom: 2px; }
+    .asset-cell span { color: var(--muted); font-size: 10px; }
+    .status { display: inline-flex; align-items: center; gap: 6px; border-radius: 999px; padding: 5px 8px; font-size: 10px; font-weight: 720; white-space: nowrap; }
+    .status::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+    .status-current { color: var(--accent); background: var(--accent-soft); }
+    .status-watch { color: var(--amber); background: var(--amber-soft); }
+    .status-at-risk { color: var(--orange); background: var(--orange-soft); }
+    .status-critical { color: var(--danger); background: var(--danger-soft); }
+    .status-closed { color: #77827c; background: #edf0ee; }
+    .risk-meter { width: 82px; height: 6px; background: #edf0ee; border-radius: 99px; overflow: hidden; }
+    .risk-meter i { display: block; height: 100%; border-radius: inherit; background: var(--accent); }
+    .risk-meter i.medium { background: var(--amber); }
+    .risk-meter i.high { background: var(--danger); }
+    .table-action { border: 0; background: transparent; color: var(--accent); font-weight: 700; font-size: 11px; cursor: pointer; padding: 6px; }
+    .empty { padding: 48px 18px; text-align: center; color: var(--muted); }
+
+    .filterbar { display: flex; align-items: center; gap: 9px; margin-bottom: 15px; flex-wrap: wrap; }
+    .search-box { position: relative; flex: 1 1 260px; max-width: 460px; }
+    .search-box input { width: 100%; height: 40px; border: 1px solid var(--line); background: var(--surface); border-radius: 11px; padding: 0 12px 0 38px; outline: none; }
+    .search-box [data-icon] { position: absolute; left: 12px; top: 11px; color: var(--faint); }
+    .select { height: 40px; border: 1px solid var(--line); border-radius: 11px; padding: 0 34px 0 11px; background: var(--surface); color: var(--ink); outline: none; }
+    .segmented { display: inline-flex; padding: 3px; background: #e9edea; border-radius: 11px; }
+    .segmented button { border: 0; background: transparent; border-radius: 8px; height: 32px; padding: 0 11px; color: var(--muted); font-size: 11px; cursor: pointer; }
+    .segmented button.active { background: var(--surface); color: var(--ink); box-shadow: 0 1px 4px rgba(20,30,25,.08); font-weight: 680; }
+
+    .risk-layout { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(300px, .6fr); gap: 16px; }
+    .risk-cards { display: grid; gap: 10px; padding: 6px 18px 18px; }
+    .risk-contract { display: grid; grid-template-columns: 1fr auto; gap: 10px 16px; align-items: center; padding: 13px 0; border-bottom: 1px solid var(--line); }
+    .risk-contract:last-child { border-bottom: 0; }
+    .risk-contract-main { display: flex; gap: 11px; align-items: center; }
+    .risk-score { width: 44px; height: 44px; display: grid; place-items: center; border-radius: 50%; background: var(--amber-soft); color: var(--amber); font-weight: 780; font-variant-numeric: tabular-nums; }
+    .risk-score.high { background: var(--danger-soft); color: var(--danger); }
+    .risk-contract small { color: var(--muted); }
+    .risk-amount { text-align: right; }
+    .risk-amount strong { display: block; }
+    .risk-amount small { color: var(--muted); }
+    .method-list { display: grid; gap: 14px; margin-top: 10px; }
+    .method-row { display: grid; grid-template-columns: 34px 1fr; gap: 10px; }
+    .method-num { width: 30px; height: 30px; display: grid; place-items: center; background: var(--surface-2); border: 1px solid var(--line); border-radius: 9px; color: var(--accent); font-weight: 750; font-size: 11px; }
+    .notice { margin-top: 14px; padding: 12px; border-radius: 11px; color: #765223; background: var(--amber-soft); font-size: 10.5px; }
+
+    .analytics-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+    .analytics-grid .wide { grid-column: 1 / -1; }
+    .bar-list { display: grid; gap: 13px; padding-top: 7px; }
+    .bar-row { display: grid; grid-template-columns: minmax(100px, 150px) 1fr auto; gap: 10px; align-items: center; font-size: 11px; }
+    .bar-track { height: 8px; border-radius: 99px; background: #edf0ee; overflow: hidden; }
+    .bar-track i { display: block; height: 100%; background: var(--accent-2); border-radius: inherit; }
+    .bar-row strong { font-variant-numeric: tabular-nums; min-width: 54px; text-align: right; }
+    .insight-list { display: grid; gap: 0; }
+    .insight { display: grid; grid-template-columns: 36px 1fr; gap: 11px; padding: 13px 0; border-bottom: 1px solid var(--line); }
+    .insight:last-child { border: 0; }
+    .insight-icon { width: 34px; height: 34px; border-radius: 10px; background: var(--accent-soft); color: var(--accent); display: grid; place-items: center; }
+    .insight p { margin: 3px 0 0; color: var(--muted); font-size: 11px; }
+
+    dialog { border: 0; padding: 0; background: transparent; max-width: none; max-height: none; }
+    dialog::backdrop { background: rgba(11,20,16,.52); backdrop-filter: blur(3px); }
+    .modal {
+      width: min(820px, calc(100vw - 28px)); max-height: min(88vh, 940px); overflow: auto; background: var(--surface);
+      border: 1px solid rgba(255,255,255,.2); border-radius: 20px; box-shadow: 0 28px 80px rgba(9,20,14,.24);
+    }
+    .modal.wide { width: min(1040px, calc(100vw - 28px)); }
+    .modal-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; padding: 22px 24px 17px; border-bottom: 1px solid var(--line); position: sticky; top: 0; background: rgba(255,255,255,.96); backdrop-filter: blur(12px); z-index: 3; }
+    .modal-head h2 { font-size: 19px; margin: 0 0 4px; }
+    .modal-head p { color: var(--muted); margin: 0; font-size: 11px; }
+    .modal-close { border: 1px solid var(--line); border-radius: 10px; background: var(--surface); width: 36px; height: 36px; display: grid; place-items: center; cursor: pointer; flex: 0 0 auto; }
+    .modal-body { padding: 22px 24px; }
+    .modal-foot { display: flex; justify-content: flex-end; gap: 9px; padding: 16px 24px; border-top: 1px solid var(--line); background: #fbfcfb; position: sticky; bottom: 0; z-index: 3; }
+    .form-section { margin-bottom: 22px; }
+    .form-section:last-child { margin-bottom: 0; }
+    .form-section-title { font-size: 10px; font-weight: 780; letter-spacing: .11em; text-transform: uppercase; color: var(--accent); margin-bottom: 12px; }
+    .form-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 13px; }
+    .field { display: grid; gap: 6px; }
+    .field.span-2 { grid-column: span 2; }
+    .field.span-3 { grid-column: span 3; }
+    .field label { font-size: 10.5px; color: var(--muted); font-weight: 650; }
+    .field input, .field select, .field textarea {
+      width: 100%; border: 1px solid var(--line); border-radius: 10px; padding: 0 11px; min-height: 41px; background: var(--surface); outline: none; color: var(--ink);
+    }
+    .field textarea { padding-top: 10px; min-height: 72px; resize: vertical; }
+    .field input:focus, .field select:focus, .field textarea:focus { border-color: #94b6a7; box-shadow: 0 0 0 3px rgba(31,107,82,.08); }
+    .field input[readonly] { background: #f5f7f5; color: var(--muted); }
+    .hint { color: var(--faint); font-size: 9.5px; }
+    .calc-preview { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+    .calc-item { background: var(--surface-2); padding: 13px; }
+    .calc-item span { color: var(--muted); font-size: 9.5px; display: block; margin-bottom: 4px; }
+    .calc-item strong { font-size: 15px; font-variant-numeric: tabular-nums; }
+
+    .detail-hero { display: grid; grid-template-columns: 1.2fr repeat(3, minmax(120px, .6fr)); gap: 12px; margin-bottom: 16px; }
+    .detail-primary, .detail-stat { border: 1px solid var(--line); border-radius: 14px; padding: 16px; background: var(--surface-2); }
+    .detail-primary { display: flex; align-items: center; gap: 13px; }
+    .detail-primary .asset-icon { width: 44px; height: 44px; }
+    .detail-primary h3 { font-size: 16px; margin: 0 0 3px; }
+    .detail-stat span { display: block; color: var(--muted); font-size: 9.5px; margin-bottom: 6px; }
+    .detail-stat strong { display: block; font-size: 17px; font-variant-numeric: tabular-nums; }
+    .detail-grid { display: grid; grid-template-columns: .8fr 1.2fr; gap: 16px; }
+    .info-card { border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
+    .info-card h3 { padding: 14px 15px; margin: 0; border-bottom: 1px solid var(--line); background: #fbfcfb; }
+    .info-list { padding: 6px 15px; }
+    .info-row { display: flex; justify-content: space-between; gap: 16px; padding: 9px 0; border-bottom: 1px solid #eef1ef; font-size: 11px; }
+    .info-row:last-child { border: 0; }
+    .info-row span { color: var(--muted); }
+    .schedule-wrap { max-height: 390px; overflow: auto; }
+    .schedule-wrap th { position: sticky; top: 0; z-index: 1; }
+    .schedule-paid { color: var(--accent); font-weight: 700; }
+    .schedule-late { color: var(--danger); font-weight: 700; }
+
+    .toast { position: fixed; right: 22px; bottom: 22px; z-index: 100; max-width: min(360px, calc(100vw - 32px)); color: #fff; background: var(--ink); border-radius: 12px; padding: 12px 15px; box-shadow: 0 15px 45px rgba(10,20,15,.24); transform: translateY(24px); opacity: 0; pointer-events: none; transition: .25s ease; }
+    .toast.show { transform: none; opacity: 1; }
+    .mobile-nav { display: none; }
+
+    @media (max-width: 1320px) {
+      .kpi-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+    @media (max-width: 1020px) {
+      :root { --sidebar: 76px; }
+      .sidebar { padding: 22px 10px; }
+      .brand { justify-content: center; padding-inline: 0; }
+      .brand-name, .nav-label, .nav-btn span:not([data-icon]), .source-chip div { display: none; }
+      .nav-btn { justify-content: center; padding: 12px; }
+      .source-chip { justify-content: center; padding: 12px 8px; }
+      .source-dot { margin: 0; }
+      .content { padding-inline: 22px; }
+      .topbar { padding-inline: 22px; }
+      .dashboard-grid, .risk-layout { grid-template-columns: 1fr; }
+      .detail-hero { grid-template-columns: 1.2fr repeat(3, 1fr); }
+    }
+    @media (max-width: 760px) {
+      :root { --sidebar: 0px; }
+      body { padding-bottom: calc(70px + env(safe-area-inset-bottom)); }
+      .sidebar { display: none; }
+      .topbar { height: 62px; padding: 0 15px; }
+      .global-search { width: auto; flex: 1; }
+      .keycap, .profile div:not(.avatar), .topbar-actions .icon-btn:first-child { display: none; }
+      .content { padding: 20px 15px 40px; }
+      .page-head { display: grid; gap: 14px; }
+      .page-head .actions { width: 100%; }
+      .page-head .actions .btn { flex: 1; }
+      .kpi-grid { grid-template-columns: repeat(2, 1fr); gap: 9px; }
+      .kpi { min-height: 116px; padding: 14px; }
+      .kpi-value { margin: 10px 0 7px; font-size: 22px; }
+      .dashboard-grid, .analytics-grid { grid-template-columns: 1fr; gap: 12px; }
+      .analytics-grid .wide { grid-column: auto; }
+      .card-head { padding: 16px 15px 8px; }
+      .card-body { padding: 7px 15px 16px; }
+      .risk-card-body { grid-template-columns: 125px 1fr; padding-inline: 15px; }
+      .donut { width: 124px; height: 124px; }
+      .table-toolbar { padding: 14px; }
+      th, td { padding-inline: 13px; }
+      #contractsView th:nth-child(2), #contractsView td:nth-child(2),
+      #contractsView th:nth-child(3), #contractsView td:nth-child(3),
+      #contractsView th:nth-child(4), #contractsView td:nth-child(4),
+      #contractsView th:nth-child(6), #contractsView td:nth-child(6) { display: none; }
+      #contractsView th, #contractsView td { padding-left: 8px; padding-right: 8px; }
+      #contractsView .asset-cell { min-width: 158px; gap: 8px; }
+      #contractsView .asset-icon { width: 30px; height: 30px; }
+      #contractsView .table-action { padding-left: 2px; padding-right: 2px; }
+      .desktop-optional { display: none; }
+      .form-grid { grid-template-columns: 1fr; }
+      .field.span-2, .field.span-3 { grid-column: span 1; }
+      .calc-preview { grid-template-columns: repeat(2, 1fr); }
+      dialog[open] { width: 100vw; height: 100dvh; margin: 0; display: flex; align-items: flex-end; justify-content: center; overflow: hidden; }
+      .modal { width: 100vw; max-height: 92dvh; border-radius: 19px 19px 0 0; position: relative; }
+      .modal-head, .modal-body, .modal-foot { padding-left: 17px; padding-right: 17px; }
+      .detail-hero { grid-template-columns: repeat(2, 1fr); }
+      .detail-primary { grid-column: 1 / -1; }
+      .detail-grid { grid-template-columns: 1fr; }
+      .mobile-nav {
+        position: fixed; z-index: 50; inset: auto 0 0; height: calc(64px + env(safe-area-inset-bottom)); padding: 7px 8px env(safe-area-inset-bottom);
+        display: grid; grid-template-columns: repeat(5, 1fr); background: rgba(255,255,255,.95); border-top: 1px solid var(--line); backdrop-filter: blur(15px);
+      }
+      .mobile-nav button { border: 0; background: transparent; color: var(--muted); display: grid; place-items: center; align-content: center; gap: 3px; font-size: 9px; cursor: pointer; }
+      .mobile-nav button.active { color: var(--accent); font-weight: 700; }
+      .toast { bottom: 80px; right: 16px; }
+    }
+    @media (max-width: 430px) {
+      .kpi-grid { grid-template-columns: 1fr 1fr; }
+      .kpi-label { font-size: 10px; }
+      .kpi-value { font-size: 20px; }
+      .kpi-foot { font-size: 9px; }
+      .risk-card-body { grid-template-columns: 1fr; justify-items: center; }
+      .risk-list { width: 100%; }
+      .bar-row { grid-template-columns: 100px 1fr auto; }
+    }
+    @media print {
+      .sidebar, .topbar, .mobile-nav, .actions, .filterbar, .table-action { display: none !important; }
+      .main { margin: 0; }
+      .content { padding: 0; max-width: none; }
+      .view { display: none !important; }
+      #overviewView { display: block !important; }
+      .card, .kpi { box-shadow: none; break-inside: avoid; }
+      body { background: #fff; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-mark">AF</div>
+        <div class="brand-name">Autofinance <small>PORTFOLIO OS</small></div>
+      </div>
+      <div class="nav-label">Workspace</div>
+      <nav class="nav" aria-label="Primary navigation">
+        <button class="nav-btn active" data-view="overview"><span data-icon="grid"></span><span>Overview</span></button>
+        <button class="nav-btn" data-view="contracts"><span data-icon="file"></span><span>Contracts</span></button>
+        <button class="nav-btn" data-view="payments"><span data-icon="wallet"></span><span>Payments</span></button>
+        <button class="nav-btn" data-view="risk"><span data-icon="shield"></span><span>Risk monitor</span></button>
+        <button class="nav-btn" data-view="analytics"><span data-icon="chart"></span><span>Analytics</span></button>
+      </nav>
+      <div class="sidebar-foot">
+        <div class="source-chip">
+          <i class="source-dot"></i>
+          <div><strong>Excel snapshot loaded</strong><span id="sidebarSource">29 contract sheets</span></div>
+        </div>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div class="global-search">
+          <span data-icon="search"></span>
+          <label class="sr-only" for="globalSearch">Search portfolio</label>
+          <input id="globalSearch" type="search" placeholder="Search contracts, clients, plates…" autocomplete="off">
+          <span class="keycap">/</span>
+        </div>
+        <div class="topbar-actions">
+          <button class="icon-btn" id="exportBtn" title="Export portfolio data"><span data-icon="download"></span></button>
+          <button class="icon-btn" id="quickPaymentBtn" title="Record a payment"><span data-icon="plus"></span></button>
+          <div class="profile">
+            <div class="avatar">FO</div>
+            <div><strong>Finance Owner</strong><span>Administrator</span></div>
+          </div>
+        </div>
+      </header>
+
+      <div class="content">
+        <section class="view active" id="overviewView">
+          <div class="page-head">
+            <div>
+              <div class="eyebrow">Owner dashboard</div>
+              <h1>Portfolio overview</h1>
+              <p id="overviewSubtitle">Financial position, collections, and risk based on the uploaded workbook.</p>
+            </div>
+            <div class="actions">
+              <button class="btn" id="overviewPaymentBtn"><span data-icon="wallet"></span>Record payment</button>
+              <button class="btn btn-primary" data-open-contract><span data-icon="plus"></span>New contract</button>
+            </div>
+          </div>
+
+          <div class="kpi-grid" id="kpiGrid"></div>
+
+          <div class="dashboard-grid">
+            <article class="card">
+              <div class="card-head">
+                <div><h2>Monthly collections</h2><p>Scheduled versus recorded payments · last 12 months</p></div>
+                <div class="chart-legend"><span class="legend-key"><i class="legend-dot plan"></i>Scheduled</span><span class="legend-key"><i class="legend-dot"></i>Collected</span></div>
+              </div>
+              <div class="card-body"><div class="chart-wrap" id="cashflowChart"></div></div>
+            </article>
+            <article class="card">
+              <div class="card-head"><div><h2>Portfolio status</h2><p>Open receivables grouped by payment risk</p></div></div>
+              <div class="risk-card-body" id="riskDonut"></div>
+            </article>
+          </div>
+
+          <article class="card table-card">
+            <div class="table-toolbar"><h2>Requires attention</h2><span class="muted" id="attentionCount"></span><button class="btn btn-sm" data-go-contracts>View all</button></div>
+            <div class="table-wrap"><table><thead><tr><th>Contract</th><th>Borrower</th><th>Outstanding</th><th>Overdue</th><th>Days late</th><th>Risk</th><th></th></tr></thead><tbody id="attentionTable"></tbody></table></div>
+          </article>
+        </section>
+
+        <section class="view" id="contractsView">
+          <div class="page-head">
+            <div><div class="eyebrow">Portfolio register</div><h1>Contracts</h1><p>Review every imported and newly entered contract, including closed portfolio history.</p></div>
+            <div class="actions"><button class="btn btn-primary" data-open-contract><span data-icon="plus"></span>New contract</button></div>
+          </div>
+          <div class="filterbar">
+            <div class="search-box"><span data-icon="search"></span><input id="contractSearch" type="search" placeholder="Search model, borrower, plate or ID"></div>
+            <select class="select" id="statusFilter" aria-label="Filter by status"><option value="all">All statuses</option><option>Current</option><option>Watch</option><option>At risk</option><option>Critical</option><option>Closed</option></select>
+            <select class="select" id="typeFilter" aria-label="Filter by asset type"><option value="all">All asset types</option><option>Car</option><option>Commercial vehicle</option><option>Real estate</option><option>Other</option></select>
+          </div>
+          <article class="card table-card">
+            <div class="table-toolbar"><h2>Contract register</h2><span class="muted" id="contractResultCount"></span></div>
+            <div class="table-wrap"><table><thead><tr><th>Contract / asset</th><th>Borrower</th><th>Principal</th><th>Total return</th><th>Outstanding</th><th>ROI</th><th>Status</th><th></th></tr></thead><tbody id="contractsTable"></tbody></table></div>
+          </article>
+        </section>
+
+        <section class="view" id="paymentsView">
+          <div class="page-head">
+            <div><div class="eyebrow">Cash control</div><h1>Payments</h1><p>Track the collection schedule, next due amounts, and recorded payment performance.</p></div>
+            <div class="actions"><button class="btn btn-accent" id="paymentsRecordBtn"><span data-icon="plus"></span>Record payment</button></div>
+          </div>
+          <div class="kpi-grid" id="paymentKpis"></div>
+          <div class="dashboard-grid">
+            <article class="card">
+              <div class="card-head"><div><h2>12-month cash-flow plan</h2><p>Expected scheduled payments from the contract register</p></div></div>
+              <div class="card-body"><div class="chart-wrap" id="forecastChart"></div></div>
+            </article>
+            <article class="card">
+              <div class="card-head"><div><h2>Upcoming due</h2><p>Nearest scheduled payments after the data date</p></div></div>
+              <div class="card-body"><div class="insight-list" id="upcomingList"></div></div>
+            </article>
+          </div>
+          <article class="card table-card">
+            <div class="table-toolbar"><h2>Recent recorded payments</h2><span class="muted">Latest schedule entries</span></div>
+            <div class="table-wrap"><table><thead><tr><th>Payment date</th><th>Contract</th><th>Borrower</th><th>Scheduled</th><th>Paid</th><th>Variance</th><th>Status</th></tr></thead><tbody id="paymentsTable"></tbody></table></div>
+          </article>
+        </section>
+
+        <section class="view" id="riskView">
+          <div class="page-head">
+            <div><div class="eyebrow">Early warning</div><h1>Risk monitor</h1><p>Prioritize collections using overdue balance, days past due, and payment completion.</p></div>
+            <div class="actions"><button class="btn" data-go-contracts>Open register</button></div>
+          </div>
+          <div class="kpi-grid" id="riskKpis"></div>
+          <div class="risk-layout">
+            <article class="card">
+              <div class="card-head"><div><h2>Highest-priority contracts</h2><p>Ranked by heuristic risk score and overdue exposure</p></div></div>
+              <div class="risk-cards" id="riskContracts"></div>
+            </article>
+            <article class="card">
+              <div class="card-head"><div><h2>Risk methodology</h2><p>Transparent operational score · 0–100</p></div></div>
+              <div class="card-body">
+                <div class="method-list">
+                  <div class="method-row"><span class="method-num">45</span><div><h3>Overdue share</h3><span class="muted">Overdue amount relative to remaining receivables.</span></div></div>
+                  <div class="method-row"><span class="method-num">40</span><div><h3>Days past due</h3><span class="muted">Time elapsed since the oldest unpaid scheduled amount.</span></div></div>
+                  <div class="method-row"><span class="method-num">15</span><div><h3>Data and collateral</h3><span class="muted">Reserved for mileage, vehicle age, and collateral value when completed.</span></div></div>
+                </div>
+                <div class="notice"><strong>Important:</strong> this is a transparent collection-priority heuristic, not a statistically trained probability-of-default model. A predictive score requires more borrower and repayment history.</div>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section class="view" id="analyticsView">
+          <div class="page-head">
+            <div><div class="eyebrow">Investment performance</div><h1>Analytics</h1><p>Contracted economics, portfolio composition, return rates, and concentration.</p></div>
+            <div class="actions"><button class="btn" id="printBtn"><span data-icon="print"></span>Print summary</button></div>
+          </div>
+          <div class="kpi-grid" id="analyticsKpis"></div>
+          <div class="analytics-grid">
+            <article class="card"><div class="card-head"><div><h2>Return rate by asset type</h2><p>Weighted contracted markup ÷ principal</p></div></div><div class="card-body"><div class="bar-list" id="roiBars"></div></div></article>
+            <article class="card"><div class="card-head"><div><h2>Portfolio composition</h2><p>Original principal invested by asset type</p></div></div><div class="card-body"><div class="bar-list" id="mixBars"></div></div></article>
+            <article class="card wide"><div class="card-head"><div><h2>Decision signals</h2><p>Automatically calculated from the normalized workbook records</p></div></div><div class="card-body"><div class="insight-list" id="analyticsInsights"></div></div></article>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <nav class="mobile-nav" aria-label="Mobile navigation">
+    <button class="active" data-view="overview"><span data-icon="grid"></span><span>Overview</span></button>
+    <button data-view="contracts"><span data-icon="file"></span><span>Contracts</span></button>
+    <button data-view="payments"><span data-icon="wallet"></span><span>Payments</span></button>
+    <button data-view="risk"><span data-icon="shield"></span><span>Risk</span></button>
+    <button data-view="analytics"><span data-icon="chart"></span><span>Analytics</span></button>
+  </nav>
+
+  <dialog id="contractDialog">
+    <form class="modal" id="contractForm" method="dialog">
+      <div class="modal-head"><div><h2 id="contractModalTitle">New contract</h2><p id="contractModalSubtitle">Create a contract and calculate its repayment schedule.</p></div><button class="modal-close" type="button" data-close-dialog="contractDialog"><span data-icon="x"></span></button></div>
+      <div class="modal-body">
+        <input type="hidden" name="contractId">
+        <section class="form-section">
+          <div class="form-section-title">Asset and parties</div>
+          <div class="form-grid">
+            <div class="field"><label for="assetType">Asset type</label><select id="assetType" name="assetType" required><option>Car</option><option>Commercial vehicle</option><option>Real estate</option><option>Other</option></select></div>
+            <div class="field span-2"><label for="assetName">Car model / asset</label><input id="assetName" name="assetName" list="modelList" placeholder="e.g. Chevrolet Cobalt" required><datalist id="modelList"><option>Chevrolet Cobalt</option><option>Chevrolet Gentra</option><option>Chevrolet Tracker</option><option>Chevrolet Onix</option><option>BYD Song Plus</option><option>BYD Yuan Up</option><option>Zeekr</option><option>Hyundai Santa Fe</option><option>Toyota Land Cruiser Prado</option></datalist></div>
+            <div class="field"><label for="borrower">Borrower / customer</label><input id="borrower" name="borrower" placeholder="Full name" required></div>
+            <div class="field"><label for="lender">Lender</label><input id="lender" name="lender" value="Company owner" required></div>
+            <div class="field"><label for="licensePlate">License plate</label><input id="licensePlate" name="licensePlate" placeholder="01 A 123 BC" maxlength="16"></div>
+            <div class="field"><label for="vehicleYear">Model year</label><input id="vehicleYear" name="vehicleYear" type="number" min="1980" max="2035" placeholder="2025"></div>
+            <div class="field"><label for="mileage">Mileage (km)</label><input id="mileage" name="mileage" type="number" min="0" step="100" placeholder="24,000"></div>
+            <div class="field"><label for="assetPrice">Vehicle / asset price (USD)</label><input id="assetPrice" name="assetPrice" type="number" min="0" step="0.01" placeholder="18,000"></div>
+          </div>
+        </section>
+        <section class="form-section">
+          <div class="form-section-title">Loan economics</div>
+          <div class="form-grid">
+            <div class="field"><label for="principal">Loan amount (USD)</label><input id="principal" name="principal" type="number" min="1" step="0.01" placeholder="15,000" required></div>
+            <div class="field"><label for="interestRate">Total interest / markup (%)</label><input id="interestRate" name="interestRate" type="number" min="0" max="300" step="0.01" placeholder="25" required></div>
+            <div class="field"><label for="termMonths">Duration (months)</label><input id="termMonths" name="termMonths" type="number" min="1" max="84" step="1" placeholder="12" required></div>
+            <div class="field"><label for="contractDate">Contract date</label><input id="contractDate" name="contractDate" type="date" required></div>
+            <div class="field"><label for="firstDueDate">First payment date</label><input id="firstDueDate" name="firstDueDate" type="date" required></div>
+            <div class="field"><label for="paymentDay">Payment day</label><input id="paymentDay" name="paymentDay" readonly><span class="hint">Taken from the first payment date.</span></div>
+          </div>
+        </section>
+        <section class="form-section" id="calculationSection">
+          <div class="form-section-title">Calculated contract</div>
+          <div class="calc-preview"><div class="calc-item"><span>Monthly payment</span><strong id="calcMonthly">$0</strong></div><div class="calc-item"><span>Contracted profit</span><strong id="calcProfit">$0</strong></div><div class="calc-item"><span>Total receivable</span><strong id="calcTotal">$0</strong></div><div class="calc-item"><span>Annualized simple yield</span><strong id="calcYield">0%</strong></div></div>
+        </section>
+        <section class="form-section"><div class="field"><label for="notes">Notes</label><textarea id="notes" name="notes" placeholder="Collateral, guarantor, special payment terms…"></textarea></div></section>
+      </div>
+      <div class="modal-foot"><button class="btn" type="button" data-close-dialog="contractDialog">Cancel</button><button class="btn btn-primary" type="submit" id="contractSubmit">Create contract</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="paymentDialog">
+    <form class="modal" id="paymentForm" method="dialog">
+      <div class="modal-head"><div><h2>Record payment</h2><p>Apply cash received against the earliest unpaid installments.</p></div><button class="modal-close" type="button" data-close-dialog="paymentDialog"><span data-icon="x"></span></button></div>
+      <div class="modal-body"><div class="form-grid">
+        <div class="field span-3"><label for="paymentContract">Contract</label><select id="paymentContract" name="paymentContract" required></select></div>
+        <div class="field"><label for="paymentAmount">Amount (USD)</label><input id="paymentAmount" name="paymentAmount" type="number" min="0.01" step="0.01" required></div>
+        <div class="field"><label for="paymentDate">Payment date</label><input id="paymentDate" name="paymentDate" type="date" required></div>
+        <div class="field"><label for="paymentMethod">Method</label><select id="paymentMethod" name="paymentMethod"><option>Cash</option><option>Bank transfer</option><option>Card</option><option>Other</option></select></div>
+        <div class="field span-3"><label for="paymentNote">Note</label><textarea id="paymentNote" name="paymentNote" placeholder="Receipt number or comment"></textarea></div>
+      </div></div>
+      <div class="modal-foot"><button class="btn" type="button" data-close-dialog="paymentDialog">Cancel</button><button class="btn btn-accent" type="submit">Record payment</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="detailDialog"><div class="modal wide"><div class="modal-head"><div><h2>Contract details</h2><p id="detailSubtitle">Payment schedule and asset information</p></div><button class="modal-close" type="button" data-close-dialog="detailDialog"><span data-icon="x"></span></button></div><div class="modal-body" id="detailBody"></div><div class="modal-foot"><button class="btn" type="button" data-close-dialog="detailDialog">Close</button><button class="btn" id="detailEditBtn" type="button"><span data-icon="edit"></span>Complete data</button><button class="btn btn-accent" id="detailPaymentBtn" type="button"><span data-icon="wallet"></span>Record payment</button></div></div></dialog>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    const SEED_DATA = {"source":"Car_unlocked(1).xlsx","asOf":"2026-07-16","currency":"USD","contracts":[{"id":"XL-001","sourceSheet":"1 Спарк","sourceTitle":"Музаффар спарк 1 йил","assetName":"Chevrolet Spark","assetType":"Car","borrower":"Muzaffar","lender":"Company owner","licensePlate":"","mileage":null,"vehicleYear":null,"contractDate":"2023-07-05","firstDueDate":"2023-08-05","termMonths":12,"principal":9000.0,"interestRate":25.0,"markup":2250.0,"totalReceivable":11250.0,"assetPrice":11500.0,"monthlyPayment":937.5,"paidTotal":11250.0,"outstanding":0.0,"dueScheduled":11250.0,"duePaid":11250.0,"overdue":0.0,"daysLate":0,"riskScore":0,"status":"Closed","simpleROI":25.0,"annualYield":25.0,"lastPaymentDate":"2024-07-05","nextDueDate":null,"notes":"Imported from Excel; missing operational fields can be completed in the dashboard.","schedule":[{"sequence":1,"dueDate":"2023-08-05","scheduled":1000.0,"paid":1000.0},{"sequence":2,"dueDate":"2023-09-05","scheduled":1000.0,"paid":1000.0},{"sequence":3,"dueDate":"2023-10-05","scheduled":1000.0,"paid":1000.0},{"sequence":4,"dueDate":"2023-11-05","scheduled":1000.0,"paid":1000.0},{"sequence":5,"dueDate":"2023-12-05","scheduled":1000.0,"paid":1000.0},{"sequence":6,"dueDate":"2024-01-05","scheduled":1000.0,"paid":1000.0},{"sequence":7,"dueDate":"2024-02-05","scheduled":1000.0,"paid":1000.0},{"sequence":8,"dueDate":"2024-03-05","scheduled":1000.0,"paid":1000.0},{"sequence":9,"dueDate":"2024-04-05","scheduled":1000.0,"paid":1000.0},{"sequence":10,"dueDate":"2024-05-05","scheduled":1000.0,"paid":1000.0},{"sequence":11,"dueDate":"2024-06-05","scheduled":1000.0,"paid":250.0},{"sequence":12,"dueDate":"2024-07-05","scheduled":250.0,"paid":1000.0}]},{"id":"XL-002","sourceSheet":"1. Нексия 3 ","sourceTitle":"Музаффар Нексия 3, 1 йил Июль","assetName":"Chevrolet Nexia 3","assetType":"Car","borrower":"Muzaffar","lender":"Company owner","licensePlate":"","mileage":null,"vehicleYear":null,"contractDate":"2024-07-15","firstDueDate":"2024-08-15","termMonths":18,"principal":8000.0,"interestRate":37.5,"markup":3000.0,"totalReceivable":11000.0,"assetPrice":null,"monthlyPayment":611.11,"paidTotal":11000.0,"outstanding":0.0,"dueScheduled":11000.0,"duePaid":11000.0,"overdue":0.0,"daysLate":0,"riskScore":0,"status":"Closed","simpleROI":37.5,"annualYield":25.0,"lastPaymentDate":"2026-01-15","nextDueDate":null,"notes":"Imported from Excel; missing operational fields can be completed in the dashboard.","schedule":[{"sequence":1,"dueDate":"2024-08-15","scheduled":600.0,"paid":600.0},{"sequence":2,"dueDate":"2024-09-15","scheduled":600.0,"paid":600.0},{"sequence":3,"dueDate":"2024-10-15","scheduled":600.0,"paid":600.0},{"sequence":4,"dueDate":"2024-11-15","scheduled":600.0,"paid":600.0},{"sequence":5,"dueDate":"2024-12-15","scheduled":600.0,"paid":600.0},{"sequence":6,"dueDate":"2025-01-15","scheduled":600.0,"paid":600.0},{"sequence":7,"dueDate":"2025-02-15","scheduled":600.0,"paid":600.0},{"sequence":8,"dueDate":"2025-03-15","scheduled":600.0,"paid":600.0},{"sequence":9,"dueDate":"2025-04-15","scheduled":600.0,"paid":600.0},{"sequence":10,"dueDate":"2025-05-15","scheduled":600.0,"paid":600.0},{"sequence":11,"dueDate":"2025-06-15","scheduled":600.0,"paid":600.0},{"sequence":12,"dueDate":"2025-07-15","scheduled":600.0,"paid":600.0},{"sequence":13,"dueDate":"2025-08-15","scheduled":600.0,"paid":600.0},{"sequence":14,"dueDate":"2025-09-15","scheduled":600.0,"paid":600.0},{"sequence":15,"dueDate":"2025-10-15","scheduled":600.0,"paid":600.0},{"sequence":16,"dueDate":"2025-11-15","scheduled":600.0,"paid":600.0},{"sequence":17,"dueDate":"2025-12-15","scheduled":600.0,"paid":600.0},{"sequence":18,"dueDate":"2026-01-15","scheduled":800.0,"paid":800.0}]},{"id":"XL-003","sourceSheet":"ABBOS","sourceTitle":"ABBOS 10ta ayfon 17 promaks 1590 dan","assetName":"iPhone 17 Pro Max (10 units)","assetType":"Other","borrower":"Abbos","lender":"Company owner","licensePlate":"","mileage":null,"vehicleYear":null,"contractDate":"2026-04-01","firstDueDate":"2026-05-01","termMonths":18,"principal":15900.0,"interestRate":28.49,"markup":4530.0,"totalReceivable":20430.0,"assetPrice":null,"monthlyPayment":1135.0,"paidTotal":2275.0,"outstanding":18155.0,"dueScheduled":3405.0,"duePaid":2275.0,"overdue":1130.0,"daysLate":15,"riskScore":25,"status":"Watch","simpleROI":28.49,"annualYield":18.99,"lastPaymentDate":"2026-06-01","nextDueDate":"2026-08-01","notes":"Imported from Excel; missing operational fields can be completed in the dashboard.","schedule":[{"sequence":1,"dueDate":"2026-05-01","scheduled":1135.0,"paid":1135.0},{"sequence":2,"dueDate":"2026-06-01","scheduled":1135.0,"paid":1140.0},{"sequence":3,"dueDate":"2026-07-01","scheduled":1135.0,"paid":0.0},{"sequence":4,"dueDate":"2026-08-01","scheduled":1135.0,"paid":0.0},{"sequence":5,"dueDate":"2026-09-01","scheduled":1135.0,"paid":0.0},{"sequence":6,"dueDate":"2026-10-01","scheduled":1135.0,"paid":0.0},{"sequence":7,"dueDate":"2026-11-01","scheduled":1135.0,"paid":0.0},{"sequence":8,"dueDate":"2026-12-01","scheduled":1135.0,"paid":0.0},{"sequence":9,"dueDate":"2027-01-01","scheduled":1135.0,"paid":0.0},{"sequence":10,"dueDate":"2027-02-01","scheduled":1135.0,"paid":0.0},{"sequence":11,"dueDate":"2027-03-01","scheduled":1135.0,"paid":0.0},{"sequence":12,"dueDate":"2027-04-01","scheduled":1135.0,"paid":0.0},{"sequence":13,"dueDate":"2027-05-01","scheduled":1135.0,"paid":0.0},{"sequence":14,"dueDate":"2027-06-01","scheduled":1135.0,"paid":0.0},{"sequence":15,"dueDate":"2027-07-01","scheduled":1135.0,"paid":0.0},{"sequence":16,"dueDate":"2027-08-01","scheduled":1135.0,"paid":0.0},{"sequence":17,"dueDate":"2027-09-01","scheduled":1135.0,"paid":0.0},{"sequence":18,"dueDate":"2027-10-01","scheduled":1135.0,"paid":0.0}]},{"id":"XL-004","sourceSheet":"Bekzod Mafia","sourceTitle":"Bekzod Mafia Malibu","assetName":"Chevrolet Malibu","assetType":"Car","borrower":"Bekzod","lender":"Company owner","licensePlate":"","mileage":null,"vehicleYear":null,"contractDate":"2026-06-17","firstDueDate":"2026-07-17","termMonths":12,"principal":7000.0,"interestRate":15.0,"markup":1050.0,"totalReceivable":8050.0,"assetPrice":25000.0,"monthlyPayment":670.0,"paidTotal":670.0,"outstanding":7380.0,"dueScheduled":0,"duePaid":0,"overdue":0,"daysLate":0,"riskScore":0,"status":"Current","simpleROI":15.0,"annualYield":15.0,"lastPaymentDate":"2026-07-17","nextDueDate":"2026-07-17","notes":"Imported from Excel; missing operational fields can be completed in the dashboard.","schedule":[{"sequence":1,"dueDate":"2026-07-17","scheduled":670.0,"paid":670.0},{"sequence":2,"dueDate":"2026-08-17","scheduled":670.0,"paid":0.0},{"sequence":3,"dueDate":"2026-09-17","scheduled":670.0,"paid":0.0},{"sequence":4,"dueDate":"2026-10-17","scheduled":670.0,"paid":0.0},{"sequence":5,"dueDate":"2026-11-17","scheduled":670.0,"paid":0.0},{"sequence":6,"dueDate":"2026-12-17","scheduled":670.0,"paid":0.0},{"sequence":7,"dueDate":"2027-01-17","scheduled":670.0,"paid":0.0},{"sequence":8,"dueDate":"2027-02-17","scheduled":670.0,"paid":0.0},{"sequence":9,"dueDate":"2027-03-17","scheduled":670.0,"paid":0.0},{"sequence":10,"dueDate":"2027-04-17","scheduled":670.0,"paid":0.0},{"sequence":11,"dueDate":"2027-05-17","scheduled":670.0,"paid":0.0},{"sequence":12,"dueDate":"2027-06-17","scheduled":670.0,"paid":0.0}]},{"id":"XL-005","sourceSheet":"1. Нексия 3 2026","sourceTitle":"Музаффар Нексия 3, 1,5  йил январ 2026","assetName":"Chevrolet Nexia 3","assetType":"Car","borrower":"Muzaffar","lender":"Company owner","licensePlate":"","mileage":null,"vehicleYear":null,"contractDate":"2026-02-10","firstDueDate":"2026-03-10","termMonths":18,"principal":10000.0,"interestRate":37.5,"markup":3750.0,"totalReceivable":13750.0,"assetPrice":null,"monthlyPayment":763.89,"paidTotal":3200.0,"outstanding":10550.0,"dueScheduled":4000.0,"duePaid":3200.0,"overdue":800.0,"daysLate":6,"riskScore":25,"status":"Watch","simpleROI":37.5,"annualYield":25.0,"lastPaymentDate":"2026-06-10","nextDueDate":"2026-08-10","notes":"Imported from Excel; missing operational fields can be completed in the dashboard.","schedule":[{"sequence":1,"dueDate":"2026-03-10","scheduled":800.0,"paid":800.0},{"sequence":2,"dueDate":"2026-04-10","scheduled":800.0,"paid":800.0},{"sequence":3,"dueDate":"2026-05-10","scheduled":800.0,"paid":800.0},{"sequence":4,"dueDate":"2026-06-10","scheduled":800.0,"paid":800.0},{"sequence":5,"dueDate":"2026-07-10","scheduled":800.0,"paid":0.0},{"sequence":6,"dueDate":"2026-08-10","scheduled":800.0,"paid":0.0},{"sequence":7,"dueDate":"2026-09-10","scheduled":800.0,"paid":0.0},{"sequence":8,"dueDate":"2026-10-10","scheduled":800.0,"paid":0.0},{"sequence":9,"dueDate":"2026-11-10","scheduled":800.0,"paid":0.0},{"sequence":10,"dueDate":"2026-12-10","scheduled":800.0,"paid":0.0},{"sequence":11,"dueDate":"2027-01-10","scheduled":800.0,"paid":0.0},{"sequence":12,"dueDate":"2027-02-10","scheduled":800.0,"paid":0.0},{"sequence":13,"dueDate":"2027-03-10","scheduled":800.0,"paid":0.0},{"sequence":14,"dueDate":"2027-04-10","scheduled":800.0,"paid":0.0},{"sequence":15,"dueDate":"2027-05-10","scheduled":800.0,"paid":0.0},{"sequence":16,"dueDate":"2027-06-10","scheduled":800.0,"paid":0.0},{"sequence":17,"dueDate":"2027-07-10","scheduled":800.0,"paid":0.0},{"sequence":18,"dueDate":"2027-08-10","scheduled":150.0,"paid":0.0}]},{"id":"XL-006","sourceSheet":"Zeekr 06.2026","sourceTitle":"Музаффар Zeekr 06.2026","assetName":"Zeekr","assetType":"Car","borrower":"Muzaffar","lender":"Company owner","licensePlate":"","mileage":null,"vehicleYear":null,"contractDate":"2026-06-06","firstDueDate":"2026-07-06","termMonths":12,"principal":28600.0,"interestRate":25.0,"markup":7150.0,"totalReceivable":35750.0,"assetPrice":null,"monthlyPayment":2979.17,"paidTotal":0.0,"outstanding":35750.0,"dueScheduled":3000.0,"duePaid":0.0,"overdue":3000.0,"daysLate":10,"riskScore":25,"status":"Watch","simpleROI":25.0,"annualYield":25.0,"lastPaymentDate":null,"nextDueDate":"2026-08-06","notes":"Imported from Excel; missing operational fields can be completed in the dashboard.","schedule":[{"sequence":1,"dueDate":"2026-07-06","scheduled":3000.0,"paid":0.0},{"sequence":2,"dueDate":"2026-08-06","scheduled":3000.0,"paid":0.0},{"sequence":3,"dueDate":"2026-09-06","scheduled":3000.0,"paid":0.0},{"sequence":4,"dueDate":"2026-10-06","scheduled":3000.0,"paid":0.0},{"sequence":5,"dueDate":"2026-11-06","scheduled":3000.0,"paid":0.0},{"sequence":6,"dueDate":"2026-12-06","scheduled":3000.0,"paid":0.0},{"sequence":7,"dueDate":"2027-01-06","scheduled":3000.0,"paid":0.0},{"sequence":8,"dueDate":"2027-02-06","scheduled":3000.0,"paid":0.0},{"sequence":9,"dueDate":"2027-03-06","scheduled":3000.0,"paid":0.0},{"sequence":10,"dueDate":"2027-04-06","scheduled":3000.0,"paid":0.0},{"sequence":11,"dueDate":"2027-05-06","scheduled":3000.0,"paid":0.0},{"sequence":12,"dueDate":"2027-06-06","scheduled":2750.0,"paid":0.0}]},{"id":"XL-007","sourceSheet":"DOM Yangi 06.2026","sourceTitle":"Музаффар Dom","assetName":"New house","assetType":"Real estate","borrower":"Muzaffar","lender":"Company owner","licensePlate":"","mileage":null,"vehicleYear":null,"contractDate":"2026-06-28","firstDueDate":"2026-07-28","termMonths":12,"principal":30200.0,"interestRate":25.0,"markup":7550.0,"totalReceivable":37750.0,"assetPrice":null,"monthlyPayment":3145.83,"paidTotal":0.0,"outstanding":37750.0,"dueScheduled":0,"duePaid":0,"overdue":0,"daysLate":0,"riskScore":0,"status":"Current","simpleROI":25.0,"annualYield":25.0,"lastPaymentDate":null,"nextDueDate":"2026-07-28","notes":"Imported from Excel; missing operational fields can be completed in the dashboard.","schedule":[{"sequence":1,"dueDate":"2026-07-28","scheduled":3150.0,"paid":0.0},{"sequence":2,"dueDate":"2026-08-28","scheduled":3150.0,"paid":0.0},{"sequence":3,"dueDate":"2026-09-28","scheduled":3150.0,"paid":0.0},{"sequence":4,"dueDate":"2026-10-28","scheduled":3150.0,"paid":0.0},{"sequence":5,"dueDate":"2026-11-28","scheduled":3150.0,"paid":0.0},{"sequence":6,"dueDate":"2026-12-28","scheduled":3150.0,"paid":0.0},{"sequence":7,"dueDate":"2027-01-28","scheduled":3150.0,"paid":0.0},{"sequence":8,"dueDate":"2027-02-28","scheduled":3150.0,"paid":0.0},{"sequence":9,"dueDate":"2027-03-28","scheduled":3150.0,"paid":0.0},{"sequence":10,"dueDate":"2027-04-28","scheduled":3150.0,"paid":0.0},{"sequence":11,"dueDate":"2027-05-28","scheduled":3150.0,"paid":0.0},{"sequence":12,"dueDate":"2027-06-28","scheduled":3100.0,"paid":0.0}]},{"id":"XL-008","sourceSheet":"Dom Maksim Gorkiy","sourceTitle":"Музаффар Dom Maksim Gorkiy, 2  йил apreldan  2026","assetName":"House — Maksim Gorkiy","assetType":"Real estate","borrower":"Muzaffar","lender":"Company owner","licensePlate":"","mileage":null,"vehicleYear":null,"contractDate":"2026-03-30","firstDueDate":"2026-04-30","termMonths":24,"principal":15000.0,"interestRate":50.0,"markup":7500.0,"totalReceivable":22500.0,"assetPrice":null,"monthlyPayment":937.5,"paidTotal":2850.0,"outstanding":19650.0,"dueScheduled":2850.0,"duePaid":2850.0,"overdue":0.0,"daysLate":0,"riskScore":0,"status":"Current","simpleROI":50.0,"annualYield":25.0,"lastPaymentDate":"2026-06-30","nextDueDate":"2026-07-31","notes":"Imported from Excel; missing operational fields can be completed in the dashboard.","schedule":[{"sequence":1,"dueDate":"2026-04-30","scheduled":950.0,"paid":950.0},{"sequence":2,"dueDate":"2026-05-31","scheduled":950.0,"paid":950.0},{"sequence":3,"dueDate":"2026-06-30","scheduled":950.0,"paid":950.0},{"sequence":4,"dueDate":"2026-07-31","scheduled":950.0,"paid":0.0},{"sequence":5,"dueDate":"2026-08-31","scheduled":950.0,"paid":0.0},{"sequence":6,"dueDate":"2026-09-30","scheduled":950.0,"paid":0.0},{"sequence":7,"dueDate":"2026-10-31","scheduled":950.0,"paid":0.0},{"sequence":8,"dueDate":"2026-11-30","scheduled":950.0,"paid":0.0},{"sequence":9,"dueDate":"2026-12-31","scheduled":950.0,"paid":0.0},{"sequence":10,"dueDate":"2027-01-31","scheduled":950.0,"paid":0.0},{"sequence":11,"dueDate":"2027-02-28","scheduled":950.0,"paid":0.0},{"sequence":12,"dueDate":"2027-03-31","scheduled":950.0,"paid":0.0},{"sequence":13,"dueDate":"2027-04-30","scheduled":950.0,"paid":0.0},{"sequence":14,"dueDate":"2027-05-31","scheduled":950.0,"paid":0.0},{"sequence":15,"dueDate":"2027-06-30","scheduled":950.0,"paid":0.0},{"sequence":16,"dueDate":"2027-07-31","scheduled":950.0,"paid":0.0},{"sequence":17,"dueDate":"2027-08-31","scheduled":950.0,"paid":0.0},{"sequence":18,"dueDate":"2027-09-30","scheduled":950.0,"paid":0.0},{"sequence":19,"dueDate":"2027-10-31","scheduled":950.0,"paid":0.0},{"sequence":20,"dueDate":"2027-11-30","scheduled":950.0,"paid":0.0},{"sequence":21,"dueDate":"2027-12-31","scheduled":950.0,"paid":0.0},{"sequence":22,"dueDate":"2028-01-31","scheduled":950.0,"paid":0.0},{"sequence":23,"dueDate":"2028-02-29","scheduled":950.0,"paid":0.0},{"sequence":24,"dueDate":"2028-03-31","scheduled":650.0,"paid":0.0}]},{"id":"XL-009","sourceSheet":"С16  04.2026","sourceTitle":"С16   04.2026","assetName":"Chevrolet Traverse","assetType":"Car","borrower":"Not specified","lender":"Company owner","licensePlate":"","mileage":null,"vehicleYear":null,"contractDate":"2026-04-15","firstDueDate":"2026-05-15","termMonths":12,"principal":30000.0,"interestRate":25.0,"markup":7500.0,"totalReceivable":37500.0,"assetPrice":null,"monthlyPayment":3125.0,"paidTotal":6225.0,"outstanding":31275.0,"dueScheduled":9375.0,"duePaid":6225.0,"overdue":3150.0,"daysLate":31,"riskScore":50,"status":"At risk","simpleROI":25.0,"annualYield":25.0,"lastPaymentDate":"2026-06-15","nextDueDate":"2026-08-15","notes":"Imported from Excel; missing operational fields can be completed in the dashboard.","schedule":[{"sequence":1,"dueDate":"2026-05-15","scheduled":3125.0,"paid":3125.0},{"sequence":2,"dueDate":"2026-06-15","scheduled":3125.0,"paid":3100.0},{"sequence":3,"dueDate":"2026-07-15","scheduled":3125.0,"paid":0.0},{"sequence":4,"dueDate":"2026-08-15","scheduled":3125.0,"paid":0.0},{"sequence":5,"dueDate":"2026-09-15","scheduled":3125.0,"paid":0.0},{"sequence":6,"dueDate":"2026-10-15","scheduled":3125.0,"paid":0.0},{"sequence":7,"dueDate":"2026-11-15","scheduled":3125.0,"paid":0.0},{"sequence":8,"dueDate":"2026-12-15","scheduled":3125.0,"paid":0.0},{"sequence":9,"dueDate":"2027-01-15","scheduled":3125.0,"paid":0.0},{"sequence":10,"dueDate":"2027-02-15","scheduled":3125.0,"paid":0.0},{"sequence":11,"dueDate":"2027-03-15","scheduled":3125.0,"paid":0.0},{"sequence":12,"dueDate":"2027-04-15","scheduled":3125.0,"paid":0.0}]},{"id":"XL-010","sourceSheet":"Oq Jentra 11.2025","sourceTitle":"Gentra 27.11.2025 йилда тикилган","assetName":"Chevrolet Gentra (white)","assetType":"Car","borrower":"Not specified","lender":"Company owner","licensePlate":"","mileage":null,"vehicleYear":null,"contractDate":"2025-11-29","firstDueDate":"2025-12-29","termMonths":12,"principal":10000.0,"interestRate":25.0,"markup":2500.0,"totalReceivable":12500.0,"assetPrice":null,"monthlyPayment":1041.67,"paidTotal":7250.0,"outstanding":5250.0,"dueScheduled":7350.0,"duePaid":7250.0,"overdue":100.0,"daysLate":17,"riskScore":25,"status":"Watch","simpleROI":25.0,"annualYield":25.0,"lastPaymentDate":"2026-06-29","nextDueDate":"2026-07-29","notes":"Imported from Excel; missing operational fields can be completed in the dashboard.","schedule":[{"sequence":1,"dueDate":"2025-12-29","scheduled":1050.0,"paid":1000.0},{"sequence":2,"dueDate":"2026-01-29","scheduled":1050.0,"paid":1000.0},{"sequence":3,"dueDate":"2026-02-28","scheduled":1050.0,"paid":1050.0},{"sequence":4,"dueDate":"2026-03-29","scheduled":1050.0,"paid":1050.0},{"sequence":5,"dueDate":"2026-04-29","scheduled":1050.0,"paid":1050.0},{"sequence":6,"dueDate":"2026-05-29","scheduled":1050.0,"paid":1050.0},{"sequence":7,"dueDate":"2026-06-29","scheduled":1050.0,"paid":1050.0},{"sequence":8,"dueDate":"2026-07-29","scheduled":1050.0,"paid":0.0},{"sequence":9,"dueDate":"2026-08-29","scheduled":1050.0,"paid":0.0},{"sequence":10,"dueDate":"2026-09-29","scheduled":1050.0,"paid":0.0},{"sequence":11,"dueDate":"2026-10-29","scheduled":1050.0,"paid":0.0},{"sequence":12,"dueDate":"2026-11-29","scheduled":950.0,"paid":0.0}]},{"id":"XL-011","sourceSheet":"Oq Jentra (889) 7700","sourceTitle":"889 Oq Jentra 7600 12,2025","assetName":"Chevrolet Gentra (white)","assetType":"Car","borrower":"Not specified","lender":"Company owner","licensePlate":"","mileage":null,"vehicleYear":null,"contractDate":"2025-12-15","firstDueDate":"2026-01-15","termMonths":24,"principal":7700.0,"interestRate":50.0,"markup":3850.0,"totalReceivable":11550.0,"assetPrice":null,"monthlyPayment":481.25,"paidTotal":3000.0,"outstanding":8550.0,"dueScheduled":3360.0,"duePaid":3000.0,"overdue":360.0,"daysLate":1,"riskScore":25,"status":"Watch","simpleROI":50.0,"annualYield":25.0,"lastPaymentDate":"2026-06-15","nextDueDate":"2026-08-15","notes":"Imported from Excel; missing operational fields can be completed in the dashboard.","schedule":[{"sequence":1,"dueDate":"2026-01-15","scheduled":480.0,"paid":500.0},{"sequence":2,"dueDate":"2026-02-15","scheduled":480.0,"paid":500.0},{"sequence":3,"dueDate":"2026-03-15","scheduled":480.0,"paid":500.0},{"sequence":4,"dueDate":"2026-04-15","scheduled":480.0,"paid":500.0},{"sequence":5,"dueDate":"2026-05-15","scheduled":480.0,"paid":500.0},{"sequence":6,"dueDate":"2026-06-15","scheduled":480.0,"paid":500.0},{"sequence":7,"dueDate":"2026-07-15","scheduled":480.0,"paid":0.0},{"sequence":8,"dueDate":"2026-08-15","scheduled":480.0,"paid":0.0},{"sequence":9,"dueDate":"2026-09-15","scheduled":480.0,"paid":0.0},{"sequence":10,"dueDate":"2026-10-15","scheduled":480.0,"paid":0.0},{"sequence":11,"dueDate":"2026-11-15","scheduled":480.0,"paid":0.0},{"sequence":12,"dueDate":"2026-12-15","scheduled":480.0,"paid":0.0},{"sequence":13,"dueDate":"2027-01-15","scheduled":480.0,"paid":0.0},{"sequence":14,"dueDate":"2027-02-15","scheduled":480.0,"paid":0.0},{"sequence":15,"dueDate":"2027-03-15","scheduled":480.0,"paid":0.0},{"sequence":16,"dueDate":"2027-04-15","scheduled":480.0,"paid":0.0},{"sequence":17,"dueDate":"2027-05-15","scheduled":480.0,"paid":0.0},{"sequence":18,"dueDate":"2027-06-15","scheduled":480.0,"paid":0.0},{"sequence":19,"dueDate":"2027-07-15","scheduled":480.0,"paid":0.0},{"sequence":20,"dueDate":"2027-08-15","scheduled":480.0,"paid":0.0},{"sequence":21,"dueDate":"2027-09-15","scheduled":480.0,"paid":0.0},{"sequence":22,"dueDate":"2027-10-15","scheduled":480.0,"paid":0.0},{"sequence":23,"dueDate":"2027-11-15","scheduled":480.0,"paid":0.0},{"sequence":24,"dueDate":"2027-12-15","scheduled":510.0,"paid":0.0}]},{"id":"XL-012","sourceSheet":"Иссузи","sourceTitle":"Issuzu 3 yil","assetName":"Isuzu","assetType":"Commercial vehicle","borrower":"Not specified","lender":"Company owner","licensePlate":"","mileage":null,"vehicleYear":null,"contractDate":"2025-05-05","firstDueDate":"2025-06-05","termMonths":36,"principal":14000.0,"interestRate":75.0,"markup":10500.0,"totalReceivable":24500.0,"assetPrice":null,"monthlyPayment":680.56,"paidTotal":8100.0,"outstanding":16400.0,"dueScheduled":9450.0,"duePaid":8100.0,"overdue":1350.0,"daysLate":41,"riskScore":50,"status":"At risk","simpleROI":75.0,"annualYield":25.0,"lastPaymentDate":"2026-06-05","nextDueDate":"2026-08-05","notes":"Imported from Excel; missing operational fields can be completed in the dashboard.","schedule":[{"sequence":1,"dueDate":"2025-06-05","scheduled":650.0,"paid":600.0},{"sequence":2,"dueDate":"2025-07-05","scheduled":700.0,"paid":600.0},{"sequence":3,"dueDate":"2025-08-05","scheduled":650.0,"paid":600.0},{"sequence":4,"dueDate":"2025-09-05","scheduled":700.0,"paid":600.0},{"sequence":5,"dueDate":"2025-10-05","scheduled":650.0,"paid":600.0},{"sequence":6,"dueDate":"2025-11-05","scheduled":700.0,"paid":600.0},{"sequence":7,"dueDate":"2025-12-05","scheduled":650.0,"paid":700.0},{"sequence":8,"dueDate":"2026-01-05","scheduled":700.0,"paid":600.0},{"sequence":9,"dueDate":"2026-02-05","scheduled":650.0,"paid":600.0},{"sequence":10,"dueDate":"2026-03-05","scheduled":700.0,"paid":700.0},{"sequence":11,"dueDate":"2026-04-05","scheduled":650.0,"paid":600.0},{"sequence":12,"dueDate":"2026-05-05","scheduled":700.0,"paid":600.0},{"sequence":13,"dueDate":"2026-06-05","scheduled":650.0,"paid":700.0},{"sequence":14,"dueDate":"2026-07-05","scheduled":700.0,"paid":0.0},{"sequence":15,"dueDate":"2026-08-05","scheduled":650.0,"paid":0.0},{"sequence":16,"dueDate":"2026-09-05","scheduled":700.0,"paid":0.0},{"sequence":17,"dueDate":"2026-10-05","scheduled":650.0,"paid":0.0},{"sequence":18,"dueDate":"2026-11-05","scheduled":700.0,"paid":0.0},{"sequence":19,"dueDate":"2026-12-05","scheduled":650.0,"paid":0.0},{"sequence":20,"dueDate":"2027-01-05","scheduled":700.0,"paid":0.0},{"sequence":21,"dueDate":"2027-02-05","scheduled":650.0,"paid":0.0},{"sequence":22,"dueDate":"2027-03-05","scheduled":700.0,"paid":0.0},{"sequence":23,"dueDate":"2027-04-05","scheduled":650.0,"paid":0.0},{"sequence":24,"dueDate":"2027-05-05","scheduled":700.0,"paid":0.0},{"sequence":25,"dueDate":"2027-06-05","scheduled":650.0,"paid":0.0},{"sequence":26,"dueDate":"2027-07-05","scheduled":700.0,"paid":0.0},{"sequence":27,"dueDate":"2027-08-05","scheduled":650.0,"paid":0.0},{"sequence":28,"dueDate":"2027-09-05","scheduled":700.0,"paid":0.0},{"sequence":29,"dueDate":"2027-10-05","scheduled":700.0,"paid":0.0},{"sequence":30,"dueDate":"2027-11-05","scheduled":700.0,"paid":0.0},{"sequence":31,"dueDate":"2027-12-05","scheduled":700.0,"paid":0.0},{"sequence":32,"dueDate":"2028-01-05","scheduled":700.0,"paid":0.0},{"sequence":33,"dueDate":"2028-02-05","scheduled":700.0,"paid":0.0},{"sequence":34,"dueDate":"2028-03-05","scheduled":700.0,"paid":0.0},{"sequence":35,"dueDate":"2028-04-05","scheduled":700.0,"paid":0.0},{"sequence":36,"dueDate":"2028-05-05","scheduled":700.0,"paid":0.0}]},{"id":"XL-013","sourceSheet":"Урикзор дом","sourceTitle":"Урикзор дом","assetName":"House — Urikzor","assetType":"Real estate","borrower":"Not specified","lender":"Company owner","licensePlate":"","mileage":null,"vehicleYear":null,"contractDate":"2024-11-29","firstDueDate":"2024-12-29","termMonths":12,"principal":20000.0,"interestRate":25.0,"markup":5000.0,"totalReceivable":25000.0,"assetPrice":null,"monthlyPayment":2083.33,"paidTotal":25000.0,"outstanding":0.0,"dueScheduled":25000.0,"duePaid":25000.0,"overdue":0.0,"daysLate":0,"riskScore":0,"status":"Closed","simpleROI":25.0,"annualYield":25.0,"lastPaymentDate":"2025-11-29","nextDueDate":null,"notes":"Imported from Excel; missing operational fields can be completed in the dashboard.","schedule":[{"sequence":1,"dueDate":"2024-12-29","scheduled":2000.0,"paid":2000.0},{"sequence":2,"dueDate":"2025-01-29","scheduled":2000.0,"paid":2000.0},{"sequence":3,"dueDate":"2025-02-28","scheduled":2000.0,"paid":2000.0},{"sequence":4,"dueDate":"2025-03-29","scheduled":2000.0,"paid":2000.0},{"sequence":5,"dueDate":"2025-04-29","scheduled":2000.0,"paid":2000.0},{"sequence":6,"dueDate":"2025-05-29","scheduled":2000.0,"paid":2000.0},{"sequence":7,"dueDate":"2025-06-29","scheduled":2000.0,"paid":2000.0},{"sequence":8,"dueDate":"2025-07-29","scheduled":2000.0,"paid":2000.0},{"sequence":9,"dueDate":"2025-08-29","scheduled":2000.0,"paid":2000.0},{"sequence":10,"dueDate":"2025-09-29","scheduled":2000.0,"paid":2000.0},{"sequence":11,"dueDate":"2025-10-29","scheduled":2000.0,"paid":2000.0},{"sequence":12,"dueDate":"2025-11-29","scheduled":3000.0,"paid":3000.0}]},{"id":"XL-014","sourceSheet":"2. Сантафе","sourceTitle":"Музаффар снатафе 1 йил","assetName":"Hyundai Santa Fe","assetType":"Car","borrower":"Muzaffar","lender":"Company owner","licensePlate":"","mileage":null,"vehicleYear":null,"contractDate":"2023-07-05","firstDueDate":"2023-08-05","termMonths":24,"principal":15000.0,"interestRate":50.0,"markup":7500.0,"totalReceivable":22500.0,"assetPrice":null,"monthlyPayment":937.5,"paidTotal":15937.5,"outstanding":6562.5,"dueScheduled":22500.0,"duePaid":15937.5,"overdue":6562.5,"daysLate":557,"riskScore":85,"status":"Critical","simpleROI":50.0,"annualYield":25.0,"lastPaymentDate":"2024-12-05","nextDueDate":null,"notes":"Imported from Excel; missing operational fields can be completed in the dashboard.","schedule":[{"sequence":1,"dueDate":"2023-08-05","scheduled":937.5,"paid":937.5},{"sequence":2,"dueDate":"2023-09-05","scheduled":937.5,"paid":937.5},{"sequence":3,"dueDate":"2023-10-05","scheduled":937.5,"paid":937.5},{"sequence":4,"dueDate":"2023-11-05","scheduled":937.5,"paid":937.5},{"sequence":5,"dueDate":"2023-12-05","scheduled":937.5,"paid":937.5},{"sequence":6,"dueDate":"2024-01-05","scheduled":937.5,"paid":937.5},{"sequence":7,"dueDate":"2024-02-05","scheduled":937.5,"paid":937.5},{"sequence":8,"dueDate":"2024-03-05","scheduled":937.5,"paid":937.5},{"sequence":9,"dueDate":"2024-04-05","scheduled":937.5,"paid":937.5},{"sequence":10,"dueDate":"2024-05-05","scheduled":937.5,"paid":937.5},{"sequence":11,"dueDate":"2024-06-05","scheduled":937.5,"paid":937.5},{"sequence":12,"dueDate":"2024-07-05","scheduled":937.5,"paid":937.5},{"sequence":13,"dueDate":"2024-08-05","scheduled":937.5,"paid":937.5},{"sequence":14,"dueDate":"2024-09-05","scheduled":937.5,"paid":937.5},{"sequence":15,"dueDate":"2024-10-05","scheduled":937.5,"paid":937.5},{"sequence":16,"dueDate":"2024-11-05","scheduled":937.5,"paid":937.5},{"sequence":17,"dueDate":"2024-12-05","scheduled":937.5,"paid":937.5},{"sequence":18,"dueDate":"2025-01-05","scheduled":937.5,"paid":0.0},{"sequence":19,"dueDate":"2025-02-05","scheduled":937.5,"paid":0.0},{"sequence":20,"dueDate":"2025-03-05","scheduled":937.5,"paid":0.0},{"sequence":21,"dueDate":"2025-04-05","scheduled":937.5,"paid":0.0},{"sequence":22,"dueDate":"2025-05-05","scheduled":937.5,"paid":0.0},{"sequence":23,"dueDate":"2025-06-05","scheduled":937.5,"paid":0.0},{"sequence":24,"dueDate":"2025-07-05","scheduled":937.5,"paid":0.0}]},{"id":"XL-015","sourceSheet":"3. Чанган","sourceTitle":"Музаффар Чанган 2 йил","assetName":"Changan","assetType":"Car","borrower":"Muzaffar","lender":"Company owner","licensePlate":"","mileage":null,"vehicleYear":null,"contractDate":"2023-07-05","firstDueDate":"2023-08-05","termMonths":24,"principal":13800.0,"interestRate":50.0,"markup":6900.0,"totalReceivable":20700.0,"assetPrice":null,"monthlyPayment":862.5,"paidTotal":18687.5,"outstanding":2012.5,"dueScheduled":20700.0,"duePaid":18687.5,"overdue":2012.5,"daysLate":437,"riskScore":85,"status":"Critical","simpleROI":50.0,"annualYield":25.0,"lastPaymentDate":"2025-01-05","nextDueDate":null,"notes":"Imported from Excel; missing operational fields can be completed in the dashboard.","schedule":[{"sequence":1,"dueDate":"2023-08-05","scheduled":862.5,"paid":862.5},{"sequence":2,"dueDate":"2023-09-05","scheduled":862.5,"paid":862.5},{"sequence":3,"dueDate":"2023-10-05","scheduled":862.5,"paid":862.5},{"sequence":4,"dueDate":"2023-11-05","scheduled":862.5,"paid":862.5},{"sequence":5,"dueDate":"2023-12-05","scheduled":862.5,"paid":862.5},{"sequence":6,"dueDate":"2024-01-05","scheduled":862.5,"paid":862.5},{"sequence":7,"dueDate":"2024-02-05","scheduled":862.5,"paid":862.5},{"sequence":8,"dueDate":"2024-03-05","scheduled":862.5,"paid":862.5},{"sequence":9,"dueDate":"2024-04-05","scheduled":862.5,"paid":862.5},{"sequence":10,"dueDate":"2024-05-05","scheduled":862.5,"paid":862.5},{"sequence":11,"dueDate":"2024-06-05","scheduled":862.5,"paid":862.5},{"sequence":12,"dueDate":"2024-07-05","scheduled":862.5,"paid":862.5},{"sequence":13,"dueDate":"2024-08-05","scheduled":862.5,"paid":862.5},{"sequence":14,"dueDate":"2024-09-05","scheduled":862.5,"paid":862.5},{"sequence":15,"dueDate":"2024-10-05","scheduled":862.5,"paid":862.5},{"sequence":16,"dueDate":"2024-11-05","scheduled":862.5,"paid":862.5},{"sequence":17,"dueDate":"2024-12-05","scheduled":862.5,"paid":862.5},{"sequence":18,"dueDate":"2025-01-05","scheduled":862.5,"paid":4025.0},{"sequence":19,"dueDate":"2025-02-05","scheduled":862.5,"paid":0.0},{"sequence":20,"dueDate":"2025-03-05","scheduled":862.5,"paid":0.0},{"sequence":21,"dueDate":"2025-04-05","scheduled":862.5,"paid":0.0},{"sequence":22,"dueDate":"2025-05-05","scheduled":862.5,"paid":0.0},{"sequence":23,"dueDate":"2025-06-05","scheduled":862.5,"paid":0.0},{"sequence":24,"dueDate":"2025-07-05","scheduled":862.5,"paid":0.0}]},{"id":"XL-016","sourceSheet":"4. Trekker 2","sourceTitle":"Музаффар Trekker  1 йил","assetName":"Chevrolet Tracker 2","assetType":"Car","borrower":"Muzaffar","lender":"Company owner","licensePlate":"","mileage":null,"vehicleYear":null,"contractDate":"2023-10-05","firstDueDate":"2023-11-05","termMonths":12,"principal":17500.0,"interestRate":25.0,"markup":4375.0,"totalReceivable":21875.0,"assetPrice":21500.0,"monthlyPayment":1822.92,"paidTotal":21875.0,"outstanding":0.0,"dueScheduled":21875.0,"duePaid":21875.0,"overdue":0.0,"daysLate":0,"riskScore":0,"status":"Closed","simpleROI":25.0,"annualYield":25.0,"lastPaymentDate":"2024-10-05","nextDueDate":null,"notes":"Imported from Excel; missing operational fields can be completed in the dashboard.","schedule":[{"sequence":1,"dueDate":"2023-11-05","scheduled":1815.0,"paid":1800.0},{"sequence":2,"dueDate":"2023-12-05","scheduled":1815.0,"paid":1800.0},{"sequence":3,"dueDate":"2024-01-05","scheduled":1815.0,"paid":1800.0},{"sequence":4,"dueDate":"2024-02-05","scheduled":1815.0,"paid":1800.0},{"sequence":5,"dueDate":"2024-03-05","scheduled":1815.0,"paid":1800.0},{"sequence":6,"dueDate":"2024-04-05","scheduled":1815.0,"paid":1800.0},{"sequence":7,"dueDate":"2024-05-05","scheduled":1815.0,"paid":1800.0},{"sequence":8,"dueDate":"2024-06-05","scheduled":1810.0,"paid":1800.0},{"sequence":9,"dueDate":"2024-07-05","scheduled":1810.0,"paid":1800.0},{"sequence":10,"dueDate":"2024-08-05","scheduled":1810.0,"paid":1800.0},{"sequence":11,"dueDate":"2024-09-05","scheduled":1870.0,"paid":1800.0},{"sequence":12,"dueDate":"2024-10-05","scheduled":1870.0,"paid":2075.0}]},{"id":"XL-017","sourceSheet":"2. Jentra 092025","sourceTitle":"Музаффар Жентра 285  2 йилга","assetName":"Chevrolet Gentra 285","assetType":"Car","borrower":"Muzaffar","lender":"Company owner","licensePlate":"","mileage":null,"vehicleYear":null,"contractDate":"2025-09-12","firstDueDate":"2025-10-12","termMonths":24,"principal":13500.0,"interestRate":50.0,"markup":6750.0,"totalReceivable":20250.0,"assetPrice":null,"monthlyPayment":843.75,"paidTotal":7650.0,"outstanding":12600.0,"dueScheduled":8500.0,"duePaid":7650.0,"overdue":850.0,"daysLate":4,"riskScore":25,"status":"Watch","simpleROI":50.0,"annualYield":25.0,"lastPaymentDate":"2026-06-12","nextDueDate":"2026-08-12","notes":"Imported from Excel; missing operational fields can be completed in the dashboard.","schedule":[{"sequence":1,"dueDate":"2025-10-12","scheduled":850.0,"paid":850.0},{"sequence":2,"dueDate":"2025-11-12","scheduled":850.0,"paid":850.0},{"sequence":3,"dueDate":"2025-12-12","scheduled":850.0,"paid":850.0},{"sequence":4,"dueDate":"2026-01-12","scheduled":850.0,"paid":850.0},{"sequence":5,"dueDate":"2026-02-12","scheduled":850.0,"paid":850.0},{"sequence":6,"dueDate":"2026-03-12","scheduled":850.0,"paid":850.0},{"sequence":7,"dueDate":"2026-04-12","scheduled":850.0,"paid":850.0},{"sequence":8,"dueDate":"2026-05-12","scheduled":850.0,"paid":850.0},{"sequence":9,"dueDate":"2026-06-12","scheduled":850.0,"paid":850.0},{"sequence":10,"dueDate":"2026-07-12","scheduled":850.0,"paid":0.0},{"sequence":11,"dueDate":"2026-08-12","scheduled":850.0,"paid":0.0},{"sequence":12,"dueDate":"2026-09-12","scheduled":850.0,"paid":0.0},{"sequence":13,"dueDate":"2026-10-12","scheduled":850.0,"paid":0.0},{"sequence":14,"dueDate":"2026-11-12","scheduled":850.0,"paid":0.0},{"sequence":15,"dueDate":"2026-12-12","scheduled":850.0,"paid":0.0},{"sequence":16,"dueDate":"2027-01-12","scheduled":850.0,"paid":0.0},{"sequence":17,"dueDate":"2027-02-12","scheduled":850.0,"paid":0.0},{"sequence":18,"dueDate":"2027-03-12","scheduled":850.0,"paid":0.0},{"sequence":19,"dueDate":"2027-04-12","scheduled":850.0,"paid":0.0},{"sequence":20,"dueDate":"2027-05-12","scheduled":850.0,"paid":0.0},{"sequence":21,"dueDate":"2027-06-12","scheduled":850.0,"paid":0.0},{"sequence":22,"dueDate":"2027-07-12","scheduled":850.0,"paid":0.0},{"sequence":23,"dueDate":"2027-08-12","scheduled":850.0,"paid":0.0},{"sequence":24,"dueDate":"2027-09-12","scheduled":700.0,"paid":0.0}]},{"id":"XL-018","sourceSheet":"BYD222  07.2025","sourceTitle":"BYD   222    07.2025","assetName":"BYD 222","assetType":"Car","borrower":"Not specified","lender":"Company owner","licensePlate":"","mileage":null,"vehicleYear":null,"contractDate":"2025-07-25","firstDueDate":"2025-08-25","termMonths":24,"principal":25000.0,"interestRate":50.0,"markup":12500.0,"totalReceivable":37500.0,"assetPrice":25000.0,"monthlyPayment":1562.5,"paidTotal":18700.0,"outstanding":18800.0,"dueScheduled":18700.0,"duePaid":18700.0,"overdue":0.0,"daysLate":0,"riskScore":0,"status":"Current","simpleROI":50.0,"annualYield":25.0,"lastPaymentDate":"2026-06-25","nextDueDate":"2026-07-25","notes":"Imported from Excel; missing operational fields can be completed in the dashboard.","schedule":[{"sequence":1,"dueDate":"2025-08-25","scheduled":1700.0,"paid":1700.0},{"sequence":2,"dueDate":"2025-09-25","scheduled":1700.0,"paid":1700.0},{"sequence":3,"dueDate":"2025-10-25","scheduled":1700.0,"paid":1700.0},{"sequence":4,"dueDate":"2025-11-25","scheduled":1700.0,"paid":1700.0},{"sequence":5,"dueDate":"2025-12-25","scheduled":1700.0,"paid":1700.0},{"sequence":6,"dueDate":"2026-01-25","scheduled":1700.0,"paid":1700.0},{"sequence":7,"dueDate":"2026-02-25","scheduled":1700.0,"paid":1700.0},{"sequence":8,"dueDate":"2026-03-25","scheduled":1700.0,"paid":1700.0},{"sequence":9,"dueDate":"2026-04-25","scheduled":1700.0,"paid":1700.0},{"sequence":10,"dueDate":"2026-05-25","scheduled":1700.0,"paid":1700.0},{"sequence":11,"dueDate":"2026-06-25","scheduled":1700.0,"paid":1700.0},{"sequence":12,"dueDate":"2026-07-25","scheduled":1700.0,"paid":0.0},{"sequence":13,"dueDate":"2026-08-25","scheduled":1700.0,"paid":0.0},{"sequence":14,"dueDate":"2026-09-25","scheduled":1700.0,"paid":0.0},{"sequence":15,"dueDate":"2026-10-25","scheduled":1700.0,"paid":0.0},{"sequence":16,"dueDate":"2026-11-25","scheduled":1700.0,"paid":0.0},{"sequence":17,"dueDate":"2026-12-25","scheduled":1700.0,"paid":0.0},{"sequence":18,"dueDate":"2027-01-25","scheduled":1700.0,"paid":0.0},{"sequence":19,"dueDate":"2027-02-25","scheduled":1700.0,"paid":0.0},{"sequence":20,"dueDate":"2027-03-25","scheduled":1700.0,"paid":0.0},{"sequence":21,"dueDate":"2027-04-25","scheduled":1700.0,"paid":0.0},{"sequence":22,"dueDate":"2027-05-25","scheduled":1700.0,"paid":0.0},{"sequence":23,"dueDate":"2027-06-25","scheduled":100.0,"paid":0.0},{"sequence":24,"dueDate":"2027-07-25","scheduled":0.0,"paid":0.0}]},{"id":"XL-019","sourceSheet":"BYD  yuan up 09.2025 ","sourceTitle":"BYD Yuan up 09.2025","assetName":"BYD Yuan Up","assetType":"Car","borrower":"Not specified","lender":"Company owner","licensePlate":"","mileage":null,"vehicleYear":null,"contractDate":"2025-09-10","firstDueDate":"2025-10-10","termMonths":12,"principal":13500.0,"interestRate":25.0,"markup":3375.0,"totalReceivable":16875.0,"assetPrice":null,"monthlyPayment":1427.08,"paidTotal":12600.0,"outstanding":4275.0,"dueScheduled":14000.0,"duePaid":12600.0,"overdue":1400.0,"daysLate":6,"riskScore":75,"status":"Critical","simpleROI":25.0,"annualYield":25.0,"lastPaymentDate":"2026-06-10","nextDueDate":"2026-08-10","notes":"Imported from Excel; missing operational fields can be completed in the dashboard.","schedule":[{"sequence":1,"dueDate":"2025-10-10","scheduled":1400.0,"paid":1400.0},{"sequence":2,"dueDate":"2025-11-10","scheduled":1400.0,"paid":1400.0},{"sequence":3,"dueDate":"2025-12-10","scheduled":1400.0,"paid":1400.0},{"sequence":4,"dueDate":"2026-01-10","scheduled":1400.0,"paid":1400.0},{"sequence":5,"dueDate":"2026-02-10","scheduled":1400.0,"paid":1400.0},{"sequence":6,"dueDate":"2026-03-10","scheduled":1400.0,"paid":1400.0},{"sequence":7,"dueDate":"2026-04-10","scheduled":1400.0,"paid":1400.0},{"sequence":8,"dueDate":"2026-05-10","scheduled":1400.0,"paid":1400.0},{"sequence":9,"dueDate":"2026-06-10","scheduled":1400.0,"paid":1400.0},{"sequence":10,"dueDate":"2026-07-10","scheduled":1400.0,"paid":0.0},{"sequence":11,"dueDate":"2026-08-10","scheduled":1400.0,"paid":0.0},{"sequence":12,"dueDate":"2026-09-10","scheduled":1725.0,"paid":0.0}]},{"id":"XL-020","sourceSheet":"New BYD Chempion sentyabr 24","sourceTitle":"New BYD Chempion sentyabr 2024","assetName":"BYD Champion","assetType":"Car","borrower":"Not specified","lender":"Company owner","licensePlate":"","mileage":null,"vehicleYear":null,"contractDate":"2023-10-05","firstDueDate":"2023-11-05","termMonths":12,"principal":16000.0,"interestRate":25.0,"markup":4000.0,"totalReceivable":20000.0,"assetPrice":29200.0,"monthlyPayment":0.0,"paidTotal":20400.0,"outstanding":0,"dueScheduled":0.0,"duePaid":20400.0,"overdue":0,"daysLate":0,"riskScore":0,"status":"Closed","simpleROI":25.0,"annualYield":25.0,"lastPaymentDate":"2024-10-05","nextDueDate":null,"notes":"Imported from Excel; missing operational fields can be completed in the dashboard.","schedule":[{"sequence":1,"dueDate":"2023-11-05","scheduled":0.0,"paid":2000.0},{"sequence":2,"dueDate":"2023-12-05","scheduled":0.0,"paid":2000.0},{"sequence":3,"dueDate":"2024-01-05","scheduled":0.0,"paid":1500.0},{"sequence":4,"dueDate":"2024-02-05","scheduled":0.0,"paid":1700.0},{"sequence":5,"dueDate":"2024-03-05","scheduled":0.0,"paid":1700.0},{"sequence":6,"dueDate":"2024-04-05","scheduled":0.0,"paid":1700.0},{"sequence":7,"dueDate":"2024-05-05","scheduled":0.0,"paid":1700.0},{"sequence":8,"dueDate":"2024-06-05","scheduled":0.0,"paid":1700.0},{"sequence":9,"dueDate":"2024-07-05","scheduled":0.0,"paid":1700.0},{"sequence":10,"dueDate":"2024-08-05","scheduled":0.0,"paid":1700.0},{"sequence":11,"dueDate":"2024-09-05","scheduled":0.0,"paid":1700.0},{"sequence":12,"dueDate":"2024-10-05","scheduled":0.0,"paid":1300.0}]},{"id":"XL-021","sourceSheet":"5. BYD song L","sourceTitle":"BYD Song L   30 avgust 2024","assetName":"BYD Song L","assetType":"Car","borrower":"Not specified","lender":"Company owner","licensePlate":"","mileage":null,"vehicleYear":null,"contractDate":"2024-08-30","firstDueDate":"2024-09-30","termMonths":12,"principal":30000.0,"interestRate":25.0,"markup":7500.0,"totalReceivable":37500.0,"assetPrice":36000.0,"monthlyPayment":3125.0,"paidTotal":37500.0,"outstanding":0.0,"dueScheduled":37500.0,"duePaid":37500.0,"overdue":0.0,"daysLate":0,"riskScore":0,"status":"Closed","simpleROI":25.0,"annualYield":25.0,"lastPaymentDate":"2025-08-31","nextDueDate":null,"notes":"Imported from Excel; missing operational fields can be completed in the dashboard.","schedule":[{"sequence":1,"dueDate":"2024-09-30","scheduled":3100.0,"paid":3100.0},{"sequence":2,"dueDate":"2024-10-31","scheduled":3100.0,"paid":3100.0},{"sequence":3,"dueDate":"2024-11-30","scheduled":3100.0,"paid":3100.0},{"sequence":4,"dueDate":"2024-12-31","scheduled":3100.0,"paid":3100.0},{"sequence":5,"dueDate":"2025-01-31","scheduled":3100.0,"paid":3100.0},{"sequence":6,"dueDate":"2025-02-28","scheduled":3100.0,"paid":3100.0},{"sequence":7,"dueDate":"2025-03-31","scheduled":3100.0,"paid":3100.0},{"sequence":8,"dueDate":"2025-04-30","scheduled":3100.0,"paid":3100.0},{"sequence":9,"dueDate":"2025-05-31","scheduled":3100.0,"paid":3100.0},{"sequence":10,"dueDate":"2025-06-30","scheduled":3100.0,"paid":3100.0},{"sequence":11,"dueDate":"2025-07-31","scheduled":3100.0,"paid":3100.0},{"sequence":12,"dueDate":"2025-08-31","scheduled":3400.0,"paid":3400.0}]},{"id":"XL-022","sourceSheet":"Hongi New 10.2024","sourceTitle":"Hongi New","assetName":"Hongqi","assetType":"Car","borrower":"Not specified","lender":"Company owner","licensePlate":"","mileage":null,"vehicleYear":null,"contractDate":"2024-10-07","firstDueDate":"2024-11-07","termMonths":24,"principal":10245.0,"interestRate":50.0,"markup":5122.5,"totalReceivable":15367.5,"assetPrice":22567.0,"monthlyPayment":640.29,"paidTotal":12000.0,"outstanding":3367.5,"dueScheduled":12600.0,"duePaid":12000.0,"overdue":600.0,"daysLate":9,"riskScore":50,"status":"At risk","simpleROI":50.0,"annualYield":25.0,"lastPaymentDate":"2026-06-07","nextDueDate":"2026-08-07","notes":"Imported from Excel; missing operational fields can be completed in the dashboard.","schedule":[{"sequence":1,"dueDate":"2024-11-07","scheduled":600.0,"paid":600.0},{"sequence":2,"dueDate":"2024-12-07","scheduled":600.0,"paid":600.0},{"sequence":3,"dueDate":"2025-01-07","scheduled":600.0,"paid":600.0},{"sequence":4,"dueDate":"2025-02-07","scheduled":600.0,"paid":600.0},{"sequence":5,"dueDate":"2025-03-07","scheduled":600.0,"paid":600.0},{"sequence":6,"dueDate":"2025-04-07","scheduled":600.0,"paid":600.0},{"sequence":7,"dueDate":"2025-05-07","scheduled":600.0,"paid":600.0},{"sequence":8,"dueDate":"2025-06-07","scheduled":600.0,"paid":600.0},{"sequence":9,"dueDate":"2025-07-07","scheduled":600.0,"paid":600.0},{"sequence":10,"dueDate":"2025-08-07","scheduled":600.0,"paid":600.0},{"sequence":11,"dueDate":"2025-09-07","scheduled":600.0,"paid":600.0},{"sequence":12,"dueDate":"2025-10-07","scheduled":600.0,"paid":600.0},{"sequence":13,"dueDate":"2025-11-07","scheduled":600.0,"paid":600.0},{"sequence":14,"dueDate":"2025-12-07","scheduled":600.0,"paid":600.0},{"sequence":15,"dueDate":"2026-01-07","scheduled":600.0,"paid":600.0},{"sequence":16,"dueDate":"2026-02-07","scheduled":600.0,"paid":600.0},{"sequence":17,"dueDate":"2026-03-07","scheduled":600.0,"paid":600.0},{"sequence":18,"dueDate":"2026-04-07","scheduled":600.0,"paid":600.0},{"sequence":19,"dueDate":"2026-05-07","scheduled":600.0,"paid":600.0},{"sequence":20,"dueDate":"2026-06-07","scheduled":600.0,"paid":600.0},{"sequence":21,"dueDate":"2026-07-07","scheduled":600.0,"paid":0.0},{"sequence":22,"dueDate":"2026-08-07","scheduled":600.0,"paid":0.0},{"sequence":23,"dueDate":"2026-09-07","scheduled":600.0,"paid":0.0},{"sequence":24,"dueDate":"2026-10-07","scheduled":1567.0,"paid":0.0}]},{"id":"XL-023","sourceSheet":"6. Jentra 539","sourceTitle":"Музаффар Жентра 1 йил","assetName":"Chevrolet Gentra 539","assetType":"Car","borrower":"Muzaffar","lender":"Company owner","licensePlate":"","mileage":null,"vehicleYear":null,"contractDate":"2024-04-10","firstDueDate":"2024-05-10","termMonths":18,"principal":10000.0,"interestRate":37.5,"markup":3750.0,"totalReceivable":13750.0,"assetPrice":10000.0,"monthlyPayment":750.0,"paidTotal":13500.0,"outstanding":250.0,"dueScheduled":13500.0,"duePaid":13500.0,"overdue":0.0,"daysLate":0,"riskScore":0,"status":"Current","simpleROI":37.5,"annualYield":25.0,"lastPaymentDate":"2025-10-10","nextDueDate":null,"notes":"Imported from Excel; missing operational fields can be completed in the dashboard.","schedule":[{"sequence":1,"dueDate":"2024-05-10","scheduled":750.0,"paid":750.0},{"sequence":2,"dueDate":"2024-06-10","scheduled":750.0,"paid":750.0},{"sequence":3,"dueDate":"2024-07-10","scheduled":750.0,"paid":750.0},{"sequence":4,"dueDate":"2024-08-10","scheduled":750.0,"paid":750.0},{"sequence":5,"dueDate":"2024-09-10","scheduled":750.0,"paid":750.0},{"sequence":6,"dueDate":"2024-10-10","scheduled":750.0,"paid":750.0},{"sequence":7,"dueDate":"2024-11-10","scheduled":750.0,"paid":750.0},{"sequence":8,"dueDate":"2024-12-10","scheduled":750.0,"paid":750.0},{"sequence":9,"dueDate":"2025-01-10","scheduled":750.0,"paid":750.0},{"sequence":10,"dueDate":"2025-02-10","scheduled":750.0,"paid":750.0},{"sequence":11,"dueDate":"2025-03-10","scheduled":750.0,"paid":750.0},{"sequence":12,"dueDate":"2025-04-10","scheduled":750.0,"paid":750.0},{"sequence":13,"dueDate":"2025-05-10","scheduled":750.0,"paid":750.0},{"sequence":14,"dueDate":"2025-06-10","scheduled":750.0,"paid":750.0},{"sequence":15,"dueDate":"2025-07-10","scheduled":750.0,"paid":750.0},{"sequence":16,"dueDate":"2025-08-10","scheduled":750.0,"paid":750.0},{"sequence":17,"dueDate":"2025-09-10","scheduled":750.0,"paid":750.0},{"sequence":18,"dueDate":"2025-10-10","scheduled":750.0,"paid":750.0}]},{"id":"XL-024","sourceSheet":"7. Прадо 9","sourceTitle":"Музаффар Прадо 1 йил","assetName":"Toyota Land Cruiser Prado","assetType":"Car","borrower":"Muzaffar","lender":"Company owner","licensePlate":"","mileage":null,"vehicleYear":null,"contractDate":"2023-11-25","firstDueDate":"2023-12-25","termMonths":12,"principal":9000.0,"interestRate":25.0,"markup":2250.0,"totalReceivable":11250.0,"assetPrice":null,"monthlyPayment":937.5,"paidTotal":11250.0,"outstanding":0.0,"dueScheduled":11250.0,"duePaid":11250.0,"overdue":0.0,"daysLate":0,"riskScore":0,"status":"Closed","simpleROI":25.0,"annualYield":25.0,"lastPaymentDate":"2024-11-25","nextDueDate":null,"notes":"Imported from Excel; missing operational fields can be completed in the dashboard.","schedule":[{"sequence":1,"dueDate":"2023-12-25","scheduled":937.5,"paid":950.0},{"sequence":2,"dueDate":"2024-01-25","scheduled":937.5,"paid":900.0},{"sequence":3,"dueDate":"2024-02-25","scheduled":937.5,"paid":925.0},{"sequence":4,"dueDate":"2024-03-25","scheduled":937.5,"paid":1000.0},{"sequence":5,"dueDate":"2024-04-25","scheduled":937.5,"paid":1000.0},{"sequence":6,"dueDate":"2024-05-25","scheduled":937.5,"paid":1100.0},{"sequence":7,"dueDate":"2024-06-25","scheduled":937.5,"paid":1050.0},{"sequence":8,"dueDate":"2024-07-25","scheduled":937.5,"paid":1100.0},{"sequence":9,"dueDate":"2024-08-25","scheduled":937.5,"paid":1000.0},{"sequence":10,"dueDate":"2024-09-25","scheduled":937.5,"paid":825.0},{"sequence":11,"dueDate":"2024-10-25","scheduled":937.5,"paid":700.0},{"sequence":12,"dueDate":"2024-11-25","scheduled":937.5,"paid":700.0}]},{"id":"XL-025","sourceSheet":"7 Каптива","sourceTitle":"Музаффар каптива 1 йил","assetName":"Chevrolet Captiva","assetType":"Car","borrower":"Muzaffar","lender":"Company owner","licensePlate":"","mileage":null,"vehicleYear":null,"contractDate":"2023-07-15","firstDueDate":"2023-08-15","termMonths":12,"principal":10000.0,"interestRate":25.0,"markup":2500.0,"totalReceivable":12500.0,"assetPrice":14000.0,"monthlyPayment":1041.67,"paidTotal":12500.0,"outstanding":0.0,"dueScheduled":12500.0,"duePaid":12500.0,"overdue":0.0,"daysLate":0,"riskScore":0,"status":"Closed","simpleROI":25.0,"annualYield":25.0,"lastPaymentDate":"2024-07-15","nextDueDate":null,"notes":"Imported from Excel; missing operational fields can be completed in the dashboard.","schedule":[{"sequence":1,"dueDate":"2023-08-15","scheduled":1000.0,"paid":500.0},{"sequence":2,"dueDate":"2023-09-15","scheduled":1000.0,"paid":500.0},{"sequence":3,"dueDate":"2023-10-15","scheduled":1000.0,"paid":500.0},{"sequence":4,"dueDate":"2023-11-15","scheduled":1000.0,"paid":500.0},{"sequence":5,"dueDate":"2023-12-15","scheduled":1000.0,"paid":400.0},{"sequence":6,"dueDate":"2024-01-15","scheduled":1000.0,"paid":500.0},{"sequence":7,"dueDate":"2024-02-15","scheduled":1000.0,"paid":400.0},{"sequence":8,"dueDate":"2024-03-15","scheduled":1000.0,"paid":0.0},{"sequence":9,"dueDate":"2024-04-15","scheduled":1120.0,"paid":0.0},{"sequence":10,"dueDate":"2024-05-15","scheduled":1120.0,"paid":0.0},{"sequence":11,"dueDate":"2024-06-15","scheduled":1130.0,"paid":0.0},{"sequence":12,"dueDate":"2024-07-15","scheduled":1130.0,"paid":9200.0}]},{"id":"XL-026","sourceSheet":"7 Треккер М","sourceTitle":"Музаффар треккер 1 йил","assetName":"Chevrolet Tracker","assetType":"Car","borrower":"Muzaffar","lender":"Company owner","licensePlate":"","mileage":null,"vehicleYear":null,"contractDate":"2023-07-15","firstDueDate":"2023-08-15","termMonths":12,"principal":24000.0,"interestRate":15.0,"markup":3600.0,"totalReceivable":27600.0,"assetPrice":null,"monthlyPayment":2300.0,"paidTotal":27600.0,"outstanding":0.0,"dueScheduled":27600.0,"duePaid":27600.0,"overdue":0.0,"daysLate":0,"riskScore":0,"status":"Closed","simpleROI":15.0,"annualYield":15.0,"lastPaymentDate":"2024-07-15","nextDueDate":null,"notes":"Imported from Excel; missing operational fields can be completed in the dashboard.","schedule":[{"sequence":1,"dueDate":"2023-08-15","scheduled":2300.0,"paid":2300.0},{"sequence":2,"dueDate":"2023-09-15","scheduled":2300.0,"paid":2300.0},{"sequence":3,"dueDate":"2023-10-15","scheduled":2300.0,"paid":2300.0},{"sequence":4,"dueDate":"2023-11-15","scheduled":2300.0,"paid":2300.0},{"sequence":5,"dueDate":"2023-12-15","scheduled":2300.0,"paid":2300.0},{"sequence":6,"dueDate":"2024-01-15","scheduled":2300.0,"paid":2300.0},{"sequence":7,"dueDate":"2024-02-15","scheduled":2300.0,"paid":2300.0},{"sequence":8,"dueDate":"2024-03-15","scheduled":2300.0,"paid":2300.0},{"sequence":9,"dueDate":"2024-04-15","scheduled":2300.0,"paid":2300.0},{"sequence":10,"dueDate":"2024-05-15","scheduled":2300.0,"paid":2300.0},{"sequence":11,"dueDate":"2024-06-15","scheduled":2300.0,"paid":2300.0},{"sequence":12,"dueDate":"2024-07-15","scheduled":2300.0,"paid":2300.0}]},{"id":"XL-027","sourceSheet":"8. Monza","sourceTitle":"Monza 1 yil 21.12.2023y da tuzildi","assetName":"Chevrolet Monza","assetType":"Car","borrower":"Not specified","lender":"Company owner","licensePlate":"","mileage":null,"vehicleYear":null,"contractDate":"2023-12-21","firstDueDate":"2024-01-21","termMonths":18,"principal":14000.0,"interestRate":37.5,"markup":5250.0,"totalReceivable":19250.0,"assetPrice":null,"monthlyPayment":1069.44,"paidTotal":19250.0,"outstanding":0.0,"dueScheduled":19250.0,"duePaid":19250.0,"overdue":0.0,"daysLate":0,"riskScore":0,"status":"Closed","simpleROI":37.5,"annualYield":25.0,"lastPaymentDate":"2025-06-21","nextDueDate":null,"notes":"Imported from Excel; missing operational fields can be completed in the dashboard.","schedule":[{"sequence":1,"dueDate":"2024-01-21","scheduled":1070.0,"paid":1070.0},{"sequence":2,"dueDate":"2024-02-21","scheduled":1070.0,"paid":1070.0},{"sequence":3,"dueDate":"2024-03-21","scheduled":1070.0,"paid":1070.0},{"sequence":4,"dueDate":"2024-04-21","scheduled":1070.0,"paid":1100.0},{"sequence":5,"dueDate":"2024-05-21","scheduled":1070.0,"paid":1000.0},{"sequence":6,"dueDate":"2024-06-21","scheduled":1070.0,"paid":1000.0},{"sequence":7,"dueDate":"2024-07-21","scheduled":1070.0,"paid":1000.0},{"sequence":8,"dueDate":"2024-08-21","scheduled":1070.0,"paid":1100.0},{"sequence":9,"dueDate":"2024-09-21","scheduled":1070.0,"paid":1000.0},{"sequence":10,"dueDate":"2024-10-21","scheduled":1070.0,"paid":1000.0},{"sequence":11,"dueDate":"2024-11-21","scheduled":1070.0,"paid":1100.0},{"sequence":12,"dueDate":"2024-12-21","scheduled":1070.0,"paid":1200.0},{"sequence":13,"dueDate":"2025-01-21","scheduled":1070.0,"paid":1000.0},{"sequence":14,"dueDate":"2025-02-21","scheduled":1070.0,"paid":1100.0},{"sequence":15,"dueDate":"2025-03-21","scheduled":1070.0,"paid":1100.0},{"sequence":16,"dueDate":"2025-04-21","scheduled":1070.0,"paid":1100.0},{"sequence":17,"dueDate":"2025-05-21","scheduled":1070.0,"paid":1100.0},{"sequence":18,"dueDate":"2025-06-21","scheduled":1060.0,"paid":1140.0}]},{"id":"XL-028","sourceSheet":"9. Cobalt","sourceTitle":"Музаффар Cobalt","assetName":"Chevrolet Cobalt","assetType":"Car","borrower":"Muzaffar","lender":"Company owner","licensePlate":"","mileage":null,"vehicleYear":null,"contractDate":"2024-07-25","firstDueDate":"2024-08-25","termMonths":12,"principal":11000.0,"interestRate":25.0,"markup":2750.0,"totalReceivable":13750.0,"assetPrice":12900.0,"monthlyPayment":1145.83,"paidTotal":13750.0,"outstanding":0.0,"dueScheduled":13750.0,"duePaid":13750.0,"overdue":0.0,"daysLate":0,"riskScore":0,"status":"Closed","simpleROI":25.0,"annualYield":25.0,"lastPaymentDate":"2025-07-25","nextDueDate":null,"notes":"Imported from Excel; missing operational fields can be completed in the dashboard.","schedule":[{"sequence":1,"dueDate":"2024-08-25","scheduled":1100.0,"paid":1100.0},{"sequence":2,"dueDate":"2024-09-25","scheduled":1100.0,"paid":1100.0},{"sequence":3,"dueDate":"2024-10-25","scheduled":1100.0,"paid":1100.0},{"sequence":4,"dueDate":"2024-11-25","scheduled":1100.0,"paid":1100.0},{"sequence":5,"dueDate":"2024-12-25","scheduled":1100.0,"paid":1100.0},{"sequence":6,"dueDate":"2025-01-25","scheduled":1100.0,"paid":1100.0},{"sequence":7,"dueDate":"2025-02-25","scheduled":1100.0,"paid":1100.0},{"sequence":8,"dueDate":"2025-03-25","scheduled":1100.0,"paid":1100.0},{"sequence":9,"dueDate":"2025-04-25","scheduled":1100.0,"paid":1100.0},{"sequence":10,"dueDate":"2025-05-25","scheduled":1100.0,"paid":1100.0},{"sequence":11,"dueDate":"2025-06-25","scheduled":1100.0,"paid":1100.0},{"sequence":12,"dueDate":"2025-07-25","scheduled":1650.0,"paid":1650.0}]},{"id":"XL-029","sourceSheet":"10 Mercades","sourceTitle":"Музаффар Mercades 1 йил","assetName":"Mercedes-Benz","assetType":"Car","borrower":"Muzaffar","lender":"Company owner","licensePlate":"","mileage":null,"vehicleYear":null,"contractDate":"2023-08-25","firstDueDate":"2023-09-25","termMonths":12,"principal":15000.0,"interestRate":25.0,"markup":3750.0,"totalReceivable":18750.0,"assetPrice":null,"monthlyPayment":1562.5,"paidTotal":18750.0,"outstanding":0.0,"dueScheduled":18750.0,"duePaid":18750.0,"overdue":0.0,"daysLate":0,"riskScore":0,"status":"Closed","simpleROI":25.0,"annualYield":25.0,"lastPaymentDate":"2024-08-25","nextDueDate":null,"notes":"Imported from Excel; missing operational fields can be completed in the dashboard.","schedule":[{"sequence":1,"dueDate":"2023-09-25","scheduled":1562.5,"paid":1562.5},{"sequence":2,"dueDate":"2023-10-25","scheduled":1562.5,"paid":1562.5},{"sequence":3,"dueDate":"2023-11-25","scheduled":1562.5,"paid":1562.5},{"sequence":4,"dueDate":"2023-12-25","scheduled":1562.5,"paid":1562.5},{"sequence":5,"dueDate":"2024-01-25","scheduled":1562.5,"paid":1562.5},{"sequence":6,"dueDate":"2024-02-25","scheduled":1562.5,"paid":1562.5},{"sequence":7,"dueDate":"2024-03-25","scheduled":1562.5,"paid":1562.5},{"sequence":8,"dueDate":"2024-04-25","scheduled":1562.5,"paid":1562.5},{"sequence":9,"dueDate":"2024-05-25","scheduled":1562.5,"paid":1562.5},{"sequence":10,"dueDate":"2024-06-25","scheduled":1562.5,"paid":1562.5},{"sequence":11,"dueDate":"2024-07-25","scheduled":1562.5,"paid":1562.5},{"sequence":12,"dueDate":"2024-08-25","scheduled":1562.5,"paid":1562.5}]}]}
+;
+    const STORAGE_KEY = 'autofinance-portfolio-v2';
+    const ICONS = {
+      grid: '<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>',
+      file: '<path d="M6 2h8l4 4v16H6z"/><path d="M14 2v5h5M9 12h6M9 16h6"/>',
+      wallet: '<path d="M3 7h16v13H3z"/><path d="M3 7l2-3h12l2 3M15 12h6v4h-6z"/>',
+      shield: '<path d="M12 3l8 3v6c0 5-3.4 8.3-8 10-4.6-1.7-8-5-8-10V6z"/><path d="M9 12l2 2 4-5"/>',
+      chart: '<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>',
+      search: '<circle cx="11" cy="11" r="7"/><path d="M16 16l5 5"/>',
+      download: '<path d="M12 3v12M7 10l5 5 5-5M4 21h16"/>',
+      plus: '<path d="M12 5v14M5 12h14"/>',
+      x: '<path d="M6 6l12 12M18 6L6 18"/>',
+      car: '<path d="M4 16l1-6 2-4h10l2 4 1 6v3h-2v-2H6v2H4z"/><path d="M5 11h14M8 14h.01M16 14h.01"/>',
+      home: '<path d="M3 11l9-8 9 8M5 10v11h14V10M9 21v-7h6v7"/>',
+      box: '<rect x="3" y="5" width="18" height="15" rx="2"/><path d="M3 10h18M9 5v5"/>',
+      truck: '<path d="M3 6h11v11H3zM14 10h4l3 4v3h-7z"/><circle cx="7" cy="19" r="2"/><circle cx="18" cy="19" r="2"/>',
+      print: '<path d="M6 9V3h12v6M6 17H4V9h16v8h-2M7 14h10v7H7z"/>',
+      edit: '<path d="M4 20l4-1 11-11-3-3L5 16zM14 7l3 3"/>',
+      trend: '<path d="M3 17l6-6 4 4 8-9M15 6h6v6"/>',
+      clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v6l4 2"/>',
+      alert: '<path d="M12 3l10 18H2z"/><path d="M12 9v5M12 18h.01"/>',
+      check: '<circle cx="12" cy="12" r="9"/><path d="M8 12l3 3 5-6"/>'
+    };
+
+    function iconSvg(name, size = 18) {
+      return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[name] || ICONS.box}</svg>`;
+    }
+    function hydrateIcons(root = document) { root.querySelectorAll('[data-icon]').forEach(el => { el.innerHTML = iconSvg(el.dataset.icon, Number(el.dataset.size || 18)); }); }
+
+    const money = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
+    const money1 = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 1 });
+    const number = new Intl.NumberFormat('en-US', { maximumFractionDigits: 0 });
+    const pct = new Intl.NumberFormat('en-US', { style: 'percent', maximumFractionDigits: 1 });
+    const shortDate = new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+    const monthLabel = new Intl.DateTimeFormat('en-US', { month: 'short' });
+    const dataDate = parseISO(SEED_DATA.asOf);
+    let contracts = loadContracts();
+    let currentView = 'overview';
+    let detailContractId = null;
+
+    function clone(value) { return JSON.parse(JSON.stringify(value)); }
+    function loadContracts() {
+      try {
+        const stored = localStorage.getItem(STORAGE_KEY);
+        return stored ? JSON.parse(stored) : clone(SEED_DATA.contracts);
+      } catch { return clone(SEED_DATA.contracts); }
+    }
+    function saveContracts() { localStorage.setItem(STORAGE_KEY, JSON.stringify(contracts)); }
+    function sum(rows, field) { return rows.reduce((total, row) => total + (Number(row[field]) || 0), 0); }
+    function parseISO(value) { return value ? new Date(`${value}T12:00:00`) : null; }
+    function isoDate(value) { return value.toISOString().slice(0, 10); }
+    function formatDate(value) { const d = parseISO(value); return d && !Number.isNaN(d) ? shortDate.format(d) : 'Not recorded'; }
+    function daysBetween(a, b) { return Math.max(0, Math.floor((b - a) / 86400000)); }
+    function statusClass(status) { return `status-${String(status).toLowerCase().replaceAll(' ', '-')}`; }
+    function escapeHtml(value) { return String(value ?? '').replace(/[&<>'"]/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[char])); }
+    function assetIcon(type) { return type === 'Real estate' ? 'home' : type === 'Commercial vehicle' ? 'truck' : type === 'Car' ? 'car' : 'box'; }
+    function compactMoney(value) {
+      const abs = Math.abs(value || 0);
+      if (abs >= 1000000) return `$${(value / 1000000).toFixed(1)}M`;
+      if (abs >= 1000) return `$${(value / 1000).toFixed(abs >= 100000 ? 0 : 1)}K`;
+      return money.format(value || 0);
+    }
+    function addMonths(dateValue, months) {
+      const d = new Date(dateValue);
+      const originalDay = d.getDate();
+      d.setDate(1); d.setMonth(d.getMonth() + months);
+      d.setDate(Math.min(originalDay, new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate()));
+      return d;
+    }
+
+    function recalculate(contract) {
+      const schedule = contract.schedule || [];
+      const today = dataDate;
+      contract.paidTotal = +schedule.reduce((t, row) => t + (+row.paid || 0), 0).toFixed(2);
+      contract.totalReceivable = +(contract.totalReceivable || (contract.principal * (1 + contract.interestRate / 100))).toFixed(2);
+      contract.markup = +(contract.totalReceivable - contract.principal).toFixed(2);
+      contract.outstanding = +Math.max(0, contract.totalReceivable - contract.paidTotal).toFixed(2);
+      const due = schedule.filter(row => row.dueDate && parseISO(row.dueDate) <= today);
+      contract.dueScheduled = +sum(due, 'scheduled').toFixed(2);
+      contract.duePaid = +sum(due, 'paid').toFixed(2);
+      contract.overdue = +Math.max(0, contract.dueScheduled - contract.duePaid).toFixed(2);
+      let paidPool = contract.duePaid, earliest = null;
+      [...due].sort((a,b) => a.dueDate.localeCompare(b.dueDate)).forEach(row => {
+        const allocated = Math.min(paidPool, row.scheduled);
+        paidPool -= allocated;
+        if (!earliest && row.scheduled - allocated > 1) earliest = parseISO(row.dueDate);
+      });
+      contract.daysLate = earliest ? daysBetween(earliest, today) : 0;
+      contract.simpleROI = contract.principal ? contract.markup / contract.principal * 100 : 0;
+      contract.annualYield = contract.termMonths ? contract.simpleROI * 12 / contract.termMonths : 0;
+      contract.monthlyPayment = contract.termMonths ? contract.totalReceivable / contract.termMonths : 0;
+      const closed = contract.outstanding <= 1;
+      const overdueShare = contract.outstanding ? contract.overdue / contract.outstanding : 0;
+      let score = Math.min(85, Math.round(Math.min(45, overdueShare * 100) + Math.min(40, contract.daysLate / 90 * 40)));
+      if (contract.mileage) score += Math.min(8, Math.max(0, (contract.mileage - 50000) / 25000));
+      if (contract.vehicleYear) score += Math.min(7, Math.max(0, (dataDate.getFullYear() - contract.vehicleYear - 4) * 1.5));
+      contract.riskScore = closed ? 0 : Math.min(100, Math.round(score));
+      if (closed) contract.status = 'Closed';
+      else if (contract.overdue <= 1) contract.status = 'Current';
+      else if (contract.daysLate <= 30 && overdueShare < .5) contract.status = 'Watch';
+      else if (contract.daysLate <= 60 || overdueShare < .4) contract.status = 'At risk';
+      else contract.status = 'Critical';
+      if (contract.status === 'Watch') contract.riskScore = Math.max(contract.riskScore, 25);
+      if (contract.status === 'At risk') contract.riskScore = Math.max(contract.riskScore, 50);
+      if (contract.status === 'Critical') contract.riskScore = Math.max(contract.riskScore, 75);
+      contract.nextDueDate = schedule.filter(r => r.dueDate && parseISO(r.dueDate) > today).sort((a,b) => a.dueDate.localeCompare(b.dueDate))[0]?.dueDate || null;
+      contract.lastPaymentDate = schedule.filter(r => r.dueDate && r.paid > 0).sort((a,b) => b.dueDate.localeCompare(a.dueDate))[0]?.dueDate || contract.lastPaymentDate || null;
+      return contract;
+    }
+    contracts.forEach(recalculate);
+
+    function portfolioMetrics() {
+      const open = contracts.filter(c => c.status !== 'Closed');
+      const atRisk = open.filter(c => c.riskScore >= 50);
+      const dueScheduled = sum(contracts, 'dueScheduled');
+      const duePaid = sum(contracts, 'duePaid');
+      const principal = sum(contracts, 'principal');
+      const markup = sum(contracts, 'markup');
+      const openPrincipal = sum(open, 'principal');
+      const weightedAnnualYield = openPrincipal ? open.reduce((t,c) => t + c.annualYield * c.principal, 0) / openPrincipal : 0;
+      return {
+        open, atRisk, activeCount: open.length,
+        originated: principal,
+        outstanding: sum(open, 'outstanding'),
+        overdue: sum(open, 'overdue'),
+        atRiskExposure: sum(atRisk, 'outstanding'),
+        collected: sum(contracts, 'paidTotal'),
+        contractedProfit: markup,
+        roi: principal ? markup / principal * 100 : 0,
+        collectionRate: dueScheduled ? duePaid / dueScheduled * 100 : 0,
+        weightedAnnualYield,
+        dueScheduled, duePaid
+      };
+    }
+
+    function kpiCard(label, value, foot, tone = '', icon = '') {
+      return `<article class="kpi"><i class="tone ${tone}"></i><div class="kpi-label">${icon ? iconSvg(icon,14) : ''}${escapeHtml(label)}</div><div class="kpi-value mono">${value}</div><div class="kpi-foot">${foot}</div></article>`;
+    }
+
+    function renderOverview() {
+      const m = portfolioMetrics();
+      document.getElementById('overviewSubtitle').textContent = `As of ${formatDate(SEED_DATA.asOf)} · ${contracts.length} contract sheets normalized from ${SEED_DATA.source}`;
+      document.getElementById('kpiGrid').innerHTML = [
+        kpiCard('Outstanding receivables', compactMoney(m.outstanding), `${m.activeCount} open contracts`, '', 'wallet'),
+        kpiCard('Collection rate', `${m.collectionRate.toFixed(1)}%`, `${money.format(m.duePaid)} of ${money.format(m.dueScheduled)} due`, 'blue', 'check'),
+        kpiCard('Overdue now', compactMoney(m.overdue), m.overdue ? `<span class="delta bad">${(m.overdue / m.outstanding * 100).toFixed(1)}%</span> of open receivables` : 'No overdue balance', 'amber', 'clock'),
+        kpiCard('At-risk exposure', compactMoney(m.atRiskExposure), `${m.atRisk.length} contracts score 50+`, 'orange', 'shield'),
+        kpiCard('Contracted profit', compactMoney(m.contractedProfit), `Across all ${contracts.length} contracts`, 'blue', 'trend'),
+        kpiCard('Contracted ROI', `${m.roi.toFixed(1)}%`, `${m.weightedAnnualYield.toFixed(1)}% annualized on open contracts`, '', 'chart')
+      ].join('');
+      renderCashflowChart('cashflowChart', monthSeries(-11, 0), true);
+      renderRiskDonut(m);
+      const attention = m.open.filter(c => c.overdue > 0).sort((a,b) => b.riskScore - a.riskScore || b.overdue - a.overdue).slice(0, 7);
+      document.getElementById('attentionCount').textContent = `${m.open.filter(c => c.overdue > 0).length} overdue`;
+      document.getElementById('attentionTable').innerHTML = attention.length ? attention.map(c => `<tr>
+        <td><div class="asset-cell"><div class="asset-icon">${iconSvg(assetIcon(c.assetType),17)}</div><div><strong>${escapeHtml(c.assetName)}</strong><span>${c.id} · ${escapeHtml(c.sourceSheet)}</span></div></div></td>
+        <td>${escapeHtml(c.borrower)}</td><td class="mono"><strong>${money.format(c.outstanding)}</strong></td><td class="mono">${money.format(c.overdue)}</td>
+        <td class="mono">${number.format(c.daysLate)}</td><td><span class="status ${statusClass(c.status)}">${c.status}</span></td><td><button class="table-action" onclick="openDetail('${c.id}')">Review</button></td></tr>`).join('') : `<tr><td colspan="7" class="empty">No contracts currently require attention.</td></tr>`;
+    }
+
+    function monthSeries(startOffset, endOffset) {
+      const rows = [];
+      for (let offset = startOffset; offset <= endOffset; offset++) {
+        const start = new Date(dataDate.getFullYear(), dataDate.getMonth() + offset, 1, 12);
+        const end = new Date(start.getFullYear(), start.getMonth() + 1, 0, 12);
+        let scheduled = 0, paid = 0;
+        contracts.forEach(c => (c.schedule || []).forEach(row => {
+          const due = parseISO(row.dueDate);
+          if (due && due >= start && due <= end) { scheduled += +row.scheduled || 0; paid += +row.paid || 0; }
+        }));
+        rows.push({ key: `${start.getFullYear()}-${String(start.getMonth()+1).padStart(2,'0')}`, label: monthLabel.format(start), fullLabel: `${monthLabel.format(start)} ${start.getFullYear()}`, scheduled, paid });
+      }
+      return rows;
+    }
+
+    function renderCashflowChart(targetId, rows, showActual) {
+      const width = 820, height = 265, left = 48, right = 12, top = 12, bottom = 38;
+      const innerW = width - left - right, innerH = height - top - bottom;
+      const maxValue = Math.max(1, ...rows.flatMap(r => showActual ? [r.scheduled, r.paid] : [r.scheduled]));
+      const scaleMax = Math.ceil(maxValue / 5000) * 5000 || maxValue;
+      const groupW = innerW / rows.length, barW = Math.min(18, groupW * (showActual ? .28 : .48));
+      let svg = `<svg viewBox="0 0 ${width} ${height}" role="img" aria-label="${showActual ? 'Scheduled and collected payments by month' : 'Scheduled payments forecast by month'}">`;
+      for (let i=0;i<=4;i++) {
+        const y = top + innerH * i / 4, value = scaleMax * (1 - i / 4);
+        svg += `<line class="chart-grid" x1="${left}" x2="${width-right}" y1="${y}" y2="${y}"/><text class="chart-label" x="${left-8}" y="${y+3}" text-anchor="end">${value >= 1000 ? '$'+Math.round(value/1000)+'k' : '$'+value}</text>`;
+      }
+      rows.forEach((row, i) => {
+        const center = left + groupW * i + groupW / 2;
+        const sh = row.scheduled / scaleMax * innerH, sy = top + innerH - sh;
+        const planX = showActual ? center - barW - 2 : center - barW / 2;
+        svg += `<rect x="${planX}" y="${sy}" width="${barW}" height="${Math.max(0,sh)}" rx="3" fill="#cbd4cf"><title>${row.fullLabel}: scheduled ${money1.format(row.scheduled)}</title></rect>`;
+        if (showActual) {
+          const ah = row.paid / scaleMax * innerH, ay = top + innerH - ah;
+          svg += `<rect x="${center+2}" y="${ay}" width="${barW}" height="${Math.max(0,ah)}" rx="3" fill="#1f6b52"><title>${row.fullLabel}: collected ${money1.format(row.paid)}</title></rect>`;
+        }
+        svg += `<text class="chart-label" x="${center}" y="${height-14}" text-anchor="middle">${row.label}</text>`;
+      });
+      svg += `</svg>`;
+      document.getElementById(targetId).innerHTML = svg;
+    }
+
+    function renderRiskDonut(m) {
+      const buckets = [
+        {name:'Current', color:'#1f6b52', rows:m.open.filter(c=>c.status==='Current')},
+        {name:'Watch', color:'#a76616', rows:m.open.filter(c=>c.status==='Watch')},
+        {name:'At risk', color:'#b6572b', rows:m.open.filter(c=>c.status==='At risk')},
+        {name:'Critical', color:'#9b3a3a', rows:m.open.filter(c=>c.status==='Critical')}
+      ];
+      const total = Math.max(1, sum(m.open,'outstanding')), circumference = 2 * Math.PI * 46;
+      let offset = 0, circles = `<circle cx="60" cy="60" r="46" fill="none" stroke="#edf0ee" stroke-width="12"/>`;
+      buckets.forEach(b => {
+        const value = sum(b.rows,'outstanding'), length = value / total * circumference;
+        circles += `<circle cx="60" cy="60" r="46" fill="none" stroke="${b.color}" stroke-width="12" stroke-dasharray="${length} ${circumference-length}" stroke-dashoffset="${-offset}"/>`;
+        offset += length;
+      });
+      document.getElementById('riskDonut').innerHTML = `<div class="donut"><svg viewBox="0 0 120 120">${circles}</svg><div class="donut-center"><strong>${m.activeCount}</strong><span>open contracts</span></div></div><div class="risk-list">${buckets.map(b=>`<div class="risk-row"><i style="background:${b.color}"></i><span>${b.name}</span><strong>${b.rows.length} · ${compactMoney(sum(b.rows,'outstanding'))}</strong></div>`).join('')}</div>`;
+    }
+
+    function renderContracts() {
+      const query = document.getElementById('contractSearch').value.trim().toLowerCase();
+      const status = document.getElementById('statusFilter').value;
+      const type = document.getElementById('typeFilter').value;
+      const filtered = contracts.filter(c => {
+        const haystack = [c.id,c.assetName,c.borrower,c.licensePlate,c.sourceSheet].join(' ').toLowerCase();
+        return (!query || haystack.includes(query)) && (status==='all'||c.status===status) && (type==='all'||c.assetType===type);
+      }).sort((a,b) => (a.status==='Closed') - (b.status==='Closed') || b.outstanding - a.outstanding);
+      document.getElementById('contractResultCount').textContent = `${filtered.length} of ${contracts.length}`;
+      document.getElementById('contractsTable').innerHTML = filtered.length ? filtered.map(c => `<tr>
+        <td><div class="asset-cell"><div class="asset-icon">${iconSvg(assetIcon(c.assetType),17)}</div><div><strong>${escapeHtml(c.assetName)}</strong><span>${c.id}${c.licensePlate ? ' · '+escapeHtml(c.licensePlate) : ''}</span></div></div></td>
+        <td>${escapeHtml(c.borrower)}<div class="subtle">${escapeHtml(c.lender)}</div></td><td class="mono">${money.format(c.principal)}</td><td class="mono">${money.format(c.totalReceivable)}</td><td class="mono"><strong>${money.format(c.outstanding)}</strong></td>
+        <td class="mono">${c.simpleROI.toFixed(1)}%</td><td><span class="status ${statusClass(c.status)}">${c.status}</span></td><td><button class="table-action" onclick="openDetail('${c.id}')">Details</button></td></tr>`).join('') : `<tr><td colspan="8" class="empty">No contracts match the selected filters.</td></tr>`;
+    }
+
+    function renderPayments() {
+      const m = portfolioMetrics();
+      const next30 = addMonths(dataDate,1);
+      const dueNext30 = contracts.flatMap(c => (c.schedule||[]).filter(r=>r.dueDate&&parseISO(r.dueDate)>dataDate&&parseISO(r.dueDate)<=next30).map(r=>({...r,contract:c}))) ;
+      document.getElementById('paymentKpis').innerHTML = [
+        kpiCard('Cash collected', compactMoney(m.collected), 'All recorded contract payments', '', 'wallet'),
+        kpiCard('Due to date', compactMoney(m.dueScheduled), `As of ${formatDate(SEED_DATA.asOf)}`, 'blue', 'clock'),
+        kpiCard('Collection rate', `${m.collectionRate.toFixed(1)}%`, `${compactMoney(m.duePaid)} recorded against due schedule`, '', 'check'),
+        kpiCard('Next 30 days', compactMoney(sum(dueNext30,'scheduled')), `${dueNext30.length} scheduled installments`, 'blue', 'chart'),
+        kpiCard('Overdue', compactMoney(m.overdue), `${m.open.filter(c=>c.overdue>0).length} open contracts`, 'amber', 'alert'),
+        kpiCard('Average payment', compactMoney(m.activeCount ? sum(m.open,'monthlyPayment')/m.activeCount : 0), 'Average scheduled open-contract installment', '', 'trend')
+      ].join('');
+      renderCashflowChart('forecastChart', monthSeries(1,12), false);
+      const upcoming = contracts.flatMap(c => (c.schedule||[]).filter(r => r.dueDate && parseISO(r.dueDate)>dataDate && r.scheduled>0).map(r=>({...r,contract:c}))).sort((a,b)=>a.dueDate.localeCompare(b.dueDate)).slice(0,7);
+      document.getElementById('upcomingList').innerHTML = upcoming.length ? upcoming.map(row=>`<div class="insight"><div class="insight-icon">${iconSvg('clock',16)}</div><div><h3>${escapeHtml(row.contract.assetName)} · ${money.format(row.scheduled)}</h3><p>${formatDate(row.dueDate)} · ${escapeHtml(row.contract.borrower)}</p></div></div>`).join('') : `<div class="empty">No future installments in the workbook.</div>`;
+      const paymentRows = contracts.flatMap(c => (c.schedule||[]).filter(r=>r.dueDate&&r.paid>0).map(r=>({...r,contract:c}))).sort((a,b)=>b.dueDate.localeCompare(a.dueDate)).slice(0,20);
+      document.getElementById('paymentsTable').innerHTML = paymentRows.map(r=>{ const variance=r.paid-r.scheduled; return `<tr><td>${formatDate(r.dueDate)}</td><td><strong>${escapeHtml(r.contract.assetName)}</strong><div class="subtle">${r.contract.id}</div></td><td>${escapeHtml(r.contract.borrower)}</td><td class="mono">${money.format(r.scheduled)}</td><td class="mono"><strong>${money.format(r.paid)}</strong></td><td class="mono ${variance<0?'schedule-late':'schedule-paid'}">${variance>=0?'+':''}${money.format(variance)}</td><td><span class="status ${variance>=0?'status-current':'status-watch'}">${variance>=0?'Complete':'Short'}</span></td></tr>`;}).join('');
+    }
+
+    function renderRisk() {
+      const m = portfolioMetrics(), overdueContracts = m.open.filter(c=>c.overdue>0), critical = m.open.filter(c=>c.status==='Critical');
+      const avgDays = overdueContracts.length ? sum(overdueContracts,'daysLate')/overdueContracts.length : 0;
+      document.getElementById('riskKpis').innerHTML = [
+        kpiCard('At-risk exposure', compactMoney(m.atRiskExposure), `${m.atRisk.length} contracts score 50+`, 'orange', 'shield'),
+        kpiCard('Critical contracts', String(critical.length), `${compactMoney(sum(critical,'outstanding'))} outstanding`, 'orange', 'alert'),
+        kpiCard('Total overdue', compactMoney(m.overdue), `${overdueContracts.length} contracts with arrears`, 'amber', 'clock'),
+        kpiCard('Average days late', `${avgDays.toFixed(0)} days`, 'Among contracts with arrears', 'amber', 'clock'),
+        kpiCard('Largest exposure', compactMoney(Math.max(0,...m.open.map(c=>c.outstanding))), 'Single open contract', 'blue', 'wallet'),
+        kpiCard('Incomplete asset data', String(m.open.filter(c=>!c.licensePlate||!c.mileage).length), 'Plate or mileage missing', 'blue', 'file')
+      ].join('');
+      const risky = m.open.filter(c=>c.overdue>0||c.riskScore>=25).sort((a,b)=>b.riskScore-a.riskScore||b.overdue-a.overdue).slice(0,12);
+      document.getElementById('riskContracts').innerHTML = risky.length ? risky.map(c=>`<div class="risk-contract"><div class="risk-contract-main"><div class="risk-score ${c.riskScore>=75?'high':''}">${c.riskScore}</div><div><h3>${escapeHtml(c.assetName)} <span class="status ${statusClass(c.status)}">${c.status}</span></h3><small>${escapeHtml(c.borrower)} · ${c.daysLate} days late · ${c.id}</small><div class="risk-meter" style="margin-top:7px"><i class="${c.riskScore>=75?'high':c.riskScore>=40?'medium':''}" style="width:${c.riskScore}%"></i></div></div></div><div class="risk-amount"><strong>${money.format(c.outstanding)}</strong><small>${money.format(c.overdue)} overdue</small><br><button class="table-action" onclick="openDetail('${c.id}')">Review</button></div></div>`).join('') : `<div class="empty">No elevated-risk contracts.</div>`;
+    }
+
+    function groupByType() {
+      return [...new Set(contracts.map(c=>c.assetType))].map(type => {
+        const rows = contracts.filter(c=>c.assetType===type), principal=sum(rows,'principal'), markup=sum(rows,'markup');
+        return {type, rows, principal, markup, roi:principal?markup/principal*100:0, outstanding:sum(rows,'outstanding')};
+      }).sort((a,b)=>b.principal-a.principal);
+    }
+    function renderAnalytics() {
+      const m=portfolioMetrics(), closed=contracts.filter(c=>c.status==='Closed'), avgTerm=contracts.length?sum(contracts,'termMonths')/contracts.length:0;
+      document.getElementById('analyticsKpis').innerHTML = [
+        kpiCard('Total originated', compactMoney(m.originated), `${contracts.length} historical + open contracts`, 'blue', 'wallet'),
+        kpiCard('Contracted profit', compactMoney(m.contractedProfit), 'Markup stated in contracts', '', 'trend'),
+        kpiCard('Weighted ROI', `${m.roi.toFixed(1)}%`, 'Total markup ÷ total principal', '', 'chart'),
+        kpiCard('Open annualized yield', `${m.weightedAnnualYield.toFixed(1)}%`, 'Simple, principal-weighted estimate', 'blue', 'trend'),
+        kpiCard('Closed contracts', `${closed.length}`, `${(closed.length/contracts.length*100).toFixed(0)}% of contract count`, '', 'check'),
+        kpiCard('Average duration', `${avgTerm.toFixed(1)} mo`, 'Across all imported contracts', 'blue', 'clock')
+      ].join('');
+      const groups=groupByType(), maxRoi=Math.max(1,...groups.map(g=>g.roi)), maxPrincipal=Math.max(1,...groups.map(g=>g.principal));
+      document.getElementById('roiBars').innerHTML=groups.map(g=>`<div class="bar-row"><span>${escapeHtml(g.type)}</span><div class="bar-track"><i style="width:${g.roi/maxRoi*100}%"></i></div><strong>${g.roi.toFixed(1)}%</strong></div>`).join('');
+      document.getElementById('mixBars').innerHTML=groups.map(g=>`<div class="bar-row"><span>${escapeHtml(g.type)}</span><div class="bar-track"><i style="width:${g.principal/maxPrincipal*100}%"></i></div><strong>${compactMoney(g.principal)}</strong></div>`).join('');
+      const largest=[...m.open].sort((a,b)=>b.outstanding-a.outstanding)[0], worst=[...m.open].sort((a,b)=>b.daysLate-a.daysLate)[0], strongest=groups.sort((a,b)=>b.roi-a.roi)[0];
+      const concentration=largest&&m.outstanding?largest.outstanding/m.outstanding*100:0;
+      document.getElementById('analyticsInsights').innerHTML=[
+        `<div class="insight"><div class="insight-icon">${iconSvg('wallet',16)}</div><div><h3>Largest open exposure: ${escapeHtml(largest?.assetName||'—')}</h3><p>${largest?money.format(largest.outstanding):'$0'} represents ${concentration.toFixed(1)}% of all open receivables.</p></div></div>`,
+        `<div class="insight"><div class="insight-icon">${iconSvg('alert',16)}</div><div><h3>Longest delinquency: ${escapeHtml(worst?.assetName||'—')}</h3><p>${worst?.daysLate||0} days past due with ${money.format(worst?.overdue||0)} currently overdue.</p></div></div>`,
+        `<div class="insight"><div class="insight-icon">${iconSvg('trend',16)}</div><div><h3>Highest contracted return segment: ${escapeHtml(strongest?.type||'—')}</h3><p>${strongest?.roi.toFixed(1)||'0.0'}% weighted simple ROI based on stated markup and principal.</p></div></div>`,
+        `<div class="insight"><div class="insight-icon">${iconSvg('file',16)}</div><div><h3>Operational data gap</h3><p>${m.open.filter(c=>!c.licensePlate).length} open contracts do not yet contain a license plate, and ${m.open.filter(c=>!c.mileage).length} lack mileage. Complete these fields before collateral-risk modeling.</p></div></div>`
+      ].join('');
+    }
+
+    function renderAll() { contracts.forEach(recalculate); renderOverview(); renderContracts(); renderPayments(); renderRisk(); renderAnalytics(); hydrateIcons(); }
+
+    function switchView(view) {
+      currentView=view;
+      document.querySelectorAll('.view').forEach(el=>el.classList.toggle('active',el.id===`${view}View`));
+      document.querySelectorAll('[data-view]').forEach(btn=>btn.classList.toggle('active',btn.dataset.view===view));
+      window.scrollTo({top:0,behavior:'smooth'});
+      if(view==='contracts') renderContracts();
+    }
+
+    function openContractModal(id=null) {
+      const form=document.getElementById('contractForm'); form.reset(); form.contractId.value=id||'';
+      const editing=id?contracts.find(c=>c.id===id):null;
+      const financialNames=['principal','interestRate','termMonths','contractDate','firstDueDate'];
+      financialNames.forEach(name=>form.elements[name].readOnly=!!editing);
+      if(editing) {
+        document.getElementById('contractModalTitle').textContent='Complete contract data';
+        document.getElementById('contractModalSubtitle').textContent='Update missing asset and party fields without changing the imported financial schedule.';
+        document.getElementById('contractSubmit').textContent='Save changes';
+        ['assetType','assetName','borrower','lender','licensePlate','vehicleYear','mileage','assetPrice','principal','interestRate','termMonths','contractDate','firstDueDate','notes'].forEach(name=>{
+          const field=form.elements[name]; if(field) field.value=editing[name]??'';
+        });
+      } else {
+        document.getElementById('contractModalTitle').textContent='New contract';
+        document.getElementById('contractModalSubtitle').textContent='Create a contract and calculate its repayment schedule.';
+        document.getElementById('contractSubmit').textContent='Create contract';
+        form.lender.value='Company owner'; form.contractDate.value=SEED_DATA.asOf;
+        form.firstDueDate.value=isoDate(addMonths(dataDate,1));
+      }
+      updateContractCalculation(); document.getElementById('contractDialog').showModal();
+    }
+    function updateContractCalculation() {
+      const form=document.getElementById('contractForm'), principal=+form.principal.value||0, rate=+form.interestRate.value||0, term=+form.termMonths.value||0;
+      const profit=principal*rate/100,total=principal+profit,monthly=term?total/term:0,annual=term?rate*12/term:0;
+      document.getElementById('calcMonthly').textContent=money1.format(monthly);
+      document.getElementById('calcProfit').textContent=money1.format(profit);
+      document.getElementById('calcTotal').textContent=money1.format(total);
+      document.getElementById('calcYield').textContent=`${annual.toFixed(1)}%`;
+      document.getElementById('paymentDay').value=form.firstDueDate.value?`Day ${parseISO(form.firstDueDate.value).getDate()} of each month`:'—';
+    }
+    function generateSchedule(firstDue, term, total) {
+      const monthly=total/term; return Array.from({length:term},(_,i)=>({sequence:i+1,dueDate:isoDate(addMonths(parseISO(firstDue),i)),scheduled:+(i===term-1?total-monthly*(term-1):monthly).toFixed(2),paid:0}));
+    }
+
+    function openPaymentModal(id=null) {
+      const open=contracts.filter(c=>c.status!=='Closed').sort((a,b)=>b.overdue-a.overdue||b.outstanding-a.outstanding), select=document.getElementById('paymentContract');
+      select.innerHTML=open.map(c=>`<option value="${c.id}">${escapeHtml(c.assetName)} · ${c.id} · ${money.format(c.outstanding)} due</option>`).join('');
+      select.value=id&&open.some(c=>c.id===id)?id:open[0]?.id||'';
+      document.getElementById('paymentDate').value=SEED_DATA.asOf; updatePaymentAmount(); document.getElementById('paymentDialog').showModal();
+    }
+    function updatePaymentAmount() { const c=contracts.find(x=>x.id===document.getElementById('paymentContract').value); document.getElementById('paymentAmount').value=c?Math.min(c.monthlyPayment,c.outstanding).toFixed(2):''; }
+
+    function openDetail(id) {
+      detailContractId=id; const c=contracts.find(x=>x.id===id); if(!c)return;
+      document.getElementById('detailSubtitle').textContent=`${c.id} · ${c.sourceSheet||'New contract'} · ${c.status}`;
+      const scheduleRows=(c.schedule||[]).map(row=>{ const due=parseISO(row.dueDate), isDue=due&&due<=dataDate, variance=row.paid-row.scheduled; return `<tr><td>${row.sequence}</td><td>${formatDate(row.dueDate)}</td><td class="mono">${money1.format(row.scheduled)}</td><td class="mono ${row.paid>=row.scheduled?'schedule-paid':row.paid>0?'schedule-late':''}">${money1.format(row.paid)}</td><td><span class="status ${row.paid>=row.scheduled?'status-current':isDue?'status-watch':'status-closed'}">${row.paid>=row.scheduled?'Paid':isDue?(row.paid>0?'Partial':'Unpaid'):'Upcoming'}</span></td><td class="mono ${variance<0&&isDue?'schedule-late':''}">${isDue?money1.format(variance):'—'}</td></tr>`;}).join('');
+      document.getElementById('detailBody').innerHTML=`
+        <div class="detail-hero"><div class="detail-primary"><div class="asset-icon">${iconSvg(assetIcon(c.assetType),21)}</div><div><h3>${escapeHtml(c.assetName)}</h3><span class="muted">${escapeHtml(c.borrower)} · ${escapeHtml(c.licensePlate||'Plate not entered')}</span><div style="margin-top:7px"><span class="status ${statusClass(c.status)}">${c.status}</span></div></div></div>
+        <div class="detail-stat"><span>Outstanding</span><strong>${money.format(c.outstanding)}</strong></div><div class="detail-stat"><span>Collected</span><strong>${money.format(c.paidTotal)}</strong></div><div class="detail-stat"><span>Risk score</span><strong>${c.riskScore}/100</strong></div></div>
+        <div class="detail-grid"><div class="info-card"><h3>Contract information</h3><div class="info-list">
+          <div class="info-row"><span>Asset type</span><strong>${escapeHtml(c.assetType)}</strong></div><div class="info-row"><span>Lender</span><strong>${escapeHtml(c.lender)}</strong></div><div class="info-row"><span>Contract date</span><strong>${formatDate(c.contractDate)}</strong></div><div class="info-row"><span>Duration</span><strong>${c.termMonths} months</strong></div><div class="info-row"><span>Principal</span><strong>${money.format(c.principal)}</strong></div><div class="info-row"><span>Total markup</span><strong>${money.format(c.markup)} · ${c.simpleROI.toFixed(1)}%</strong></div><div class="info-row"><span>Total receivable</span><strong>${money.format(c.totalReceivable)}</strong></div><div class="info-row"><span>Monthly payment</span><strong>${money1.format(c.monthlyPayment)}</strong></div><div class="info-row"><span>Overdue</span><strong>${money.format(c.overdue)} · ${c.daysLate} days</strong></div><div class="info-row"><span>Vehicle year</span><strong>${c.vehicleYear||'Not entered'}</strong></div><div class="info-row"><span>Mileage</span><strong>${c.mileage?number.format(c.mileage)+' km':'Not entered'}</strong></div><div class="info-row"><span>Asset price</span><strong>${c.assetPrice?money.format(c.assetPrice):'Not entered'}</strong></div>
+        </div></div><div class="info-card"><h3>Payment schedule</h3><div class="schedule-wrap"><table><thead><tr><th>#</th><th>Due date</th><th>Scheduled</th><th>Paid</th><th>Status</th><th>Variance</th></tr></thead><tbody>${scheduleRows||'<tr><td colspan="6" class="empty">No schedule available.</td></tr>'}</tbody></table></div></div></div>`;
+      hydrateIcons(document.getElementById('detailDialog')); document.getElementById('detailDialog').showModal();
+    }
+    window.openDetail=openDetail;
+
+    function showToast(message) { const el=document.getElementById('toast'); el.textContent=message; el.classList.add('show'); clearTimeout(showToast.timer); showToast.timer=setTimeout(()=>el.classList.remove('show'),3200); }
+    function exportData() {
+      const payload={exportedAt:new Date().toISOString(),source:SEED_DATA.source,asOf:SEED_DATA.asOf,currency:'USD',contracts};
+      const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'}), url=URL.createObjectURL(blob), a=document.createElement('a');
+      a.href=url;a.download=`autofinance-portfolio-${SEED_DATA.asOf}.json`;a.click();URL.revokeObjectURL(url);showToast('Portfolio data exported.');
+    }
+
+    document.querySelectorAll('[data-view]').forEach(btn=>btn.addEventListener('click',()=>switchView(btn.dataset.view)));
+    document.querySelectorAll('[data-open-contract]').forEach(btn=>btn.addEventListener('click',()=>openContractModal()));
+    document.querySelectorAll('[data-go-contracts]').forEach(btn=>btn.addEventListener('click',()=>switchView('contracts')));
+    document.querySelectorAll('[data-close-dialog]').forEach(btn=>btn.addEventListener('click',()=>document.getElementById(btn.dataset.closeDialog).close()));
+    document.querySelectorAll('dialog').forEach(dialog=>dialog.addEventListener('click',event=>{if(event.target===dialog)dialog.close();}));
+    document.getElementById('contractForm').addEventListener('input',updateContractCalculation);
+    document.getElementById('firstDueDate').addEventListener('change',updateContractCalculation);
+    document.getElementById('contractDate').addEventListener('change',event=>{ const form=document.getElementById('contractForm'); if(!form.contractId.value) form.firstDueDate.value=isoDate(addMonths(parseISO(event.target.value),1)); updateContractCalculation(); });
+    document.getElementById('contractForm').addEventListener('submit',event=>{
+      event.preventDefault(); const form=event.currentTarget, data=Object.fromEntries(new FormData(form));
+      if(data.contractId) {
+        const c=contracts.find(x=>x.id===data.contractId); ['assetType','assetName','borrower','lender','licensePlate','notes'].forEach(k=>c[k]=data[k]); ['vehicleYear','mileage','assetPrice'].forEach(k=>c[k]=data[k]?+data[k]:null); recalculate(c); saveContracts(); form.closest('dialog').close(); document.getElementById('detailDialog').close(); renderAll(); showToast('Contract information updated.'); return;
+      }
+      const principal=+data.principal, rate=+data.interestRate, term=+data.termMonths, total=principal*(1+rate/100), id=`AF-${String(Date.now()).slice(-7)}`;
+      const c={id,sourceSheet:'Manual entry',sourceTitle:'Created in dashboard',assetName:data.assetName,assetType:data.assetType,borrower:data.borrower,lender:data.lender,licensePlate:data.licensePlate,mileage:data.mileage?+data.mileage:null,vehicleYear:data.vehicleYear?+data.vehicleYear:null,assetPrice:data.assetPrice?+data.assetPrice:null,contractDate:data.contractDate,firstDueDate:data.firstDueDate,termMonths:term,principal,interestRate:rate,markup:principal*rate/100,totalReceivable:total,notes:data.notes,schedule:generateSchedule(data.firstDueDate,term,total),paymentLog:[]};
+      recalculate(c);contracts.unshift(c);saveContracts();form.closest('dialog').close();renderAll();showToast(`Contract ${id} created.`);
+    });
+    document.getElementById('paymentContract').addEventListener('change',updatePaymentAmount);
+    document.getElementById('paymentForm').addEventListener('submit',event=>{
+      event.preventDefault(); const data=Object.fromEntries(new FormData(event.currentTarget)), c=contracts.find(x=>x.id===data.paymentContract); if(!c)return;
+      let remaining=Math.min(+data.paymentAmount,c.outstanding); const applied=remaining;
+      [...(c.schedule||[])].sort((a,b)=>(a.dueDate||'').localeCompare(b.dueDate||'')).forEach(row=>{ if(remaining<=0)return; const gap=Math.max(0,row.scheduled-row.paid), amount=Math.min(gap,remaining); row.paid=+(row.paid+amount).toFixed(2);remaining-=amount; });
+      c.paymentLog=c.paymentLog||[];c.paymentLog.push({date:data.paymentDate,amount:applied,method:data.paymentMethod,note:data.paymentNote});recalculate(c);saveContracts();event.currentTarget.closest('dialog').close();renderAll();showToast(`${money1.format(applied)} recorded for ${c.assetName}.`);
+    });
+    document.getElementById('contractSearch').addEventListener('input',renderContracts);
+    document.getElementById('statusFilter').addEventListener('change',renderContracts);
+    document.getElementById('typeFilter').addEventListener('change',renderContracts);
+    document.getElementById('globalSearch').addEventListener('keydown',event=>{if(event.key==='Enter'){document.getElementById('contractSearch').value=event.target.value;switchView('contracts');renderContracts();}});
+    document.addEventListener('keydown',event=>{if(event.key==='/'&&document.activeElement.tagName!=='INPUT'&&document.activeElement.tagName!=='TEXTAREA'){event.preventDefault();document.getElementById('globalSearch').focus();}});
+    ['quickPaymentBtn','overviewPaymentBtn','paymentsRecordBtn'].forEach(id=>document.getElementById(id).addEventListener('click',()=>openPaymentModal()));
+    document.getElementById('detailPaymentBtn').addEventListener('click',()=>{document.getElementById('detailDialog').close();openPaymentModal(detailContractId);});
+    document.getElementById('detailEditBtn').addEventListener('click',()=>{document.getElementById('detailDialog').close();openContractModal(detailContractId);});
+    document.getElementById('exportBtn').addEventListener('click',exportData);
+    document.getElementById('printBtn').addEventListener('click',()=>window.print());
+    document.getElementById('sidebarSource').textContent=`${SEED_DATA.contracts.length} contract sheets · ${formatDate(SEED_DATA.asOf)}`;
+    hydrateIcons(); renderAll();
+  </script>
+</body>
+</html>
