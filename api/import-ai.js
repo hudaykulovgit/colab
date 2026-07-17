@@ -1,7 +1,14 @@
 const { generateObject } = require('ai');
+const { google } = require('@ai-sdk/google');
 const { z } = require('zod');
 const { upsertContract } = require('../lib/contracts');
 const { generateSchedule, addMonths } = require('../lib/schedule');
+
+// Calls Google's Generative AI API directly (not via Vercel AI Gateway) using
+// a free Google AI Studio key (GOOGLE_GENERATIVE_AI_API_KEY) -- no Vercel
+// billing/credit-card requirement, and Gemini's free tier covers this
+// workload comfortably.
+const MODEL = 'gemini-3.5-flash';
 
 // Keeps a single request's token usage (and cost) bounded. Large sheets
 // should be split into multiple uploads.
@@ -60,8 +67,12 @@ module.exports = async (req, res) => {
       return res.status(400).json({ error: `This file has ${rows.length} rows; please split it into batches of ${MAX_ROWS} or fewer.` });
     }
 
+    if (!process.env.GOOGLE_GENERATIVE_AI_API_KEY) {
+      return res.status(503).json({ error: 'GOOGLE_GENERATIVE_AI_API_KEY is not configured yet.' });
+    }
+
     const { object } = await generateObject({
-      model: 'anthropic/claude-haiku-4.5',
+      model: google(MODEL),
       schema: ResultSchema,
       system: SYSTEM_PROMPT,
       prompt: `Here are the raw rows (as JSON) from the uploaded file:\n\n${JSON.stringify(rows)}`,
