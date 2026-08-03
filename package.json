@@ -3,7 +3,10 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "migrate": "node scripts/migrate.js"
+    "migrate": "node scripts/migrate.js",
+    "test": "node --test --test-isolation=none",
+    "audit:data": "node scripts/audit-data.js",
+    "preview": "node scripts/preview.js"
   },
   "dependencies": {
     "@ai-sdk/groq": "^4.0.11",

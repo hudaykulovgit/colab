@@ -1,5 +1,5 @@
-const { upsertContract } = require('../lib/contracts');
-const { addMonths, generateSchedule } = require('../lib/schedule');
+const { fetchAllContracts, upsertContract } = require('../lib/contracts');
+const { addMonths, generateSchedule, allocatePayment } = require('../lib/schedule');
 
 // Accepts a broad set of header spellings (English + common RU/UZ variants)
 // since source spreadsheets aren't standardized.
@@ -19,6 +19,11 @@ const FIELD_ALIASES = {
   principal: ['principal', 'loan amount', 'amount', 'сумма займа', 'основной долг'],
   interestRate: ['interest rate', 'rate', 'markup', 'наценка', 'процент'],
   notes: ['notes', 'note', 'comment', 'заметки', 'примечание'],
+  paymentContractId: ['contract id', 'contract_id', 'contractid', 'договор', 'номер договора'],
+  paymentDate: ['payment date', 'payment_date', 'date', 'дата платежа', 'дата'],
+  paymentAmount: ['payment amount', 'payment_amount', 'paid', 'amount paid', 'сумма платежа', 'оплачено'],
+  paymentMethod: ['payment method', 'method', 'способ оплаты', 'метод'],
+  paymentNote: ['payment note', 'note', 'comment', 'примечание', 'комментарий'],
 };
 
 function normalizeKey(key) {
@@ -53,9 +58,10 @@ module.exports = async (req, res) => {
     return res.status(405).json({ error: 'Method not allowed' });
   }
   try {
-    const rows = Array.isArray(req.body) ? req.body : req.body && req.body.rows;
+    const rows = Array.isArray(req.body) ? req.body : req.body && (req.body.contractRows || req.body.rows);
+    const paymentRows = Array.isArray(req.body && req.body.paymentRows) ? req.body.paymentRows : [];
     if (!Array.isArray(rows)) {
-      return res.status(400).json({ error: 'Expected { rows: [...] } — parsed Excel rows as objects.' });
+      return res.status(400).json({ error: 'Expected contract rows and optional paymentRows parsed from Excel.' });
     }
 
     let imported = 0;
@@ -84,8 +90,8 @@ module.exports = async (req, res) => {
 
       const contract = {
         id,
-        sourceSheet: 'Excel import',
-        sourceTitle: 'Excel import',
+        sourceSheet: row.__sheetName || 'Excel import',
+        sourceTitle: row.__sheetName || 'Excel import',
         assetType: findValue(row, 'assetType') || 'Other',
         assetName: String(assetName),
         borrower: String(borrower),
@@ -113,7 +119,44 @@ module.exports = async (req, res) => {
       }
     }
 
-    return res.status(200).json({ imported, skippedCount: skipped.length, skipped });
+    let paymentsImported = 0;
+    if (paymentRows.length) {
+      const byId = new Map((await fetchAllContracts()).map(contract => [contract.id, contract]));
+      for (let index = 0; index < paymentRows.length; index += 1) {
+        const row = paymentRows[index];
+        const contractId = findValue(row, 'paymentContractId') || findValue(row, 'id');
+        const paymentDate = toISODate(findValue(row, 'paymentDate'));
+        const amount = Number(findValue(row, 'paymentAmount'));
+        const contract = contractId ? byId.get(String(contractId)) : null;
+        if (!contract || !paymentDate || !Number.isFinite(amount) || amount <= 0) {
+          skipped.push({ sheet: row.__sheetName || 'Payments', row: index + 1, reason: 'Payment requires a valid contract ID, date, and positive amount' });
+          continue;
+        }
+        const paidTotal = (contract.schedule || []).reduce((total, item) => total + (Number(item.paid) || 0), 0);
+        const outstanding = Math.max(0, Number(contract.totalReceivable) - paidTotal);
+        const applied = allocatePayment(contract.schedule, amount, outstanding);
+        if (applied <= 0) {
+          skipped.push({ sheet: row.__sheetName || 'Payments', row: index + 1, reason: `Contract ${contract.id} has no outstanding balance` });
+          continue;
+        }
+        contract.paymentLog = Array.isArray(contract.paymentLog) ? contract.paymentLog : [];
+        contract.paymentLog.push({
+          date: paymentDate,
+          amount: applied,
+          method: findValue(row, 'paymentMethod') || 'other',
+          note: findValue(row, 'paymentNote') || `Imported from ${row.__sheetName || 'Payments'}`,
+        });
+        try {
+          await upsertContract(contract);
+          byId.set(contract.id, contract);
+          paymentsImported += 1;
+        } catch (err) {
+          skipped.push({ sheet: row.__sheetName || 'Payments', row: index + 1, reason: err.message });
+        }
+      }
+    }
+
+    return res.status(200).json({ imported, paymentsImported, skippedCount: skipped.length, skipped });
   } catch (err) {
     console.error(err);
     return res.status(500).json({ error: err.message });

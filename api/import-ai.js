@@ -3,18 +3,17 @@ const { generateSchedule, addMonths } = require('../lib/schedule');
 
 // Calls Groq's API directly (not via Vercel AI Gateway) using a free Groq
 // API key (GROQ_API_KEY) -- no Vercel billing/credit-card requirement.
-// generateObject requires Groq's json_schema structured-output mode, which
-// only a few Groq-hosted models support (console.groq.com/docs/structured
-// -outputs#supported-models) -- llama-3.3-70b-versatile is NOT one of them
-// and fails at request time. Llama 4 Scout is, and is still genuinely Llama.
+// GPT-OSS 120B is Groq's recommended replacement for the retired Llama 4
+// Scout model. It supports strict JSON Schema output, which is important for
+// financial imports because best-effort object generation can omit fields.
 //
 // @ai-sdk/groq (like @ai-sdk/google before it) may ship ESM-only, which
 // Vercel's Node runtime cannot require() -- load via dynamic import().
-const MODEL = 'meta-llama/llama-4-scout-17b-16e-instruct';
+const MODEL = 'openai/gpt-oss-120b';
 
 // Keeps a single request's token usage (and cost) bounded. Large sheets
 // should be split into multiple uploads.
-const MAX_ROWS = 400;
+const MAX_ROWS = 150;
 
 const SYSTEM_PROMPT = `You normalize messy spreadsheet exports of car/asset loan contracts into clean structured records.
 
@@ -50,7 +49,7 @@ module.exports = async (req, res) => {
       return res.status(503).json({ error: 'GROQ_API_KEY is not configured yet.' });
     }
 
-    const [{ generateObject }, { groq }, { z }] = await Promise.all([
+    const [{ generateText, Output }, { groq }, { z }] = await Promise.all([
       import('ai'),
       import('@ai-sdk/groq'),
       import('zod'),
@@ -65,8 +64,8 @@ module.exports = async (req, res) => {
       vehicleYear: z.number().int().nullable(),
       mileage: z.number().nullable(),
       assetPrice: z.number().nullable(),
-      contractDate: z.string().describe('ISO date YYYY-MM-DD'),
-      firstDueDate: z.string().nullable().describe('ISO date YYYY-MM-DD, or null if not stated'),
+      contractDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).describe('ISO date YYYY-MM-DD'),
+      firstDueDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).nullable().describe('ISO date YYYY-MM-DD, or null if not stated'),
       termMonths: z.number().int().positive(),
       principal: z.number().positive(),
       interestRate: z.number().min(0).describe('Total interest/markup as a percentage, e.g. 25 for 25%'),
@@ -78,9 +77,17 @@ module.exports = async (req, res) => {
       issues: z.array(z.string()).describe('One entry per row that was skipped or is ambiguous, explaining why'),
     });
 
-    const { object } = await generateObject({
+    const { output } = await generateText({
       model: groq(MODEL),
-      schema: ResultSchema,
+      output: Output.object({ schema: ResultSchema }),
+      providerOptions: {
+        groq: {
+          structuredOutputs: true,
+          strictJsonSchema: true,
+          reasoningEffort: 'low',
+        },
+      },
+      maxOutputTokens: 32768,
       system: SYSTEM_PROMPT,
       prompt: `Here are the raw rows (as JSON) from the uploaded file:\n\n${JSON.stringify(rows)}`,
     });
@@ -88,7 +95,7 @@ module.exports = async (req, res) => {
     let imported = 0;
     const errors = [];
     let seq = 0;
-    for (const contract of object.contracts) {
+    for (const contract of output.contracts) {
       seq += 1;
       try {
         const firstDueDate = contract.firstDueDate || addMonths(contract.contractDate, 1);
@@ -110,7 +117,7 @@ module.exports = async (req, res) => {
       }
     }
 
-    return res.status(200).json({ imported, issues: [...object.issues, ...errors] });
+    return res.status(200).json({ imported, issues: [...output.issues, ...errors], model: MODEL });
   } catch (err) {
     console.error(err);
     const status = err.statusCode === 402 ? 402 : err.statusCode === 429 ? 429 : 500;

@@ -7,35 +7,40 @@
   <title>Autofinance — Portfolio Dashboard</title>
   <style>
     :root {
-      --bg: #f5f5fc;
+      --bubblegum-pink: #ea526f;
+      --pitch-black: #070600;
+      --ghost-white: #f7f7ff;
+      --turquoise-surf: #23b5d3;
+      --blue-bell: #279af1;
+      --bg: var(--ghost-white);
       --surface: #ffffff;
-      --surface-2: #f8f7fd;
-      --ink: #16152b;
-      --muted: #6b7085;
-      --faint: #9a9db3;
-      --line: #e7e6f4;
-      --line-strong: #d7d5ec;
-      --nav: #1e1b4b;
-      --nav-2: #2d2470;
-      --nav-muted: #ada7d9;
-      --accent: #6366f1;
-      --accent-2: #a855f7;
-      --accent-soft: #eef0ff;
-      --amber: #d97706;
-      --amber-soft: #fef3c7;
-      --orange: #ea580c;
-      --orange-soft: #ffe4d5;
-      --danger: #e11d48;
-      --danger-soft: #ffe1e8;
-      --blue: #0891b2;
-      --blue-soft: #cffafe;
-      --type-car: #2a78d6;
-      --type-commercial: #1baf7a;
-      --type-realestate: #4a3aa7;
-      --type-other: #e87ba4;
-      --shadow: 0 10px 35px rgba(76, 29, 149, .09);
-      --radius: 16px;
-      --sidebar: 244px;
+      --surface-2: #eef9fd;
+      --ink: var(--pitch-black);
+      --muted: #56616c;
+      --faint: #87939d;
+      --line: rgba(7, 6, 0, .10);
+      --line-strong: rgba(7, 6, 0, .20);
+      --nav: var(--pitch-black);
+      --nav-2: #11212b;
+      --nav-muted: #a9bbc5;
+      --accent: var(--blue-bell);
+      --accent-2: var(--turquoise-surf);
+      --accent-soft: #e5f6ff;
+      --amber: #c9425d;
+      --amber-soft: #fff0f3;
+      --orange: #dc3f5d;
+      --orange-soft: #ffe8ed;
+      --danger: #b92240;
+      --danger-soft: #ffe3e9;
+      --blue: var(--turquoise-surf);
+      --blue-soft: #ddf8fc;
+      --type-car: var(--blue-bell);
+      --type-commercial: var(--turquoise-surf);
+      --type-realestate: var(--bubblegum-pink);
+      --type-other: var(--pitch-black);
+      --shadow: 0 16px 40px rgba(7, 6, 0, .07);
+      --radius: 20px;
+      --sidebar: 252px;
     }
 
     * { box-sizing: border-box; }
@@ -87,14 +92,6 @@
     .nav-btn:hover { color: #fff; background: rgba(255,255,255,.055); }
     .nav-btn.active { color: #fff; background: rgba(255,255,255,.1); }
     .nav-btn [data-icon] { opacity: .9; }
-    .sidebar-foot { margin-top: auto; }
-    .source-chip {
-      display: flex; align-items: flex-start; gap: 9px; padding: 12px; border: 1px solid rgba(255,255,255,.09);
-      border-radius: 12px; color: var(--nav-muted); background: rgba(255,255,255,.035); font-size: 11px;
-    }
-    .source-chip strong { display: block; color: #ece9fb; font-size: 12px; margin-bottom: 2px; }
-    .source-dot { width: 7px; height: 7px; margin-top: 5px; flex: 0 0 auto; border-radius: 50%; background: #34d399; box-shadow: 0 0 0 3px rgba(52,211,153,.18); }
-
     .main { min-height: 100vh; margin-left: var(--sidebar); }
     .topbar {
       height: 72px; padding: 0 30px; display: flex; align-items: center; gap: 16px;
@@ -119,6 +116,9 @@
     .avatar { width: 36px; height: 36px; display: grid; place-items: center; color: #fff; background: var(--accent); border-radius: 50%; font-size: 12px; font-weight: 750; }
     .profile strong { display: block; font-size: 12px; }
     .profile span { color: var(--muted); font-size: 10px; }
+    .logout-form { margin: 0 0 0 3px; }
+    .logout-btn { min-height: 40px; display: inline-flex; align-items: center; gap: 7px; padding: 0 12px; border: 1px solid rgba(234,82,111,.2); border-radius: 11px; color: #a52f46; background: rgba(234,82,111,.07); cursor: pointer; font: inherit; font-size: 11px; font-weight: 720; transition: .18s ease; }
+    .logout-btn:hover { border-color: rgba(234,82,111,.38); background: rgba(234,82,111,.12); transform: translateY(-1px); }
 
     .content { padding: 28px 30px 56px; max-width: 1580px; margin: 0 auto; }
     .view { display: none; }
@@ -138,6 +138,7 @@
       box-shadow: 0 1px 0 rgba(20,30,25,.02); transition: .18s ease;
     }
     .btn:hover { border-color: var(--line-strong); transform: translateY(-1px); }
+    .btn:disabled { cursor: wait; opacity: .58; transform: none; }
     .btn-primary { background: var(--ink); border-color: var(--ink); color: #fff; }
     .btn-accent { background: linear-gradient(135deg, var(--accent), var(--accent-2)); border-color: var(--accent); color: #fff; box-shadow: 0 6px 16px rgba(99,102,241,.28); }
     .btn-quiet { background: transparent; }
@@ -166,8 +167,9 @@
     .card-body { padding: 8px 19px 19px; }
     .chart-legend { display: flex; gap: 13px; flex-wrap: wrap; color: var(--muted); font-size: 10px; }
     .legend-key { display: inline-flex; align-items: center; gap: 5px; }
-    .legend-dot { width: 8px; height: 8px; border-radius: 2px; background: var(--accent); }
-    .legend-dot.plan { background: #d8d7ec; }
+    .legend-dot { width: 8px; height: 8px; border-radius: 2px; background: #287f92; }
+    .legend-dot.plan { background: #ced8dc; }
+    .legend-dot.current { background: rgba(39,154,241,.08); border: 1px solid rgba(39,154,241,.48); }
     .legend-dot.risk { background: var(--amber); }
     .chart-wrap { width: 100%; min-height: 250px; }
     .chart-wrap svg { width: 100%; height: auto; overflow: visible; }
@@ -313,6 +315,95 @@
     .toast.show { transform: none; opacity: 1; }
     .mobile-nav { display: none; }
 
+    /* 2026 visual system — Bubblegum / Black / Ghost / Surf / Bell */
+    body {
+      background:
+        radial-gradient(circle at 84% 8%, rgba(35,181,211,.12), transparent 24rem),
+        radial-gradient(circle at 28% 94%, rgba(234,82,111,.08), transparent 28rem),
+        var(--ghost-white);
+    }
+    :focus-visible { outline: 3px solid rgba(39,154,241,.34); outline-offset: 2px; }
+    .sidebar {
+      background:
+        radial-gradient(circle at 12% 12%, rgba(35,181,211,.26), transparent 11rem),
+        radial-gradient(circle at 90% 78%, rgba(234,82,111,.21), transparent 13rem),
+        var(--pitch-black);
+      overflow: hidden;
+    }
+    .sidebar::after { content: ""; position: absolute; width: 150px; height: 150px; right: -92px; top: 38%; border: 1px solid rgba(247,247,255,.12); border-radius: 42px; transform: rotate(28deg); pointer-events: none; }
+    .sidebar > * { position: relative; z-index: 1; }
+    .brand-mark { background: linear-gradient(135deg, var(--turquoise-surf), var(--blue-bell) 48%, var(--bubblegum-pink)); box-shadow: 0 8px 24px rgba(39,154,241,.3); border-radius: 13px; }
+    .nav-btn { border: 1px solid transparent; }
+    .nav-btn:hover { background: rgba(247,247,255,.07); border-color: rgba(247,247,255,.06); }
+    .nav-btn.active { color: var(--pitch-black); background: var(--ghost-white); box-shadow: 0 10px 26px rgba(0,0,0,.28); }
+    .nav-btn.active [data-icon] { color: var(--blue-bell); }
+    .topbar { background: rgba(247,247,255,.84); border-bottom-color: rgba(7,6,0,.08); }
+    .global-search input, .icon-btn { box-shadow: 0 8px 24px rgba(7,6,0,.04); }
+    .global-search input:focus, .field input:focus, .field select:focus, .field textarea:focus, .schedule-input:focus { border-color: var(--blue-bell); box-shadow: 0 0 0 4px rgba(39,154,241,.13); }
+    .avatar { background: linear-gradient(145deg, var(--blue-bell), var(--turquoise-surf)); box-shadow: inset 0 0 0 1px rgba(255,255,255,.45); }
+    .btn { border-radius: 12px; }
+    .btn-primary { background: var(--pitch-black); border-color: var(--pitch-black); }
+    .btn-accent { background: linear-gradient(135deg, var(--blue-bell), var(--turquoise-surf)); border-color: transparent; box-shadow: 0 9px 24px rgba(39,154,241,.24); }
+    .btn:hover, .icon-btn:hover { transform: translateY(-2px); }
+    .card, .kpi { border-color: rgba(7,6,0,.08); }
+    .card { overflow: clip; }
+    .kpi::after { content: ""; position: absolute; width: 80px; height: 80px; right: -42px; bottom: -46px; border: 14px solid rgba(39,154,241,.055); border-radius: 50%; }
+    .kpi .tone { height: 4px; background: linear-gradient(90deg, var(--blue-bell), var(--turquoise-surf)); }
+    .tone.amber, .tone.orange { background: var(--bubblegum-pink); }
+    .status-current { color: #08768d; background: rgba(35,181,211,.14); }
+    .status-watch { color: #b52f4b; background: rgba(234,82,111,.13); }
+    .status-at-risk, .status-critical { color: #9c1733; background: rgba(234,82,111,.20); }
+    .status-closed { color: #59636c; background: rgba(7,6,0,.06); }
+    th, .info-card h3, .modal-foot { background: rgba(247,247,255,.86); }
+    tbody tr:hover { background: rgba(39,154,241,.045); }
+    .segmented { background: rgba(7,6,0,.06); }
+    .segmented button.active { box-shadow: 0 4px 12px rgba(7,6,0,.08); }
+    dialog::backdrop { background: rgba(7,6,0,.68); backdrop-filter: blur(8px); }
+    .modal { border-color: rgba(247,247,255,.7); box-shadow: 0 34px 100px rgba(7,6,0,.36); }
+    .modal-head { background: rgba(255,255,255,.92); }
+    .form-safety-note { display: flex; align-items: center; gap: 8px; margin: -4px 0 18px; padding: 10px 12px; border: 1px solid rgba(35,181,211,.24); border-radius: 12px; color: #145e6c; background: rgba(35,181,211,.08); font-size: 11px; font-weight: 650; }
+    .form-safety-note [data-icon] { color: var(--turquoise-surf); flex: 0 0 auto; }
+    .calc-preview { border-radius: 16px; }
+    .calc-item:nth-child(1) { box-shadow: inset 0 3px var(--blue-bell); }
+    .calc-item:nth-child(2) { box-shadow: inset 0 3px var(--turquoise-surf); }
+    .calc-item:nth-child(3) { box-shadow: inset 0 3px var(--bubblegum-pink); }
+    .calc-item:nth-child(4) { box-shadow: inset 0 3px var(--pitch-black); }
+
+    .overview-hero {
+      min-height: 276px; display: grid; grid-template-columns: minmax(0,1fr) minmax(310px,.72fr); align-items: center;
+      padding: 34px 38px; border-radius: 28px; overflow: hidden; color: var(--ghost-white); position: relative;
+      background:
+        radial-gradient(circle at 78% 18%, rgba(35,181,211,.32), transparent 18rem),
+        radial-gradient(circle at 18% 128%, rgba(234,82,111,.28), transparent 22rem),
+        var(--pitch-black);
+      box-shadow: 0 24px 64px rgba(7,6,0,.18);
+    }
+    .overview-hero::before { content: ""; position: absolute; inset: 0; background-image: linear-gradient(rgba(247,247,255,.035) 1px, transparent 1px), linear-gradient(90deg, rgba(247,247,255,.035) 1px, transparent 1px); background-size: 34px 34px; mask-image: linear-gradient(90deg,#000,transparent 72%); pointer-events: none; }
+    .hero-copy, .hero-graphic { position: relative; z-index: 1; }
+    .overview-hero .eyebrow { color: var(--turquoise-surf); }
+    .overview-hero h1 { color: var(--ghost-white); font-size: clamp(32px,4vw,54px); max-width: 620px; }
+    .overview-hero p { color: rgba(247,247,255,.68); max-width: 620px; }
+    .hero-actions { margin-top: 24px; }
+    .overview-hero .hero-actions .btn:first-child { color: var(--ghost-white); background: rgba(247,247,255,.08); border-color: rgba(247,247,255,.18); }
+    .hero-graphic { min-height: 204px; border: 1px solid rgba(247,247,255,.13); border-radius: 24px; background: rgba(247,247,255,.055); backdrop-filter: blur(12px); box-shadow: inset 0 1px rgba(255,255,255,.08); }
+    .hero-graphic svg { width: 100%; height: 204px; }
+    .hero-grid { fill: none; stroke: rgba(247,247,255,.08); stroke-width: 1; }
+    .hero-area { fill: url(#heroLine); opacity: .11; }
+    .hero-line { fill: none; stroke: url(#heroLine); stroke-width: 4; stroke-linecap: round; }
+    .hero-car { fill: var(--ghost-white); opacity: .93; }
+    .hero-car circle { fill: var(--pitch-black); stroke: var(--turquoise-surf); stroke-width: 4; }
+    .hero-live { position: absolute; top: 14px; left: 16px; display: flex; align-items: center; gap: 7px; color: rgba(247,247,255,.75); font-size: 9px; font-weight: 800; letter-spacing: .12em; }
+    .hero-live i { width: 7px; height: 7px; border-radius: 50%; background: var(--turquoise-surf); box-shadow: 0 0 0 5px rgba(35,181,211,.13); }
+    .hero-chip { position: absolute; padding: 9px 11px; border: 1px solid rgba(247,247,255,.14); border-radius: 11px; background: rgba(7,6,0,.62); backdrop-filter: blur(8px); }
+    .hero-chip span { display: block; color: rgba(247,247,255,.52); font-size: 8px; letter-spacing: .1em; }
+    .hero-chip strong { display: block; margin-top: 2px; font-size: 12px; }
+    .hero-chip-a { right: 12px; top: 18px; }
+    .hero-chip-a strong { color: var(--turquoise-surf); }
+    .hero-chip-b { left: 15px; bottom: 14px; }
+    .hero-chip-b strong { color: var(--bubblegum-pink); }
+
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; animation: none !important; } }
+
     @media (max-width: 1320px) {
       .kpi-grid { grid-template-columns: repeat(3, 1fr); }
     }
@@ -320,10 +411,8 @@
       :root { --sidebar: 76px; }
       .sidebar { padding: 22px 10px; }
       .brand { justify-content: center; padding-inline: 0; }
-      .brand-name, .nav-label, .nav-btn span:not([data-icon]), .source-chip div { display: none; }
+      .brand-name, .nav-label, .nav-btn span:not([data-icon]) { display: none; }
       .nav-btn { justify-content: center; padding: 12px; }
-      .source-chip { justify-content: center; padding: 12px 8px; }
-      .source-dot { margin: 0; }
       .content { padding-inline: 22px; }
       .topbar { padding-inline: 22px; }
       .dashboard-grid, .risk-layout { grid-template-columns: 1fr; }
@@ -335,9 +424,14 @@
       .sidebar { display: none; }
       .topbar { height: 62px; padding: 0 15px; }
       .global-search { width: auto; flex: 1; }
-      .keycap, .profile div:not(.avatar), .topbar-actions .icon-btn:first-child { display: none; }
+      .keycap, .profile div:not(.avatar), .topbar-actions .icon-btn:first-child, .logout-btn span:not([data-icon]) { display: none; }
+      .logout-btn { width: 40px; padding: 0; justify-content: center; }
       .content { padding: 20px 15px 40px; }
       .page-head { display: grid; gap: 14px; }
+      .overview-hero { grid-template-columns: 1fr; padding: 26px 22px; border-radius: 22px; }
+      .overview-hero h1 { font-size: 34px; }
+      .hero-graphic { min-height: 168px; margin-top: 6px; }
+      .hero-graphic svg { height: 168px; }
       .page-head .actions { width: 100%; }
       .page-head .actions .btn { flex: 1; }
       .kpi-grid { grid-template-columns: repeat(2, 1fr); gap: 9px; }
@@ -410,12 +504,6 @@
         <button class="nav-btn" data-view="risk"><span data-icon="shield"></span><span data-i18n="nav_risk">Risk monitor</span></button>
         <button class="nav-btn" data-view="analytics"><span data-icon="chart"></span><span data-i18n="nav_analytics">Analytics</span></button>
       </nav>
-      <div class="sidebar-foot">
-        <div class="source-chip">
-          <i class="source-dot"></i>
-          <div><strong data-i18n="source_loaded">Excel snapshot loaded</strong><span id="sidebarSource">29 contract sheets</span></div>
-        </div>
-      </div>
     </aside>
 
     <main class="main">
@@ -434,23 +522,36 @@
           <button class="icon-btn" id="exportBtn" data-i18n-title="export_title" title="Export portfolio data"><span data-icon="download"></span></button>
           <button class="icon-btn" id="quickPaymentBtn" data-i18n-title="record_payment_title" title="Record a payment"><span data-icon="plus"></span></button>
           <div class="profile">
-            <div class="avatar">FO</div>
-            <div><strong data-i18n="profile_name">Finance Owner</strong><span data-i18n="profile_role">Administrator</span></div>
+            <div class="avatar">MM</div>
+            <div><strong data-i18n="profile_name">Miraziz Mirjalolov</strong><span data-i18n="profile_role">Finance Owner · Administrator</span></div>
           </div>
+          <form class="logout-form" method="post" action="/logout"><button class="logout-btn" type="submit" data-i18n-title="logout_title" title="Log out"><span data-icon="logout"></span><span data-i18n="btn_logout">Log out</span></button></form>
         </div>
       </header>
 
       <div class="content">
         <section class="view active" id="overviewView">
-          <div class="page-head">
-            <div>
+          <div class="page-head overview-hero">
+            <div class="hero-copy">
               <div class="eyebrow" data-i18n="ov_eyebrow">Owner dashboard</div>
               <h1 data-i18n="ov_title">Portfolio overview</h1>
-              <p id="overviewSubtitle">Financial position, collections, and risk based on the uploaded workbook.</p>
+              <p id="overviewSubtitle">Current portfolio data from the Neon Postgres database.</p>
+              <div class="actions hero-actions">
+                <button class="btn" id="overviewPaymentBtn"><span data-icon="wallet"></span><span data-i18n="btn_record_payment">Record payment</span></button>
+                <button class="btn btn-accent" data-open-contract><span data-icon="plus"></span><span data-i18n="btn_new_contract">New contract</span></button>
+              </div>
             </div>
-            <div class="actions">
-              <button class="btn" id="overviewPaymentBtn"><span data-icon="wallet"></span><span data-i18n="btn_record_payment">Record payment</span></button>
-              <button class="btn btn-primary" data-open-contract><span data-icon="plus"></span><span data-i18n="btn_new_contract">New contract</span></button>
+            <div class="hero-graphic" aria-hidden="true">
+              <div class="hero-live"><i></i> LIVE PORTFOLIO</div>
+              <svg viewBox="0 0 330 190" role="img">
+                <defs><linearGradient id="heroLine" x1="0" x2="1"><stop stop-color="#23b5d3"/><stop offset="1" stop-color="#ea526f"/></linearGradient></defs>
+                <path class="hero-grid" d="M18 42H312M18 82H312M18 122H312M18 162H312M62 20V174M122 20V174M182 20V174M242 20V174"/>
+                <path class="hero-area" d="M20 147C55 143 73 114 104 120S153 91 180 96s40-48 69-37 38-24 63-31v138H20Z"/>
+                <path class="hero-line" d="M20 147C55 143 73 114 104 120S153 91 180 96s40-48 69-37 38-24 63-31"/>
+                <g class="hero-car" transform="translate(116 116)"><path d="M7 31h92l-8-17c-2-5-7-8-13-8H34c-6 0-10 3-13 8L7 31Z"/><path d="M2 31h102v26H2z"/><circle cx="24" cy="58" r="10"/><circle cx="82" cy="58" r="10"/><path d="M26 13h52l8 18H17Z"/></g>
+              </svg>
+              <div class="hero-chip hero-chip-a"><span>COLLECTED</span><strong>↑ 18.4%</strong></div>
+              <div class="hero-chip hero-chip-b"><span>RISK SIGNAL</span><strong>Monitored</strong></div>
             </div>
           </div>
 
@@ -460,7 +561,7 @@
             <article class="card">
               <div class="card-head">
                 <div><h2 data-i18n="ov_cashflow_title">Monthly collections</h2><p data-i18n="ov_cashflow_sub">Scheduled versus recorded payments · last 12 months</p></div>
-                <div class="chart-legend"><span class="legend-key"><i class="legend-dot plan"></i><span data-i18n="legend_scheduled">Scheduled</span></span><span class="legend-key"><i class="legend-dot"></i><span data-i18n="legend_collected">Collected</span></span></div>
+                <div class="chart-legend"><span class="legend-key"><i class="legend-dot plan"></i><span data-i18n="legend_scheduled">Scheduled</span></span><span class="legend-key"><i class="legend-dot"></i><span data-i18n="legend_collected">Collected</span></span><span class="legend-key"><i class="legend-dot current"></i><span data-i18n="legend_current">Current month</span></span></div>
               </div>
               <div class="card-body"><div class="chart-wrap" id="cashflowChart"></div></div>
             </article>
@@ -478,7 +579,7 @@
 
         <section class="view" id="contractsView">
           <div class="page-head">
-            <div><div class="eyebrow" data-i18n="ct_eyebrow">Portfolio register</div><h1 data-i18n="ct_title">Contracts</h1><p data-i18n="ct_sub">Review every imported and newly entered contract, including closed portfolio history.</p></div>
+            <div><div class="eyebrow" data-i18n="ct_eyebrow">Portfolio register</div><h1 data-i18n="ct_title">Contracts</h1><p data-i18n="ct_sub">Add contracts manually or import an XLSX workbook; a Payments sheet can record payments by contract ID.</p></div>
             <div class="actions"><button class="btn" id="importExcelBtn"><span data-icon="upload"></span><span data-i18n="btn_import_excel">Import Excel</span></button><button class="btn btn-primary" data-open-contract><span data-icon="plus"></span><span data-i18n="btn_new_contract">New contract</span></button></div>
           </div>
           <div class="filterbar">
@@ -500,7 +601,7 @@
           <div class="kpi-grid" id="paymentKpis"></div>
           <div class="dashboard-grid">
             <article class="card">
-              <div class="card-head"><div><h2 data-i18n="pay_forecast_title">12-month cash-flow plan</h2><p data-i18n="pay_forecast_sub">Expected scheduled payments from the contract register</p></div></div>
+              <div class="card-head"><div><h2 data-i18n="pay_forecast_title">12-month cash-flow plan</h2><p data-i18n="pay_forecast_sub">Current month through the next 11 months · current month highlighted</p></div><div class="chart-legend"><span class="legend-key"><i class="legend-dot current"></i><span data-i18n="legend_current">Current month</span></span></div></div>
               <div class="card-body"><div class="chart-wrap" id="forecastChart"></div></div>
             </article>
             <article class="card">
@@ -567,6 +668,7 @@
     <form class="modal" id="contractForm" method="dialog">
       <div class="modal-head"><div><h2 id="contractModalTitle">New contract</h2><p id="contractModalSubtitle">Create a contract and calculate its repayment schedule.</p></div><button class="modal-close" type="button" data-close-dialog="contractDialog"><span data-icon="x"></span></button></div>
       <div class="modal-body">
+        <div class="form-safety-note"><span data-icon="shield"></span><span data-i18n="draft_protection">Draft protected — this form closes only with Cancel or Save.</span></div>
         <input type="hidden" name="contractId">
         <section class="form-section">
           <div class="form-section-title" data-i18n="cm_section_asset">Asset and parties</div>
@@ -605,7 +707,7 @@
   <dialog id="paymentDialog">
     <form class="modal" id="paymentForm" method="dialog">
       <div class="modal-head"><div><h2 data-i18n="pm_title">Record payment</h2><p data-i18n="pm_sub">Apply cash received against the earliest unpaid installments.</p></div><button class="modal-close" type="button" data-close-dialog="paymentDialog"><span data-icon="x"></span></button></div>
-      <div class="modal-body"><div class="form-grid">
+      <div class="modal-body"><div class="form-safety-note"><span data-icon="shield"></span><span data-i18n="draft_protection">Draft protected — this form closes only with Cancel or Save.</span></div><div class="form-grid">
         <div class="field span-3"><label for="paymentContract" data-i18n="f_contract">Contract</label><select id="paymentContract" name="paymentContract" required></select></div>
         <div class="field"><label for="paymentAmount" data-i18n="f_amount">Amount (USD)</label><input id="paymentAmount" name="paymentAmount" type="number" min="0.01" step="0.01" required></div>
         <div class="field"><label for="paymentDate" data-i18n="f_payment_date">Payment date</label><input id="paymentDate" name="paymentDate" type="date" required></div>
@@ -630,10 +732,10 @@
     const I18N = {
       en: {
         tagline: 'PORTFOLIO OS', nav_workspace: 'Workspace', nav_overview: 'Overview', nav_contracts: 'Contracts', nav_payments: 'Payments', nav_risk: 'Risk monitor', nav_risk_short: 'Risk', nav_analytics: 'Analytics',
-        source_loaded: 'Excel snapshot loaded', search_portfolio: 'Search portfolio', search_placeholder: 'Search contracts, clients, plates…', export_title: 'Export portfolio data', record_payment_title: 'Record a payment', profile_name: 'Finance Owner', profile_role: 'Administrator',
-        ov_eyebrow: 'Owner dashboard', ov_title: 'Portfolio overview', btn_record_payment: 'Record payment', btn_new_contract: 'New contract', ov_cashflow_title: 'Monthly collections', ov_cashflow_sub: 'Scheduled versus recorded payments · last 12 months', legend_scheduled: 'Scheduled', legend_collected: 'Collected', ov_risk_title: 'Portfolio status', ov_risk_sub: 'Open receivables grouped by payment risk', ov_attention_title: 'Requires attention', btn_view_all: 'View all', th_contract: 'Contract', th_borrower: 'Borrower', th_outstanding: 'Outstanding', th_overdue: 'Overdue', th_days_late: 'Days late', th_risk: 'Risk',
-        ct_eyebrow: 'Portfolio register', ct_title: 'Contracts', ct_sub: 'Review every imported and newly entered contract, including closed portfolio history.', ct_search_placeholder: 'Search model, borrower, plate or ID', filter_all_statuses: 'All statuses', filter_all_types: 'All asset types', ct_register_title: 'Contract register', th_contract_asset: 'Contract / asset', th_principal: 'Principal', th_total_return: 'Total return', th_roi: 'ROI', th_status: 'Status',
-        pay_eyebrow: 'Cash control', pay_title: 'Payments', pay_sub: 'Track the collection schedule, next due amounts, and recorded payment performance.', pay_forecast_title: '12-month cash-flow plan', pay_forecast_sub: 'Expected scheduled payments from the contract register', pay_upcoming_title: 'Upcoming due', pay_upcoming_sub: 'Nearest scheduled payments after the data date', pay_recent_title: 'Recent recorded payments', pay_recent_sub: 'Latest schedule entries', th_payment_date: 'Payment date', th_scheduled: 'Scheduled', th_paid: 'Paid', th_variance: 'Variance',
+        search_portfolio: 'Search portfolio', search_placeholder: 'Search contracts, clients, plates…', export_title: 'Export portfolio data', record_payment_title: 'Record a payment', logout_title: 'Log out securely', btn_logout: 'Log out', profile_name: 'Miraziz Mirjalolov', profile_role: 'Finance Owner · Administrator',
+        ov_eyebrow: 'Owner dashboard', ov_title: 'Portfolio overview', btn_record_payment: 'Record payment', btn_new_contract: 'New contract', ov_cashflow_title: 'Monthly collections', ov_cashflow_sub: 'Scheduled versus recorded payments · last 12 months including the current month', legend_scheduled: 'Scheduled', legend_collected: 'Collected', legend_current: 'Current month', ov_risk_title: 'Portfolio status', ov_risk_sub: 'Open receivables grouped by payment risk', ov_attention_title: 'Requires attention', btn_view_all: 'View all', th_contract: 'Contract', th_borrower: 'Borrower', th_outstanding: 'Outstanding', th_overdue: 'Overdue', th_days_late: 'Days late', th_risk: 'Risk',
+        ct_eyebrow: 'Portfolio register', ct_title: 'Contracts', ct_sub: 'Add contracts manually or import an XLSX workbook; a Payments sheet can record payments by contract ID.', ct_search_placeholder: 'Search model, borrower, plate or ID', filter_all_statuses: 'All statuses', filter_all_types: 'All asset types', ct_register_title: 'Contract register', th_contract_asset: 'Contract / asset', th_principal: 'Principal', th_total_return: 'Total return', th_roi: 'ROI', th_status: 'Status',
+        pay_eyebrow: 'Cash control', pay_title: 'Payments', pay_sub: 'Track the collection schedule, next due amounts, and recorded payment performance.', pay_forecast_title: '12-month cash-flow plan', pay_forecast_sub: 'Current month through the next 11 months · current month highlighted', pay_upcoming_title: 'Upcoming due', pay_upcoming_sub: 'Nearest scheduled payments after the data date', pay_recent_title: 'Recent recorded payments', pay_recent_sub: 'Latest schedule entries', th_payment_date: 'Payment date', th_scheduled: 'Scheduled', th_paid: 'Paid', th_variance: 'Variance',
         risk_eyebrow: 'Early warning', risk_title: 'Risk monitor', risk_sub: 'Prioritize collections using overdue balance, days past due, and payment completion.', btn_open_register: 'Open register', risk_top_title: 'Highest-priority contracts', risk_top_sub: 'Ranked by heuristic risk score and overdue exposure', risk_method_title: 'Risk methodology', risk_method_sub: 'Transparent operational score · 0–100', risk_m1_title: 'Overdue share', risk_m1_sub: 'Overdue amount relative to remaining receivables.', risk_m2_title: 'Days past due', risk_m2_sub: 'Time elapsed since the oldest unpaid scheduled amount.', risk_m3_title: 'Data and collateral', risk_m3_sub: 'Reserved for mileage, vehicle age, and collateral value when completed.', risk_notice_strong: 'Important:', risk_notice_text: 'this is a transparent collection-priority heuristic, not a statistically trained probability-of-default model. A predictive score requires more borrower and repayment history.',
         an_eyebrow: 'Investment performance', an_title: 'Analytics', an_sub: 'Contracted economics, portfolio composition, return rates, and concentration.', btn_print: 'Print summary', an_roi_title: 'Return rate by asset type', an_roi_sub: 'Weighted contracted markup ÷ principal', an_mix_title: 'Portfolio composition', an_mix_sub: 'Original principal invested by asset type', an_signals_title: 'Decision signals', an_signals_sub: 'Automatically calculated from the normalized workbook records',
         status_current: 'Current', status_watch: 'Watch', status_at_risk: 'At risk', status_critical: 'Critical', status_closed: 'Closed', asset_car: 'Car', asset_commercial: 'Commercial vehicle', asset_realestate: 'Real estate', asset_other: 'Other',
@@ -646,16 +748,16 @@
         kpi_cash_collected: 'Cash collected', kpi_cash_collected_foot: 'All recorded contract payments', kpi_due_to_date: 'Due to date', kpi_due_to_date_foot: 'As of {date}', kpi_collection_rate2_foot: '{paid} recorded against due schedule', kpi_next30: 'Next 30 days', kpi_next30_foot: '{n} scheduled installments', kpi_overdue: 'Overdue', kpi_overdue_foot: '{n} open contracts', kpi_avg_payment: 'Average payment', kpi_avg_payment_foot: 'Average scheduled open-contract installment',
         kpi_critical: 'Critical contracts', kpi_critical_foot: '{amt} outstanding', kpi_total_overdue: 'Total overdue', kpi_total_overdue_foot: '{n} contracts with arrears', kpi_avg_days_late: 'Average days late', kpi_avg_days_late_val: '{n} days', kpi_avg_days_late_foot: 'Among contracts with arrears', kpi_largest_exposure: 'Largest exposure', kpi_largest_exposure_foot: 'Single open contract', kpi_incomplete_data: 'Incomplete asset data', kpi_incomplete_data_foot: 'Plate or mileage missing',
         kpi_originated: 'Total originated', kpi_originated_foot: '{n} historical + open contracts', kpi_contracted_profit_foot: 'Markup stated in contracts', kpi_weighted_roi: 'Weighted ROI', kpi_weighted_roi_foot: 'Total markup ÷ total principal', kpi_open_yield: 'Open annualized yield', kpi_open_yield_foot: 'Simple, principal-weighted estimate', kpi_closed: 'Closed contracts', kpi_closed_foot: '{pct}% of contract count', kpi_avg_duration: 'Average duration', kpi_avg_duration_val: '{n} mo', kpi_avg_duration_foot: 'Across all imported contracts',
-        overview_subtitle: 'As of {date} · {n} contract sheets normalized from {source}', sidebar_source: '{n} contract sheets · {date}', detail_subtitle: '{id} · {source} · {status}', detail_source_fallback: 'New contract',
+        overview_subtitle: 'As of {date} · {n} contracts · Neon Postgres database', detail_subtitle: '{id} · {source} · {status}', detail_source_fallback: 'New contract',
         insight_largest_title: 'Largest open exposure: {name}', insight_largest_text: '{amount} represents {pct}% of all open receivables.', insight_delinq_title: 'Longest delinquency: {name}', insight_delinq_text: '{days} days past due with {amount} currently overdue.', insight_return_title: 'Highest contracted return segment: {type}', insight_return_text: '{pct}% weighted simple ROI based on stated markup and principal.', insight_gap_title: 'Operational data gap', insight_gap_text: '{plates} open contracts do not yet contain a license plate, and {mileage} lack mileage. Complete these fields before collateral-risk modeling.',
-        toast_contract_updated: 'Contract information updated.', toast_contract_created: 'Contract {id} created.', toast_payment_recorded: '{amount} recorded for {name}.', toast_export: 'Portfolio data exported.', toast_schedule_updated: 'Payment schedule updated for {name}.', mobile_nav_aria: 'Mobile navigation', default_lender: 'Company owner', manual_entry: 'Manual entry', toast_sync_failed: 'Saved locally, but failed to sync to the database. Check your connection.', btn_import_excel: 'Import Excel', toast_import_summary: 'Imported {n} contracts.{skipped}', toast_import_skipped: ' {n} rows skipped.', toast_import_error: 'Import failed: {error}', btn_delete_contract: 'Delete contract', confirm_delete_contract: 'Delete {name} ({id}) permanently? This removes its full payment history and cannot be undone.', toast_contract_deleted: '{name} deleted.', toast_delete_failed: 'Failed to delete: {error}',
+        toast_contract_updated: 'Contract information saved to Neon.', toast_contract_created: 'Contract {id} saved to Neon.', toast_payment_recorded: '{amount} recorded for {name} in Neon.', toast_export: 'Portfolio data exported.', toast_schedule_updated: 'Payment schedule saved to Neon for {name}.', mobile_nav_aria: 'Mobile navigation', default_lender: 'Company owner', manual_entry: 'Manual entry', toast_sync_failed: 'Not saved. Neon Postgres did not confirm the change: {error}', btn_import_excel: 'Import Excel', toast_import_summary: 'Imported {n} contracts and {p} payments to Neon.{skipped}', toast_import_skipped: ' {n} rows skipped.', toast_import_error: 'Import failed; unconfirmed rows were not added to the dashboard: {error}', btn_delete_contract: 'Delete contract', confirm_delete_contract: 'Delete {name} ({id}) permanently? This removes its full payment history and cannot be undone.', toast_contract_deleted: '{name} deleted.', toast_delete_failed: 'Failed to delete: {error}', draft_protection: 'Draft protected — this form closes only with Cancel or Save.', confirm_discard_changes: 'Discard your unsaved changes?', confirm_ai_import: 'Use AI normalization? Contract rows will be sent to the configured Groq service. Choose Cancel to use private local parsing instead.',
       },
       ru: {
         tagline: 'ПОРТФЕЛЬНАЯ СИСТЕМА', nav_workspace: 'Разделы', nav_overview: 'Обзор', nav_contracts: 'Договоры', nav_payments: 'Платежи', nav_risk: 'Мониторинг рисков', nav_risk_short: 'Риски', nav_analytics: 'Аналитика',
-        source_loaded: 'Загружен снимок Excel', search_portfolio: 'Поиск по портфелю', search_placeholder: 'Поиск по договорам, клиентам, номерам…', export_title: 'Экспорт данных портфеля', record_payment_title: 'Записать платёж', profile_name: 'Владелец финансов', profile_role: 'Администратор',
-        ov_eyebrow: 'Панель владельца', ov_title: 'Обзор портфеля', btn_record_payment: 'Записать платёж', btn_new_contract: 'Новый договор', ov_cashflow_title: 'Ежемесячные поступления', ov_cashflow_sub: 'План против фактических платежей · последние 12 месяцев', legend_scheduled: 'По плану', legend_collected: 'Получено', ov_risk_title: 'Статус портфеля', ov_risk_sub: 'Открытая задолженность по уровню риска', ov_attention_title: 'Требует внимания', btn_view_all: 'Смотреть все', th_contract: 'Договор', th_borrower: 'Заёмщик', th_outstanding: 'Остаток', th_overdue: 'Просрочка', th_days_late: 'Дней просрочки', th_risk: 'Риск',
-        ct_eyebrow: 'Реестр портфеля', ct_title: 'Договоры', ct_sub: 'Все загруженные и новые договоры, включая закрытую историю портфеля.', ct_search_placeholder: 'Поиск по модели, заёмщику, номеру или ID', filter_all_statuses: 'Все статусы', filter_all_types: 'Все типы активов', ct_register_title: 'Реестр договоров', th_contract_asset: 'Договор / актив', th_principal: 'Основной долг', th_total_return: 'Итоговая сумма', th_roi: 'ROI', th_status: 'Статус',
-        pay_eyebrow: 'Управление денежным потоком', pay_title: 'Платежи', pay_sub: 'График сбора платежей, ближайшие сроки и фактическая собираемость.', pay_forecast_title: 'План поступлений на 12 месяцев', pay_forecast_sub: 'Ожидаемые платежи по реестру договоров', pay_upcoming_title: 'Ближайшие платежи', pay_upcoming_sub: 'Ближайшие платежи после отчётной даты', pay_recent_title: 'Недавние платежи', pay_recent_sub: 'Последние записи графика', th_payment_date: 'Дата платежа', th_scheduled: 'По плану', th_paid: 'Оплачено', th_variance: 'Отклонение',
+        search_portfolio: 'Поиск по портфелю', search_placeholder: 'Поиск по договорам, клиентам, номерам…', export_title: 'Экспорт данных портфеля', record_payment_title: 'Записать платёж', logout_title: 'Безопасный выход', btn_logout: 'Выйти', profile_name: 'Miraziz Mirjalolov', profile_role: 'Владелец финансов · Администратор',
+        ov_eyebrow: 'Панель владельца', ov_title: 'Обзор портфеля', btn_record_payment: 'Записать платёж', btn_new_contract: 'Новый договор', ov_cashflow_title: 'Ежемесячные поступления', ov_cashflow_sub: 'План и факт · последние 12 месяцев, включая текущий', legend_scheduled: 'По плану', legend_collected: 'Получено', legend_current: 'Текущий месяц', ov_risk_title: 'Статус портфеля', ov_risk_sub: 'Открытая задолженность по уровню риска', ov_attention_title: 'Требует внимания', btn_view_all: 'Смотреть все', th_contract: 'Договор', th_borrower: 'Заёмщик', th_outstanding: 'Остаток', th_overdue: 'Просрочка', th_days_late: 'Дней просрочки', th_risk: 'Риск',
+        ct_eyebrow: 'Реестр портфеля', ct_title: 'Договоры', ct_sub: 'Добавляйте договоры вручную или импортируйте XLSX; лист «Payments» записывает платежи по ID договора.', ct_search_placeholder: 'Поиск по модели, заёмщику, номеру или ID', filter_all_statuses: 'Все статусы', filter_all_types: 'Все типы активов', ct_register_title: 'Реестр договоров', th_contract_asset: 'Договор / актив', th_principal: 'Основной долг', th_total_return: 'Итоговая сумма', th_roi: 'ROI', th_status: 'Статус',
+        pay_eyebrow: 'Управление денежным потоком', pay_title: 'Платежи', pay_sub: 'График сбора платежей, ближайшие сроки и фактическая собираемость.', pay_forecast_title: 'План поступлений на 12 месяцев', pay_forecast_sub: 'Текущий месяц и следующие 11 месяцев · текущий месяц выделен', pay_upcoming_title: 'Ближайшие платежи', pay_upcoming_sub: 'Ближайшие платежи после отчётной даты', pay_recent_title: 'Недавние платежи', pay_recent_sub: 'Последние записи графика', th_payment_date: 'Дата платежа', th_scheduled: 'По плану', th_paid: 'Оплачено', th_variance: 'Отклонение',
         risk_eyebrow: 'Раннее предупреждение', risk_title: 'Мониторинг рисков', risk_sub: 'Приоритизация взысканий по просроченной сумме, дням просрочки и полноте оплаты.', btn_open_register: 'Открыть реестр', risk_top_title: 'Договоры с наивысшим приоритетом', risk_top_sub: 'Ранжировано по оценке риска и просроченной сумме', risk_method_title: 'Методика оценки риска', risk_method_sub: 'Прозрачная операционная оценка · 0–100', risk_m1_title: 'Доля просрочки', risk_m1_sub: 'Просроченная сумма относительно остатка задолженности.', risk_m2_title: 'Дни просрочки', risk_m2_sub: 'Время с момента старейшего неоплаченного платежа.', risk_m3_title: 'Данные и залог', risk_m3_sub: 'Резерв для пробега, возраста ТС и стоимости залога после заполнения.', risk_notice_strong: 'Важно:', risk_notice_text: 'это прозрачная эвристика приоритизации взысканий, а не статистически обученная модель вероятности дефолта. Для прогнозной модели нужно больше истории по заёмщикам и платежам.',
         an_eyebrow: 'Инвестиционные показатели', an_title: 'Аналитика', an_sub: 'Экономика договоров, состав портфеля, доходность и концентрация.', btn_print: 'Печать сводки', an_roi_title: 'Доходность по типу актива', an_roi_sub: 'Взвешенная наценка ÷ основной долг', an_mix_title: 'Состав портфеля', an_mix_sub: 'Исходный основной долг по типу актива', an_signals_title: 'Ключевые сигналы', an_signals_sub: 'Рассчитывается автоматически по данным реестра',
         status_current: 'Текущий', status_watch: 'Наблюдение', status_at_risk: 'Риск', status_critical: 'Критический', status_closed: 'Закрыт', asset_car: 'Автомобиль', asset_commercial: 'Коммерческий транспорт', asset_realestate: 'Недвижимость', asset_other: 'Другое',
@@ -668,9 +770,9 @@
         kpi_cash_collected: 'Собрано средств', kpi_cash_collected_foot: 'Все зафиксированные платежи', kpi_due_to_date: 'Начислено к дате', kpi_due_to_date_foot: 'По состоянию на {date}', kpi_collection_rate2_foot: '{paid} собрано от начисленного', kpi_next30: 'Ближайшие 30 дней', kpi_next30_foot: '{n} плановых платежей', kpi_overdue: 'Просрочка', kpi_overdue_foot: '{n} открытых договоров', kpi_avg_payment: 'Средний платёж', kpi_avg_payment_foot: 'Средний плановый платёж по открытым договорам',
         kpi_critical: 'Критические договоры', kpi_critical_foot: '{amt} остаток', kpi_total_overdue: 'Общая просрочка', kpi_total_overdue_foot: '{n} договоров с задолженностью', kpi_avg_days_late: 'Средняя просрочка', kpi_avg_days_late_val: '{n} дн.', kpi_avg_days_late_foot: 'Среди договоров с просрочкой', kpi_largest_exposure: 'Крупнейший остаток', kpi_largest_exposure_foot: 'Один открытый договор', kpi_incomplete_data: 'Неполные данные', kpi_incomplete_data_foot: 'Нет номера или пробега',
         kpi_originated: 'Всего выдано', kpi_originated_foot: '{n} договоров (вкл. закрытые)', kpi_contracted_profit_foot: 'Наценка по договорам', kpi_weighted_roi: 'Взвешенный ROI', kpi_weighted_roi_foot: 'Наценка ÷ основной долг', kpi_open_yield: 'Годовая доходность', kpi_open_yield_foot: 'Простая оценка, взвешенная по сумме', kpi_closed: 'Закрытые договоры', kpi_closed_foot: '{pct}% от всех договоров', kpi_avg_duration: 'Средний срок', kpi_avg_duration_val: '{n} мес.', kpi_avg_duration_foot: 'По всем договорам',
-        overview_subtitle: 'На {date} · {n} договоров из {source}', sidebar_source: '{n} договоров · {date}', detail_subtitle: '{id} · {source} · {status}', detail_source_fallback: 'Новый договор',
+        overview_subtitle: 'На {date} · {n} договоров · база данных Neon Postgres', detail_subtitle: '{id} · {source} · {status}', detail_source_fallback: 'Новый договор',
         insight_largest_title: 'Крупнейший открытый остаток: {name}', insight_largest_text: '{amount} — это {pct}% от всей открытой задолженности.', insight_delinq_title: 'Самая долгая просрочка: {name}', insight_delinq_text: '{days} дн. просрочки, текущая сумма — {amount}.', insight_return_title: 'Наиболее доходный сегмент: {type}', insight_return_text: '{pct}% взвешенная простая доходность на основе наценки и долга.', insight_gap_title: 'Пробелы в данных', insight_gap_text: 'У {plates} открытых договоров нет госномера, у {mileage} — пробега. Заполните их для оценки залога.',
-        toast_contract_updated: 'Данные договора обновлены.', toast_contract_created: 'Договор {id} создан.', toast_payment_recorded: '{amount} зачислено по договору {name}.', toast_export: 'Данные портфеля экспортированы.', toast_schedule_updated: 'График платежей обновлён для {name}.', mobile_nav_aria: 'Мобильная навигация', default_lender: 'Владелец компании', manual_entry: 'Ручной ввод', toast_sync_failed: 'Сохранено локально, но не удалось синхронизировать с базой данных. Проверьте соединение.', btn_import_excel: 'Импорт из Excel', toast_import_summary: 'Импортировано договоров: {n}.{skipped}', toast_import_skipped: ' Пропущено строк: {n}.', toast_import_error: 'Ошибка импорта: {error}', btn_delete_contract: 'Удалить договор', confirm_delete_contract: 'Удалить {name} ({id}) навсегда? Вся история платежей будет удалена без возможности восстановления.', toast_contract_deleted: '{name} удалён.', toast_delete_failed: 'Не удалось удалить: {error}',
+        toast_contract_updated: 'Данные договора сохранены в Neon.', toast_contract_created: 'Договор {id} сохранён в Neon.', toast_payment_recorded: '{amount} по договору {name} сохранено в Neon.', toast_export: 'Данные портфеля экспортированы.', toast_schedule_updated: 'График платежей для {name} сохранён в Neon.', mobile_nav_aria: 'Мобильная навигация', default_lender: 'Владелец компании', manual_entry: 'Ручной ввод', toast_sync_failed: 'Не сохранено. Neon Postgres не подтвердил изменение: {error}', btn_import_excel: 'Импорт из Excel', toast_import_summary: 'В Neon импортировано: {n} договоров и {p} платежей.{skipped}', toast_import_skipped: ' Пропущено строк: {n}.', toast_import_error: 'Ошибка импорта; неподтверждённые строки не добавлены: {error}', btn_delete_contract: 'Удалить договор', confirm_delete_contract: 'Удалить {name} ({id}) навсегда? Вся история платежей будет удалена без возможности восстановления.', toast_contract_deleted: '{name} удалён.', toast_delete_failed: 'Не удалось удалить: {error}', draft_protection: 'Черновик защищён — форма закрывается только через «Отмена» или «Сохранить».', confirm_discard_changes: 'Отменить несохранённые изменения?', confirm_ai_import: 'Использовать ИИ-нормализацию? Строки договоров будут отправлены в настроенный сервис Groq. Нажмите «Отмена», чтобы использовать локальную обработку.',
       }
     };
     let lang = localStorage.getItem(LANG_KEY) === 'ru' ? 'ru' : 'en';
@@ -681,7 +783,7 @@
     }
     function statusLabel(status) { return t({Current:'status_current',Watch:'status_watch','At risk':'status_at_risk',Critical:'status_critical',Closed:'status_closed'}[status] || status); }
     function assetTypeLabel(type) { return t({Car:'asset_car','Commercial vehicle':'asset_commercial','Real estate':'asset_realestate',Other:'asset_other'}[type] || type); }
-    function assetTypeColor(type) { return {Car:'#2a78d6','Commercial vehicle':'#1baf7a','Real estate':'#4a3aa7',Other:'#e87ba4'}[type] || '#8a8798'; }
+    function assetTypeColor(type) { return {Car:'#279af1','Commercial vehicle':'#23b5d3','Real estate':'#ea526f',Other:'#070600'}[type] || '#87939d'; }
     const ICONS = {
       grid: '<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>',
       file: '<path d="M6 2h8l4 4v16H6z"/><path d="M14 2v5h5M9 12h6M9 16h6"/>',
@@ -692,6 +794,7 @@
       download: '<path d="M12 3v12M7 10l5 5 5-5M4 21h16"/>',
       upload: '<path d="M12 21V9M7 14l5-5 5 5M4 3h16"/>',
       trash: '<path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/>',
+      logout: '<path d="M10 4H5v16h5M14 8l4 4-4 4M8 12h10"/>',
       plus: '<path d="M12 5v14M5 12h14"/>',
       x: '<path d="M6 6l12 12M18 6L6 18"/>',
       car: '<path d="M4 16l1-6 2-4h10l2 4 1 6v3h-2v-2H6v2H4z"/><path d="M5 11h14M8 14h.01M16 14h.01"/>',
@@ -717,12 +820,17 @@
     const pct = new Intl.NumberFormat('en-US', { style: 'percent', maximumFractionDigits: 1 });
     function shortDate() { return new Intl.DateTimeFormat(lang === 'ru' ? 'ru-RU' : 'en-GB', { day: 'numeric', month: 'short', year: 'numeric' }); }
     function monthLabel() { return new Intl.DateTimeFormat(lang === 'ru' ? 'ru-RU' : 'en-US', { month: 'short' }); }
-    const dataDate = parseISO(SEED_DATA.asOf);
+    // The seed workbook keeps its original snapshot date as metadata, but
+    // operational calculations must advance with the actual calendar date.
+    const dataDate = new Date();
+    dataDate.setHours(12, 0, 0, 0);
+    const currentDateISO = isoDate(dataDate);
     let contracts = clone(SEED_DATA.contracts);
     let currentView = 'overview';
     let detailContractId = null;
     let scheduleEditMode = false;
     let scheduleDraft = null;
+    const dirtyDialogs = new Set();
 
     function clone(value) { return JSON.parse(JSON.stringify(value)); }
     function cachedContracts() {
@@ -749,23 +857,29 @@
         return cachedContracts() || clone(SEED_DATA.contracts);
       }
     }
-    // Persists to the database (source of truth) and mirrors to
-    // localStorage as an offline cache. Fire-and-forget by design so UI
-    // stays responsive; failures surface as a toast.
-    async function saveContracts() {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(contracts));
-      try {
-        const res = await fetch('/api/contracts', {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(contracts),
-        });
-        if (!res.ok) throw new Error(`API ${res.status}`);
-      } catch (err) {
-        console.error('Failed to sync to database:', err);
-        showToast(t('toast_sync_failed'));
+    // Neon is the source of truth. The local cache is updated only after the
+    // API confirms every requested write; failed writes remain as form drafts.
+    async function saveContracts(changed = contracts) {
+      const changedContracts = Array.isArray(changed) ? changed : [changed];
+      const res = await fetch('/api/contracts', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ contracts: changedContracts }),
+      });
+      const result = await res.json().catch(() => ({}));
+      if (res.status !== 200 || result.errors?.length) {
+        throw new Error(result.errors?.map(item=>`${item.id||'record'}: ${item.error}`).join('; ') || result.error || `API ${res.status}`);
       }
+      const nextContracts = clone(contracts);
+      changedContracts.forEach(saved => {
+        const index = nextContracts.findIndex(item => item.id === saved.id);
+        if (index >= 0) nextContracts[index] = clone(saved);
+        else nextContracts.unshift(clone(saved));
+      });
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(nextContracts));
+      return result;
     }
+    function setFormPending(form, pending) { form.setAttribute('aria-busy', String(pending)); const submit=form.querySelector('[type="submit"]'); if(submit) submit.disabled=pending; }
     function sum(rows, field) { return rows.reduce((total, row) => total + (Number(row[field]) || 0), 0); }
     function parseISO(value) { return value ? new Date(`${value}T12:00:00`) : null; }
     function isoDate(value) { return value.toISOString().slice(0, 10); }
@@ -859,7 +973,7 @@
 
     function renderOverview() {
       const m = portfolioMetrics();
-      document.getElementById('overviewSubtitle').textContent = t('overview_subtitle', { date: formatDate(SEED_DATA.asOf), n: contracts.length, source: SEED_DATA.source });
+      document.getElementById('overviewSubtitle').textContent = t('overview_subtitle', { date: formatDate(currentDateISO), n: contracts.length });
       document.getElementById('kpiGrid').innerHTML = [
         kpiCard(t('kpi_outstanding'), compactMoney(m.outstanding), t('kpi_outstanding_foot', { n: m.activeCount }), '', 'wallet'),
         kpiCard(t('kpi_collection_rate'), `${m.collectionRate.toFixed(1)}%`, t('kpi_collection_rate_foot', { paid: money.format(m.duePaid), due: money.format(m.dueScheduled) }), 'blue', 'check'),
@@ -888,18 +1002,23 @@
           const due = parseISO(row.dueDate);
           if (due && due >= start && due <= end) { scheduled += +row.scheduled || 0; paid += +row.paid || 0; }
         }));
-        rows.push({ key: `${start.getFullYear()}-${String(start.getMonth()+1).padStart(2,'0')}`, label: monthLabel().format(start), fullLabel: `${monthLabel().format(start)} ${start.getFullYear()}`, scheduled, paid });
+        rows.push({ key: `${start.getFullYear()}-${String(start.getMonth()+1).padStart(2,'0')}`, label: monthLabel().format(start), fullLabel: `${monthLabel().format(start)} ${start.getFullYear()}`, scheduled, paid, isCurrent: offset === 0 });
       }
       return rows;
     }
 
     function renderCashflowChart(targetId, rows, showActual) {
-      const width = 820, height = 340, left = 48, right = 12, top = 12, bottom = 40;
+      const width = 820, height = 340, left = 48, right = 12, top = 28, bottom = 40;
       const innerW = width - left - right, innerH = height - top - bottom;
       const maxValue = Math.max(1, ...rows.flatMap(r => showActual ? [r.scheduled, r.paid] : [r.scheduled]));
       const scaleMax = Math.ceil(maxValue / 5000) * 5000 || maxValue;
       const groupW = innerW / rows.length, barW = Math.min(18, groupW * (showActual ? .28 : .48));
-      let svg = `<svg viewBox="0 0 ${width} ${height}" role="img" aria-label="${showActual ? 'Scheduled and collected payments by month' : 'Scheduled payments forecast by month'}"><defs><linearGradient id="barGradient" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#6366f1"/><stop offset="100%" stop-color="#a855f7"/></linearGradient></defs>`;
+      let svg = `<svg viewBox="0 0 ${width} ${height}" role="img" aria-label="${showActual ? 'Scheduled and collected payments by month' : 'Scheduled payments forecast by month'}"><defs><linearGradient id="barGradient" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#315b78"/><stop offset="100%" stop-color="#287f92"/></linearGradient></defs>`;
+      rows.forEach((row, i) => {
+        if (!row.isCurrent) return;
+        const x = left + groupW * i + 3;
+        svg += `<rect x="${x}" y="${top-18}" width="${Math.max(0,groupW-6)}" height="${innerH+24}" rx="8" fill="rgba(39,154,241,.06)" stroke="rgba(39,154,241,.28)" stroke-dasharray="3 3"/><text x="${x+(groupW-6)/2}" y="${top-7}" text-anchor="middle" font-size="8" font-weight="800" fill="#315b78">${lang==='ru'?'СЕЙЧАС':'NOW'}</text>`;
+      });
       for (let i=0;i<=4;i++) {
         const y = top + innerH * i / 4, value = scaleMax * (1 - i / 4);
         svg += `<line class="chart-grid" x1="${left}" x2="${width-right}" y1="${y}" y2="${y}"/><text class="chart-label" x="${left-8}" y="${y+3}" text-anchor="end">${value >= 1000 ? '$'+Math.round(value/1000)+'k' : '$'+value}</text>`;
@@ -908,12 +1027,12 @@
         const center = left + groupW * i + groupW / 2;
         const sh = row.scheduled / scaleMax * innerH, sy = top + innerH - sh;
         const planX = showActual ? center - barW - 2 : center - barW / 2;
-        svg += `<rect x="${planX}" y="${sy}" width="${barW}" height="${Math.max(0,sh)}" rx="4" fill="#d8d7ec"><title>${row.fullLabel}: scheduled ${money1.format(row.scheduled)}</title></rect>`;
+        svg += `<rect x="${planX}" y="${sy}" width="${barW}" height="${Math.max(0,sh)}" rx="4" fill="${row.isCurrent?'#b9c8ce':'#ced8dc'}"><title>${row.fullLabel}: scheduled ${money1.format(row.scheduled)}</title></rect>`;
         if (showActual) {
           const ah = row.paid / scaleMax * innerH, ay = top + innerH - ah;
           svg += `<rect x="${center+2}" y="${ay}" width="${barW}" height="${Math.max(0,ah)}" rx="4" fill="url(#barGradient)"><title>${row.fullLabel}: collected ${money1.format(row.paid)}</title></rect>`;
         }
-        svg += `<text class="chart-label" x="${center}" y="${height-14}" text-anchor="middle">${row.label}</text>`;
+        svg += `<text class="chart-label" x="${center}" y="${height-14}" text-anchor="middle"${row.isCurrent?' font-weight="800" fill="#315b78"':''}>${row.label}</text>`;
       });
       svg += `</svg>`;
       document.getElementById(targetId).innerHTML = svg;
@@ -921,10 +1040,10 @@
 
     function renderRiskDonut(m) {
       const buckets = [
-        {name:'Current', color:'#6366f1', rows:m.open.filter(c=>c.status==='Current')},
-        {name:'Watch', color:'#d97706', rows:m.open.filter(c=>c.status==='Watch')},
-        {name:'At risk', color:'#ea580c', rows:m.open.filter(c=>c.status==='At risk')},
-        {name:'Critical', color:'#e11d48', rows:m.open.filter(c=>c.status==='Critical')}
+        {name:'Current', color:'#23b5d3', rows:m.open.filter(c=>c.status==='Current')},
+        {name:'Watch', color:'#ea526f', rows:m.open.filter(c=>c.status==='Watch')},
+        {name:'At risk', color:'#c73753', rows:m.open.filter(c=>c.status==='At risk')},
+        {name:'Critical', color:'#8f1731', rows:m.open.filter(c=>c.status==='Critical')}
       ];
       const total = Math.max(1, sum(m.open,'outstanding'));
       const stack = buckets.filter(b=>b.rows.length).map(b=>`<i style="width:${Math.max(2,sum(b.rows,'outstanding')/total*100)}%;background:${b.color}"></i>`).join('');
@@ -955,13 +1074,13 @@
       const dueNext30 = contracts.flatMap(c => (c.schedule||[]).filter(r=>r.dueDate&&parseISO(r.dueDate)>dataDate&&parseISO(r.dueDate)<=next30).map(r=>({...r,contract:c}))) ;
       document.getElementById('paymentKpis').innerHTML = [
         kpiCard(t('kpi_cash_collected'), compactMoney(m.collected), t('kpi_cash_collected_foot'), '', 'wallet'),
-        kpiCard(t('kpi_due_to_date'), compactMoney(m.dueScheduled), t('kpi_due_to_date_foot', { date: formatDate(SEED_DATA.asOf) }), 'blue', 'clock'),
+        kpiCard(t('kpi_due_to_date'), compactMoney(m.dueScheduled), t('kpi_due_to_date_foot', { date: formatDate(currentDateISO) }), 'blue', 'clock'),
         kpiCard(t('kpi_collection_rate'), `${m.collectionRate.toFixed(1)}%`, t('kpi_collection_rate2_foot', { paid: compactMoney(m.duePaid) }), '', 'check'),
         kpiCard(t('kpi_next30'), compactMoney(sum(dueNext30,'scheduled')), t('kpi_next30_foot', { n: dueNext30.length }), 'blue', 'chart'),
         kpiCard(t('kpi_overdue'), compactMoney(m.overdue), t('kpi_overdue_foot', { n: m.open.filter(c=>c.overdue>0).length }), 'amber', 'alert'),
         kpiCard(t('kpi_avg_payment'), compactMoney(m.activeCount ? sum(m.open,'monthlyPayment')/m.activeCount : 0), t('kpi_avg_payment_foot'), '', 'trend')
       ].join('');
-      renderCashflowChart('forecastChart', monthSeries(1,12), false);
+      renderCashflowChart('forecastChart', monthSeries(0,11), false);
       const upcoming = contracts.flatMap(c => (c.schedule||[]).filter(r => r.dueDate && parseISO(r.dueDate)>dataDate && r.scheduled>0).map(r=>({...r,contract:c}))).sort((a,b)=>a.dueDate.localeCompare(b.dueDate)).slice(0,7);
       document.getElementById('upcomingList').innerHTML = upcoming.length ? upcoming.map(row=>`<div class="insight"><div class="insight-icon">${iconSvg('clock',16)}</div><div><h3>${escapeHtml(row.contract.assetName)} · ${money.format(row.scheduled)}</h3><p>${formatDate(row.dueDate)} · ${escapeHtml(row.contract.borrower)}</p></div></div>`).join('') : `<div class="empty">${t('empty_upcoming')}</div>`;
       const paymentRows = contracts.flatMap(c => (c.schedule||[]).filter(r=>r.dueDate&&r.paid>0).map(r=>({...r,contract:c}))).sort((a,b)=>b.dueDate.localeCompare(a.dueDate)).slice(0,20);
@@ -1036,7 +1155,7 @@
         document.getElementById('contractModalTitle').textContent=t('cm_title_new');
         document.getElementById('contractModalSubtitle').textContent=t('cm_sub_new');
         document.getElementById('contractSubmit').textContent=t('cm_submit_new');
-        form.lender.value=t('default_lender'); form.contractDate.value=SEED_DATA.asOf;
+        form.lender.value=t('default_lender'); form.contractDate.value=currentDateISO;
         form.firstDueDate.value=isoDate(addMonths(dataDate,1));
       }
       updateContractCalculation(); document.getElementById('contractDialog').showModal();
@@ -1051,14 +1170,38 @@
       document.getElementById('paymentDay').value=form.firstDueDate.value?`Day ${parseISO(form.firstDueDate.value).getDate()} of each month`:'—';
     }
     function generateSchedule(firstDue, term, total) {
-      const monthly=total/term; return Array.from({length:term},(_,i)=>({sequence:i+1,dueDate:isoDate(addMonths(parseISO(firstDue),i)),scheduled:+(i===term-1?total-monthly*(term-1):monthly).toFixed(2),paid:0}));
+      if (!Number.isInteger(term) || term <= 0 || !Number.isFinite(total) || total < 0) return [];
+      const totalCents=Math.round(total*100), monthlyCents=Math.floor(totalCents/term);
+      return Array.from({length:term},(_,i)=>({sequence:i+1,dueDate:isoDate(addMonths(parseISO(firstDue),i)),scheduled:(i===term-1?totalCents-monthlyCents*(term-1):monthlyCents)/100,paid:0}));
+    }
+
+    function allocatePayment(schedule, amount, outstanding) {
+      const rows=Array.isArray(schedule)?schedule:[];
+      let remainingCents=Math.min(Math.max(0,Math.round(Number(amount)*100)),Math.max(0,Math.round(Number(outstanding)*100)));
+      const requestedCents=remainingCents;
+      [...rows].sort((a,b)=>(a.dueDate||'').localeCompare(b.dueDate||'')).forEach(row=>{
+        if(remainingCents<=0)return;
+        const paidCents=Math.round((Number(row.paid)||0)*100), gapCents=Math.max(0,Math.round((Number(row.scheduled)||0)*100)-paidCents), amountCents=Math.min(gapCents,remainingCents);
+        row.paid=(paidCents+amountCents)/100; remainingCents-=amountCents;
+      });
+      // Legacy imports can have a schedule total below totalReceivable. Put
+      // any valid excess on the final row so the contract balance still
+      // reflects the cash actually received.
+      if(remainingCents>0 && rows.length) { const last=[...rows].sort((a,b)=>(b.dueDate||'').localeCompare(a.dueDate||''))[0]; last.paid=(Math.round((Number(last.paid)||0)*100)+remainingCents)/100; remainingCents=0; }
+      return (requestedCents-remainingCents)/100;
+    }
+
+    function requestDialogClose(id) {
+      const dialog=document.getElementById(id);
+      if (dirtyDialogs.has(id) && !confirm(t('confirm_discard_changes'))) return;
+      dirtyDialogs.delete(id); dialog.close();
     }
 
     function openPaymentModal(id=null) {
       const open=contracts.filter(c=>c.status!=='Closed').sort((a,b)=>b.overdue-a.overdue||b.outstanding-a.outstanding), select=document.getElementById('paymentContract');
       select.innerHTML=open.map(c=>`<option value="${c.id}">${escapeHtml(c.assetName)} · ${c.id} · ${money.format(c.outstanding)} ${t('due_suffix')}</option>`).join('');
       select.value=id&&open.some(c=>c.id===id)?id:open[0]?.id||'';
-      document.getElementById('paymentDate').value=SEED_DATA.asOf; updatePaymentAmount(); document.getElementById('paymentDialog').showModal();
+      document.getElementById('paymentDate').value=currentDateISO; updatePaymentAmount(); document.getElementById('paymentDialog').showModal();
     }
     function updatePaymentAmount() { const c=contracts.find(x=>x.id===document.getElementById('paymentContract').value); document.getElementById('paymentAmount').value=c?Math.min(c.monthlyPayment,c.outstanding).toFixed(2):''; }
 
@@ -1080,11 +1223,16 @@
     function cancelScheduleEdit() { scheduleEditMode=false; scheduleDraft=null; renderDetailBody(); }
     function addScheduleRow() { syncScheduleDraftFromInputs(); scheduleDraft.push({sequence:scheduleDraft.length+1,dueDate:'',scheduled:0,paid:0}); renderDetailBody(); }
     function removeScheduleRow(idx) { syncScheduleDraftFromInputs(); scheduleDraft.splice(idx,1); scheduleDraft.forEach((r,i)=>r.sequence=i+1); renderDetailBody(); }
-    function saveScheduleEdit() {
+    async function saveScheduleEdit() {
       syncScheduleDraftFromInputs();
       const c=contracts.find(x=>x.id===detailContractId);
-      c.schedule=scheduleDraft.filter(r=>r.dueDate).map((r,i)=>({sequence:i+1,dueDate:r.dueDate,scheduled:+(+r.scheduled).toFixed(2),paid:+(+r.paid).toFixed(2)}));
-      recalculate(c); saveContracts(); scheduleEditMode=false; scheduleDraft=null; renderAll(); renderDetailBody(); hydrateIcons(document.getElementById('detailDialog')); showToast(t('toast_schedule_updated',{name:c.assetName}));
+      const draft=clone(c);
+      draft.schedule=scheduleDraft.filter(r=>r.dueDate).map((r,i)=>({sequence:i+1,dueDate:r.dueDate,scheduled:+(+r.scheduled).toFixed(2),paid:+(+r.paid).toFixed(2)}));
+      recalculate(draft);
+      try {
+        await saveContracts(draft);
+        contracts[contracts.findIndex(x=>x.id===draft.id)]=draft; scheduleEditMode=false; scheduleDraft=null; renderAll(); renderDetailBody(); hydrateIcons(document.getElementById('detailDialog')); showToast(t('toast_schedule_updated',{name:draft.assetName}));
+      } catch(err) { console.error(err); showToast(t('toast_sync_failed',{error:err.message})); }
     }
     window.startScheduleEdit=startScheduleEdit; window.cancelScheduleEdit=cancelScheduleEdit; window.addScheduleRow=addScheduleRow; window.removeScheduleRow=removeScheduleRow; window.saveScheduleEdit=saveScheduleEdit;
 
@@ -1110,39 +1258,47 @@
 
     function showToast(message) { const el=document.getElementById('toast'); el.textContent=message; el.classList.add('show'); clearTimeout(showToast.timer); showToast.timer=setTimeout(()=>el.classList.remove('show'),3200); }
     function exportData() {
-      const payload={exportedAt:new Date().toISOString(),source:SEED_DATA.source,asOf:SEED_DATA.asOf,currency:'USD',contracts};
+      const payload={exportedAt:new Date().toISOString(),source:SEED_DATA.source,sourceAsOf:SEED_DATA.asOf,asOf:currentDateISO,currency:'USD',contracts};
       const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'}), url=URL.createObjectURL(blob), a=document.createElement('a');
-      a.href=url;a.download=`autofinance-portfolio-${SEED_DATA.asOf}.json`;a.click();URL.revokeObjectURL(url);showToast(t('toast_export'));
+      a.href=url;a.download=`autofinance-portfolio-${currentDateISO}.json`;a.click();URL.revokeObjectURL(url);showToast(t('toast_export'));
     }
 
     document.querySelectorAll('[data-view]').forEach(btn=>btn.addEventListener('click',()=>switchView(btn.dataset.view)));
     document.querySelectorAll('[data-open-contract]').forEach(btn=>btn.addEventListener('click',()=>openContractModal()));
     document.querySelectorAll('[data-go-contracts]').forEach(btn=>btn.addEventListener('click',()=>switchView('contracts')));
-    document.querySelectorAll('[data-close-dialog]').forEach(btn=>btn.addEventListener('click',()=>document.getElementById(btn.dataset.closeDialog).close()));
-    document.querySelectorAll('dialog').forEach(dialog=>dialog.addEventListener('click',event=>{if(event.target===dialog)dialog.close();}));
+    document.querySelectorAll('[data-close-dialog]').forEach(btn=>btn.addEventListener('click',()=>requestDialogClose(btn.dataset.closeDialog)));
+    document.querySelectorAll('dialog').forEach(dialog=>dialog.addEventListener('cancel',event=>{
+      if (dialog.id==='contractDialog' || dialog.id==='paymentDialog') { event.preventDefault(); requestDialogClose(dialog.id); }
+    }));
+    ['contractDialog','paymentDialog'].forEach(id=>document.getElementById(id).addEventListener('input',()=>dirtyDialogs.add(id)));
     document.getElementById('contractForm').addEventListener('input',updateContractCalculation);
     document.getElementById('firstDueDate').addEventListener('change',updateContractCalculation);
     document.getElementById('contractDate').addEventListener('change',event=>{ const form=document.getElementById('contractForm'); if(!form.contractId.value) form.firstDueDate.value=isoDate(addMonths(parseISO(event.target.value),1)); updateContractCalculation(); });
-    document.getElementById('contractForm').addEventListener('submit',event=>{
-      event.preventDefault(); const form=event.currentTarget, data=Object.fromEntries(new FormData(form));
-      if(data.contractId) {
-        const c=contracts.find(x=>x.id===data.contractId);
-        ['assetType','assetName','borrower','lender','licensePlate','notes','contractDate','firstDueDate'].forEach(k=>c[k]=data[k]);
-        ['vehicleYear','mileage','assetPrice'].forEach(k=>c[k]=data[k]?+data[k]:null);
-        c.principal=+data.principal; c.interestRate=+data.interestRate; c.termMonths=+data.termMonths;
-        c.totalReceivable=+(c.principal*(1+c.interestRate/100)).toFixed(2);
-        recalculate(c); saveContracts(); form.closest('dialog').close(); document.getElementById('detailDialog').close(); renderAll(); showToast(t('toast_contract_updated')); return;
-      }
-      const principal=+data.principal, rate=+data.interestRate, term=+data.termMonths, total=principal*(1+rate/100), id=`AF-${String(Date.now()).slice(-7)}`;
-      const c={id,sourceSheet:t('manual_entry'),sourceTitle:t('manual_entry'),assetName:data.assetName,assetType:data.assetType,borrower:data.borrower,lender:data.lender,licensePlate:data.licensePlate,mileage:data.mileage?+data.mileage:null,vehicleYear:data.vehicleYear?+data.vehicleYear:null,assetPrice:data.assetPrice?+data.assetPrice:null,contractDate:data.contractDate,firstDueDate:data.firstDueDate,termMonths:term,principal,interestRate:rate,markup:principal*rate/100,totalReceivable:total,notes:data.notes,schedule:generateSchedule(data.firstDueDate,term,total),paymentLog:[]};
-      recalculate(c);contracts.unshift(c);saveContracts();form.closest('dialog').close();renderAll();showToast(t('toast_contract_created',{id}));
+    document.getElementById('contractForm').addEventListener('submit',async event=>{
+      event.preventDefault(); const form=event.currentTarget, data=Object.fromEntries(new FormData(form)); setFormPending(form,true);
+      try {
+        if(data.contractId) {
+          const index=contracts.findIndex(x=>x.id===data.contractId), draft=clone(contracts[index]);
+          ['assetType','assetName','borrower','lender','licensePlate','notes','contractDate','firstDueDate'].forEach(k=>draft[k]=data[k]);
+          ['vehicleYear','mileage','assetPrice'].forEach(k=>draft[k]=data[k]?+data[k]:null);
+          draft.principal=+data.principal; draft.interestRate=+data.interestRate; draft.termMonths=+data.termMonths;
+          draft.totalReceivable=+(draft.principal*(1+draft.interestRate/100)).toFixed(2);
+          recalculate(draft); await saveContracts(draft); contracts[index]=draft; dirtyDialogs.delete('contractDialog'); form.closest('dialog').close(); document.getElementById('detailDialog').close(); renderAll(); showToast(t('toast_contract_updated')); return;
+        }
+        const principal=+data.principal, rate=+data.interestRate, term=+data.termMonths, total=principal*(1+rate/100), id=`AF-${String(Date.now()).slice(-7)}`;
+        const draft={id,sourceSheet:t('manual_entry'),sourceTitle:t('manual_entry'),assetName:data.assetName,assetType:data.assetType,borrower:data.borrower,lender:data.lender,licensePlate:data.licensePlate,mileage:data.mileage?+data.mileage:null,vehicleYear:data.vehicleYear?+data.vehicleYear:null,assetPrice:data.assetPrice?+data.assetPrice:null,contractDate:data.contractDate,firstDueDate:data.firstDueDate,termMonths:term,principal,interestRate:rate,markup:principal*rate/100,totalReceivable:total,notes:data.notes,schedule:generateSchedule(data.firstDueDate,term,total),paymentLog:[]};
+        recalculate(draft); await saveContracts(draft); contracts.unshift(draft); dirtyDialogs.delete('contractDialog'); form.closest('dialog').close(); renderAll(); showToast(t('toast_contract_created',{id}));
+      } catch(err) { console.error(err); showToast(t('toast_sync_failed',{error:err.message})); }
+      finally { setFormPending(form,false); }
     });
     document.getElementById('paymentContract').addEventListener('change',updatePaymentAmount);
-    document.getElementById('paymentForm').addEventListener('submit',event=>{
-      event.preventDefault(); const data=Object.fromEntries(new FormData(event.currentTarget)), c=contracts.find(x=>x.id===data.paymentContract); if(!c)return;
-      let remaining=Math.min(+data.paymentAmount,c.outstanding); const applied=remaining;
-      [...(c.schedule||[])].sort((a,b)=>(a.dueDate||'').localeCompare(b.dueDate||'')).forEach(row=>{ if(remaining<=0)return; const gap=Math.max(0,row.scheduled-row.paid), amount=Math.min(gap,remaining); row.paid=+(row.paid+amount).toFixed(2);remaining-=amount; });
-      c.paymentLog=c.paymentLog||[];c.paymentLog.push({date:data.paymentDate,amount:applied,method:data.paymentMethod,note:data.paymentNote});recalculate(c);saveContracts();event.currentTarget.closest('dialog').close();renderAll();showToast(t('toast_payment_recorded',{amount:money1.format(applied),name:c.assetName}));
+    document.getElementById('paymentForm').addEventListener('submit',async event=>{
+      event.preventDefault(); const form=event.currentTarget, data=Object.fromEntries(new FormData(form)), index=contracts.findIndex(x=>x.id===data.paymentContract); if(index<0)return;
+      const draft=clone(contracts[index]), applied=allocatePayment(draft.schedule,+data.paymentAmount,draft.outstanding); if(applied<=0) return;
+      draft.paymentLog=draft.paymentLog||[]; draft.paymentLog.push({date:data.paymentDate,amount:applied,method:data.paymentMethod,note:data.paymentNote}); recalculate(draft); setFormPending(form,true);
+      try { await saveContracts(draft); contracts[index]=draft; dirtyDialogs.delete('paymentDialog'); form.closest('dialog').close(); renderAll(); showToast(t('toast_payment_recorded',{amount:money1.format(applied),name:draft.assetName})); }
+      catch(err) { console.error(err); showToast(t('toast_sync_failed',{error:err.message})); }
+      finally { setFormPending(form,false); }
     });
     document.getElementById('contractSearch').addEventListener('input',renderContracts);
     document.getElementById('statusFilter').addEventListener('change',renderContracts);
@@ -1176,25 +1332,36 @@
       try {
         const buffer=await file.arrayBuffer();
         const workbook=XLSX.read(buffer,{type:'array',cellDates:true});
-        const firstSheet=workbook.SheetNames[0];
-        const rows=XLSX.utils.sheet_to_json(workbook.Sheets[firstSheet],{defval:''});
+        const parsedSheets=workbook.SheetNames.map(sheetName=>({sheetName,rows:XLSX.utils.sheet_to_json(workbook.Sheets[sheetName],{defval:''}).map(row=>({...row,__sheetName:sheetName}))}));
+        const paymentSheet=/payment|плат[её]ж|оплат/i;
+        const paymentRows=parsedSheets.filter(sheet=>paymentSheet.test(sheet.sheetName)).flatMap(sheet=>sheet.rows);
+        const rows=parsedSheets.filter(sheet=>!paymentSheet.test(sheet.sheetName)).flatMap(sheet=>sheet.rows);
         let result, skippedCount;
-        try {
-          const aiRes=await fetch('/api/import-ai',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({rows})});
-          if(!aiRes.ok) throw new Error(`AI API ${aiRes.status}`);
-          result=await aiRes.json();
-          skippedCount=result.issues?.length||0;
-          if(result.issues && result.issues.length) console.warn('AI import: issues', result.issues);
-        } catch(aiErr) {
-          console.warn('AI import unavailable, falling back to plain import:', aiErr.message);
-          const res=await fetch('/api/import',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({rows})});
+        const importLocally=async()=>{
+          const res=await fetch('/api/import',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({rows,paymentRows})});
           if(!res.ok) throw new Error(`API ${res.status}`);
           result=await res.json();
           skippedCount=result.skippedCount||0;
           if(result.skipped && result.skipped.length) console.warn('Import: skipped rows', result.skipped);
+        };
+        if(paymentRows.length || !rows.length) {
+          await importLocally();
+        } else if(confirm(t('confirm_ai_import'))) {
+          try {
+            const aiRes=await fetch('/api/import-ai',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({rows})});
+            if(!aiRes.ok) throw new Error(`AI API ${aiRes.status}`);
+            result=await aiRes.json();
+            skippedCount=result.issues?.length||0;
+            if(result.issues && result.issues.length) console.warn('AI import: issues', result.issues);
+          } catch(aiErr) {
+            console.warn('AI import unavailable, falling back to plain import:', aiErr.message);
+            await importLocally();
+          }
+        } else {
+          await importLocally();
         }
         contracts=await loadContracts(); renderAll();
-        showToast(t('toast_import_summary',{n:result.imported, skipped: skippedCount ? t('toast_import_skipped',{n:skippedCount}) : ''}));
+        showToast(t('toast_import_summary',{n:result.imported||0, p:result.paymentsImported||0, skipped: skippedCount ? t('toast_import_skipped',{n:skippedCount}) : ''}));
       } catch(err) {
         console.error(err);
         showToast(t('toast_import_error',{error:err.message}));
@@ -1207,7 +1374,6 @@
       document.querySelectorAll('[data-i18n-placeholder]').forEach(el => { el.placeholder = t(el.dataset.i18nPlaceholder); });
       document.querySelectorAll('[data-i18n-title]').forEach(el => { el.title = t(el.dataset.i18nTitle); });
       document.querySelectorAll('[data-i18n-aria]').forEach(el => { el.setAttribute('aria-label', t(el.dataset.i18nAria)); });
-      document.getElementById('sidebarSource').textContent = t('sidebar_source', { n: SEED_DATA.contracts.length, date: formatDate(SEED_DATA.asOf) });
     }
     function setLang(newLang) {
       if (newLang === lang) return;
