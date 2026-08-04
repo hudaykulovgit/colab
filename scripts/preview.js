@@ -28,7 +28,8 @@ http.createServer((req, res) => {
       res.writeHead(404);
       return res.end('Not found');
     }
-    res.writeHead(200, { 'Content-Type': 'image/png', 'Cache-Control': 'no-store' });
+    const contentType = path.extname(assetPath).toLowerCase() === '.jpg' ? 'image/jpeg' : 'image/png';
+    res.writeHead(200, { 'Content-Type': contentType, 'Cache-Control': 'no-store' });
     return fs.createReadStream(assetPath).pipe(res);
   }
   res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });

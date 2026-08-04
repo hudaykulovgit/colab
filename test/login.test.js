@@ -10,14 +10,16 @@ const end = source.indexOf('export default', start);
 const context = {};
 vm.runInNewContext(source.slice(start, end), context);
 
-test('login page uses the requested palette and accessible form structure', () => {
+test('login page uses the light palette and accessible form structure', () => {
   const html = context.loginPage(false);
-  for (const color of ['#ea526f', '#070600', '#f7f7ff', '#23b5d3', '#279af1']) {
+  for (const color of ['#ea526f', '#f7f7ff', '#23b5d3', '#279af1']) {
     assert.match(html, new RegExp(color));
   }
+  assert.doesNotMatch(html, /#070600/);
   assert.match(html, /<label for="password">/);
   assert.match(html, /autocomplete="current-password"/);
   assert.match(html, /class="capabilities"/);
+  assert.match(html, /src="\/assets\/finance-landing\.jpg"/);
   assert.match(html, />Contracts<\/strong>/);
   assert.match(html, />Payments<\/strong>/);
   assert.match(html, />Forecasting<\/strong>/);
@@ -33,4 +35,8 @@ test('logout route expires the authentication cookie', () => {
   assert.match(source, /url\.pathname === '\/logout'/);
   assert.match(source, /Max-Age=0/);
   assert.match(source, /Location: '\/login'/);
+});
+
+test('landing illustration is public so it loads before authentication', () => {
+  assert.match(source, /url\.pathname === '\/assets\/finance-landing\.jpg'/);
 });

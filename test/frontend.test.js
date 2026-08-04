@@ -28,10 +28,12 @@ test('operational dates use today instead of the seed snapshot date', () => {
   assert.doesNotMatch(html, /getElementById\('paymentDate'\)\.value=SEED_DATA\.asOf/);
 });
 
-test('dashboard uses the requested five-color visual system', () => {
-  for (const color of ['#ea526f', '#070600', '#f7f7ff', '#23b5d3', '#279af1']) {
+test('dashboard uses the requested light visual system without pitch black', () => {
+  for (const color of ['#ea526f', '#f7f7ff', '#23b5d3', '#279af1']) {
     assert.match(html, new RegExp(color));
   }
+  assert.doesNotMatch(html, /#070600|--pitch-black/);
+  assert.doesNotMatch(html, /hero-graphic|hero-car|hero-line|hero-chip|LIVE PORTFOLIO/);
 });
 
 test('current month is included and highlighted in both cash-flow charts', () => {
