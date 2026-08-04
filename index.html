@@ -10,42 +10,47 @@
   <title>Autofinance — Portfolio Dashboard</title>
   <style>
     :root {
-      --bubblegum-pink: #5e6ad2;
-      --slate: #000000;
-      --ghost-white: #ffffff;
-      --turquoise-surf: #7a7fad;
-      --blue-bell: #5e6ad2;
-      --bg: #ffffff;
+      --punch-red: #e63946;
+      --honeydew: #f1faee;
+      --frosted-blue: #a8dadc;
+      --cerulean: #457b9d;
+      --oxford-navy: #1d3557;
+      --bubblegum-pink: var(--punch-red);
+      --slate: var(--oxford-navy);
+      --ghost-white: var(--honeydew);
+      --turquoise-surf: var(--frosted-blue);
+      --blue-bell: var(--cerulean);
+      --bg: var(--honeydew);
       --surface: #ffffff;
-      --surface-2: #f5f6f6;
-      --ink: #000000;
-      --muted: #62666d;
-      --faint: #8a8f98;
-      --line: rgba(0, 0, 0, .08);
-      --line-strong: rgba(0, 0, 0, .14);
-      --nav: #f5f6f6;
-      --nav-2: #f6f7f7;
-      --nav-muted: #62666d;
-      --accent: #5e6ad2;
-      --accent-2: #5e6ad2;
-      --accent-soft: rgba(94, 106, 210, .10);
-      --amber: #7a7fad;
-      --amber-soft: rgba(122, 127, 173, .11);
-      --orange: #62666d;
-      --orange-soft: rgba(98, 102, 109, .10);
-      --danger: #000000;
-      --danger-soft: rgba(0, 0, 0, .07);
-      --blue: #5e6ad2;
-      --blue-soft: rgba(94, 106, 210, .10);
-      --type-car: #5e6ad2;
-      --type-commercial: #7a7fad;
-      --type-realestate: #62666d;
-      --type-other: #8a8f98;
-      --tint-lavender: rgba(94, 106, 210, .075);
-      --tint-secure: rgba(122, 127, 173, .085);
-      --tint-neutral: rgba(208, 214, 224, .30);
+      --surface-2: rgba(168, 218, 220, .24);
+      --ink: var(--oxford-navy);
+      --muted: #457b9d;
+      --faint: rgba(29, 53, 87, .58);
+      --line: rgba(29, 53, 87, .12);
+      --line-strong: rgba(29, 53, 87, .22);
+      --nav: rgba(168, 218, 220, .24);
+      --nav-2: rgba(241, 250, 238, .92);
+      --nav-muted: #457b9d;
+      --accent: var(--cerulean);
+      --accent-2: var(--cerulean);
+      --accent-soft: rgba(168, 218, 220, .42);
+      --amber: var(--punch-red);
+      --amber-soft: rgba(230, 57, 70, .09);
+      --orange: var(--punch-red);
+      --orange-soft: rgba(230, 57, 70, .12);
+      --danger: var(--punch-red);
+      --danger-soft: rgba(230, 57, 70, .13);
+      --blue: var(--cerulean);
+      --blue-soft: rgba(168, 218, 220, .42);
+      --type-car: var(--cerulean);
+      --type-commercial: var(--frosted-blue);
+      --type-realestate: var(--punch-red);
+      --type-other: var(--oxford-navy);
+      --tint-frost: rgba(168, 218, 220, .34);
+      --tint-cerulean: rgba(69, 123, 157, .085);
+      --tint-honeydew: rgba(241, 250, 238, .72);
       --glass-white: rgba(255, 255, 255, .78);
-      --shadow: 0 1px 2px rgba(0, 0, 0, .03);
+      --shadow: 0 1px 3px rgba(29, 53, 87, .05);
       --radius: 12px;
       --sidebar: 252px;
     }
@@ -180,9 +185,9 @@
     .card-body { padding: 8px 19px 19px; }
     .chart-legend { display: flex; gap: 13px; flex-wrap: wrap; color: var(--muted); font-size: 10px; }
     .legend-key { display: inline-flex; align-items: center; gap: 5px; }
-    .legend-dot { width: 8px; height: 8px; border-radius: 2px; background: #5e6ad2; }
-    .legend-dot.plan { background: #d0d6e0; }
-    .legend-dot.current { background: rgba(94,106,210,.10); border: 1px solid rgba(94,106,210,.48); }
+    .legend-dot { width: 8px; height: 8px; border-radius: 2px; background: #457b9d; }
+    .legend-dot.plan { background: #a8dadc; }
+    .legend-dot.current { background: rgba(230,57,70,.10); border: 1px solid rgba(230,57,70,.48); }
     .legend-dot.risk { background: var(--amber); }
     .chart-wrap { width: 100%; min-height: 250px; }
     .chart-wrap svg { width: 100%; height: auto; overflow: visible; }
@@ -400,61 +405,62 @@
     .hero-actions { margin-top: 24px; }
     .overview-hero .hero-actions .btn:first-child { color: var(--ink); background: #fff; border-color: var(--line); }
 
-    /* Linear light system: one accent, neutral surfaces, hairline depth. */
-    body { background: #ffffff; }
-    :focus-visible { outline-color: rgba(94,106,210,.55); }
-    .sidebar { background: #f5f6f6; border-right-color: var(--line); }
+    /* Dashboard palette: honeydew canvas, frosted glass, cerulean actions, punch-red risk. */
+    body { background: #f1faee; }
+    :focus-visible { outline-color: rgba(69,123,157,.52); }
+    .sidebar { background: rgba(168,218,220,.28); border-right-color: var(--line); }
     .sidebar::after, .overview-hero::before, .kpi::after { display: none; }
-    .brand-mark { background: #5e6ad2; border-radius: 8px; box-shadow: none; }
-    .nav-label { color: #8a8f98; }
-    .nav-btn:hover { background: #f6f7f7; border-color: var(--line); }
-    .nav-btn.active { color: #000000; background: #ffffff; border-color: var(--line); box-shadow: none; }
-    .nav-btn.active [data-icon] { color: #5e6ad2; }
-    .topbar { background: rgba(255,255,255,.94); border-bottom-color: var(--line); }
+    .brand-mark { background: #457b9d; border-radius: 8px; box-shadow: none; }
+    .nav-label { color: rgba(29,53,87,.58); }
+    .nav-btn:hover { background: rgba(241,250,238,.72); border-color: var(--line); }
+    .nav-btn.active { color: #1d3557; background: rgba(255,255,255,.82); border-color: var(--line); box-shadow: none; }
+    .nav-btn.active [data-icon] { color: #457b9d; }
+    .topbar { background: rgba(241,250,238,.90); border-bottom-color: var(--line); }
     .global-search input, .icon-btn { box-shadow: none; }
-    .global-search input:focus, .field input:focus, .field select:focus, .field textarea:focus, .schedule-input:focus { border-color: #5e69d1; box-shadow: 0 0 0 3px rgba(94,105,209,.14); }
-    .avatar { background: #5e6ad2; border-radius: 8px; box-shadow: none; }
-    .logout-btn { border-color: var(--line); border-radius: 8px; color: #62666d; background: #f5f6f6; }
-    .logout-btn:hover { border-color: var(--line-strong); background: #f6f7f7; }
+    .global-search input:focus, .field input:focus, .field select:focus, .field textarea:focus, .schedule-input:focus { border-color: #457b9d; box-shadow: 0 0 0 3px rgba(69,123,157,.14); }
+    .avatar { background: #457b9d; border-radius: 8px; box-shadow: none; }
+    .logout-btn { border-color: rgba(230,57,70,.18); border-radius: 8px; color: #e63946; background: rgba(230,57,70,.07); }
+    .logout-btn:hover { border-color: rgba(230,57,70,.32); background: rgba(230,57,70,.11); }
     .btn { border-radius: 8px; }
-    .btn-primary { background: #000000; border-color: #000000; }
-    .btn-accent { background: #5e6ad2; border-color: #5e6ad2; box-shadow: none; }
-    .btn-accent:hover { background: #828fff; border-color: #828fff; }
+    .btn-primary { background: #1d3557; border-color: #1d3557; }
+    .btn-accent { background: #457b9d; border-color: #457b9d; box-shadow: none; }
+    .btn-accent:hover { background: #1d3557; border-color: #1d3557; }
     .btn:hover, .icon-btn:hover { transform: none; }
     .card, .kpi { border-color: var(--line); border-radius: 12px; box-shadow: var(--shadow); backdrop-filter: blur(10px); }
     .card { background: var(--glass-white); }
-    .kpi-grid .kpi:nth-child(3n+1) { background: var(--tint-lavender); }
-    .kpi-grid .kpi:nth-child(3n+2) { background: var(--tint-secure); }
-    .kpi-grid .kpi:nth-child(3n) { background: var(--tint-neutral); }
-    .dashboard-grid .card:nth-child(odd), .analytics-grid .card:nth-child(3n+1) { background: var(--tint-lavender); }
-    .dashboard-grid .card:nth-child(even), .analytics-grid .card:nth-child(3n+2) { background: var(--tint-neutral); }
-    .analytics-grid .card:nth-child(3n) { background: var(--tint-secure); }
+    .kpi-grid .kpi:nth-child(3n+1) { background: var(--tint-frost); }
+    .kpi-grid .kpi:nth-child(3n+2) { background: var(--tint-cerulean); }
+    .kpi-grid .kpi:nth-child(3n) { background: var(--tint-honeydew); }
+    .dashboard-grid .card:nth-child(odd), .analytics-grid .card:nth-child(3n+1) { background: var(--tint-frost); }
+    .dashboard-grid .card:nth-child(even), .analytics-grid .card:nth-child(3n+2) { background: var(--tint-honeydew); }
+    .analytics-grid .card:nth-child(3n) { background: var(--tint-cerulean); }
     .table-card { background: var(--glass-white); }
-    .detail-primary { background: var(--tint-lavender); }
-    .detail-stat:nth-child(even) { background: var(--tint-secure); }
-    .detail-stat:nth-child(odd), .info-card { background: var(--tint-neutral); }
-    .kpi .tone, .tone.amber, .tone.blue, .tone.orange { height: 3px; background: #5e6ad2; }
-    .status-current { color: #5e6ad2; background: rgba(94,106,210,.10); }
-    .status-watch { color: #7a7fad; background: rgba(122,127,173,.11); }
-    .status-at-risk { color: #62666d; background: rgba(98,102,109,.10); }
-    .status-critical { color: #000000; background: rgba(0,0,0,.07); }
-    .status-closed { color: #8a8f98; background: #f5f6f6; }
-    .risk-meter, .risk-stack, .bar-track { background: #f5f6f6; }
-    th, .info-card h3, .modal-foot { background: #f5f6f6; }
-    tbody tr:hover { background: #f6f7f7; }
-    .segmented { background: #f5f6f6; }
+    .detail-primary { background: var(--tint-frost); }
+    .detail-stat:nth-child(even) { background: var(--tint-cerulean); }
+    .detail-stat:nth-child(odd), .info-card { background: var(--tint-honeydew); }
+    .kpi .tone, .tone.blue { height: 3px; background: #457b9d; }
+    .tone.amber, .tone.orange { height: 3px; background: #e63946; }
+    .status-current { color: #1d3557; background: rgba(168,218,220,.48); }
+    .status-watch { color: #457b9d; background: rgba(69,123,157,.10); }
+    .status-at-risk, .status-critical { color: #e63946; background: rgba(230,57,70,.11); }
+    .status-closed { color: #457b9d; background: rgba(241,250,238,.78); }
+    .risk-meter, .risk-stack, .bar-track { background: rgba(168,218,220,.30); }
+    th, .info-card h3, .modal-foot { background: rgba(168,218,220,.22); }
+    tbody tr:hover { background: rgba(168,218,220,.16); }
+    .segmented { background: rgba(168,218,220,.26); }
     .segmented button.active { box-shadow: none; border: 1px solid var(--line); }
     dialog::backdrop { background: rgba(0,0,0,.34); backdrop-filter: blur(4px); }
     .modal { border-color: var(--line); border-radius: 16px; box-shadow: 0 24px 80px rgba(0,0,0,.14); }
     .modal-head { background: rgba(255,255,255,.96); }
-    .form-safety-note { border-color: rgba(94,106,210,.20); border-radius: 8px; color: #5e6ad2; background: rgba(94,106,210,.08); }
-    .form-safety-note [data-icon] { color: #5e6ad2; }
+    .form-safety-note { border-color: rgba(69,123,157,.20); border-radius: 8px; color: #1d3557; background: rgba(168,218,220,.24); }
+    .form-safety-note [data-icon] { color: #457b9d; }
     .calc-preview { border-radius: 12px; }
-    .calc-item:nth-child(1), .calc-item:nth-child(2), .calc-item:nth-child(3), .calc-item:nth-child(4) { box-shadow: inset 0 3px #5e6ad2; }
-    .overview-hero { min-height: 250px; padding: 32px; border-color: var(--line); border-radius: 16px; background: #f5f6f6; box-shadow: none; }
-    .overview-hero .eyebrow { color: #5e6ad2; }
+    .calc-item:nth-child(1), .calc-item:nth-child(2) { box-shadow: inset 0 3px #457b9d; }
+    .calc-item:nth-child(3), .calc-item:nth-child(4) { box-shadow: inset 0 3px #e63946; }
+    .overview-hero { min-height: 250px; padding: 32px; border-color: var(--line); border-radius: 16px; background: rgba(168,218,220,.24); box-shadow: none; }
+    .overview-hero .eyebrow { color: #457b9d; }
     .overview-hero .hero-actions .btn:first-child { background: #ffffff; }
-    .notice { color: #62666d; background: #f5f6f6; border: 1px solid var(--line); border-radius: 8px; }
+    .notice { color: #1d3557; background: rgba(230,57,70,.07); border: 1px solid rgba(230,57,70,.16); border-radius: 8px; }
 
     @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; animation: none !important; } }
 
@@ -823,7 +829,7 @@
     }
     function statusLabel(status) { return t({Current:'status_current',Watch:'status_watch','At risk':'status_at_risk',Critical:'status_critical',Closed:'status_closed'}[status] || status); }
     function assetTypeLabel(type) { return t({Car:'asset_car','Commercial vehicle':'asset_commercial','Real estate':'asset_realestate',Other:'asset_other'}[type] || type); }
-    function assetTypeColor(type) { return {Car:'#5e6ad2','Commercial vehicle':'#7a7fad','Real estate':'#62666d',Other:'#8a8f98'}[type] || '#8a8f98'; }
+    function assetTypeColor(type) { return {Car:'#457b9d','Commercial vehicle':'#a8dadc','Real estate':'#e63946',Other:'#1d3557'}[type] || '#457b9d'; }
     const ICONS = {
       grid: '<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>',
       file: '<path d="M6 2h8l4 4v16H6z"/><path d="M14 2v5h5M9 12h6M9 16h6"/>',
@@ -1063,7 +1069,7 @@
       rows.forEach((row, i) => {
         if (!row.isCurrent) return;
         const x = left + groupW * i + 3;
-        svg += `<rect x="${x}" y="${top-18}" width="${Math.max(0,groupW-6)}" height="${innerH+24}" rx="8" fill="rgba(94,106,210,.06)" stroke="rgba(94,106,210,.28)" stroke-dasharray="3 3"/><text x="${x+(groupW-6)/2}" y="${top-7}" text-anchor="middle" font-size="8" font-weight="800" fill="#5e6ad2">${lang==='ru'?'СЕЙЧАС':'NOW'}</text>`;
+        svg += `<rect x="${x}" y="${top-18}" width="${Math.max(0,groupW-6)}" height="${innerH+24}" rx="8" fill="rgba(230,57,70,.06)" stroke="rgba(230,57,70,.28)" stroke-dasharray="3 3"/><text x="${x+(groupW-6)/2}" y="${top-7}" text-anchor="middle" font-size="8" font-weight="800" fill="#e63946">${lang==='ru'?'СЕЙЧАС':'NOW'}</text>`;
       });
       for (let i=0;i<=4;i++) {
         const y = top + innerH * i / 4, value = scaleMax * (1 - i / 4);
@@ -1073,12 +1079,12 @@
         const center = left + groupW * i + groupW / 2;
         const sh = row.scheduled / scaleMax * innerH, sy = top + innerH - sh;
         const planX = showActual ? center - barW - 2 : center - barW / 2;
-        svg += `<rect x="${planX}" y="${sy}" width="${barW}" height="${Math.max(0,sh)}" rx="4" fill="${row.isCurrent?'#8a8f98':'#d0d6e0'}"><title>${row.fullLabel}: scheduled ${money1.format(row.scheduled)}</title></rect>`;
+        svg += `<rect x="${planX}" y="${sy}" width="${barW}" height="${Math.max(0,sh)}" rx="4" fill="${row.isCurrent?'#e63946':'#a8dadc'}"><title>${row.fullLabel}: scheduled ${money1.format(row.scheduled)}</title></rect>`;
         if (showActual) {
           const ah = row.paid / scaleMax * innerH, ay = top + innerH - ah;
-          svg += `<rect x="${center+2}" y="${ay}" width="${barW}" height="${Math.max(0,ah)}" rx="4" fill="#5e6ad2"><title>${row.fullLabel}: collected ${money1.format(row.paid)}</title></rect>`;
+          svg += `<rect x="${center+2}" y="${ay}" width="${barW}" height="${Math.max(0,ah)}" rx="4" fill="#457b9d"><title>${row.fullLabel}: collected ${money1.format(row.paid)}</title></rect>`;
         }
-        svg += `<text class="chart-label" x="${center}" y="${height-14}" text-anchor="middle"${row.isCurrent?' font-weight="800" fill="#5e6ad2"':''}>${row.label}</text>`;
+        svg += `<text class="chart-label" x="${center}" y="${height-14}" text-anchor="middle"${row.isCurrent?' font-weight="800" fill="#e63946"':''}>${row.label}</text>`;
       });
       svg += `</svg>`;
       document.getElementById(targetId).innerHTML = svg;
@@ -1086,10 +1092,10 @@
 
     function renderRiskDonut(m) {
       const buckets = [
-        {name:'Current', color:'#5e6ad2', rows:m.open.filter(c=>c.status==='Current')},
-        {name:'Watch', color:'#7a7fad', rows:m.open.filter(c=>c.status==='Watch')},
-        {name:'At risk', color:'#62666d', rows:m.open.filter(c=>c.status==='At risk')},
-        {name:'Critical', color:'#000000', rows:m.open.filter(c=>c.status==='Critical')}
+        {name:'Current', color:'#457b9d', rows:m.open.filter(c=>c.status==='Current')},
+        {name:'Watch', color:'#a8dadc', rows:m.open.filter(c=>c.status==='Watch')},
+        {name:'At risk', color:'#e63946', rows:m.open.filter(c=>c.status==='At risk')},
+        {name:'Critical', color:'#1d3557', rows:m.open.filter(c=>c.status==='Critical')}
       ];
       const total = Math.max(1, sum(m.open,'outstanding'));
       const stack = buckets.filter(b=>b.rows.length).map(b=>`<i style="width:${Math.max(2,sum(b.rows,'outstanding')/total*100)}%;background:${b.color}"></i>`).join('');

@@ -37,19 +37,19 @@ test('operational dates use today instead of the seed snapshot date', () => {
   assert.doesNotMatch(html, /getElementById\('paymentDate'\)\.value=SEED_DATA\.asOf/);
 });
 
-test('dashboard uses the Linear light visual system', () => {
-  for (const color of ['#5e6ad2', '#828fff', '#5e69d1', '#ffffff', '#f5f6f6', '#f6f7f7', '#000000', '#62666d', '#8a8f98']) {
+test('dashboard uses the requested punch, honeydew and blue visual system', () => {
+  for (const color of ['#e63946', '#f1faee', '#a8dadc', '#457b9d', '#1d3557']) {
     assert.match(html, new RegExp(color));
   }
   assert.doesNotMatch(html, /#070600|--pitch-black/);
-  assert.match(html, /\/\* Linear light system: one accent, neutral surfaces, hairline depth\. \*\//);
-  assert.match(html, /function assetTypeColor\(type\) \{ return \{Car:'#5e6ad2','Commercial vehicle':'#7a7fad','Real estate':'#62666d',Other:'#8a8f98'\}/);
-  assert.match(html, /--tint-lavender: rgba\(94, 106, 210, \.075\)/);
-  assert.match(html, /--tint-secure: rgba\(122, 127, 173, \.085\)/);
-  assert.match(html, /--tint-neutral: rgba\(208, 214, 224, \.30\)/);
+  assert.match(html, /Dashboard palette: honeydew canvas, frosted glass, cerulean actions, punch-red risk/);
+  assert.match(html, /function assetTypeColor\(type\) \{ return \{Car:'#457b9d','Commercial vehicle':'#a8dadc','Real estate':'#e63946',Other:'#1d3557'\}/);
+  assert.match(html, /--tint-frost: rgba\(168, 218, 220, \.34\)/);
+  assert.match(html, /--tint-cerulean: rgba\(69, 123, 157, \.085\)/);
+  assert.match(html, /--tint-honeydew: rgba\(241, 250, 238, \.72\)/);
   assert.match(html, /\.kpi-grid \.kpi:nth-child\(3n\+1\)/);
   assert.match(html, /\.dashboard-grid \.card:nth-child\(odd\)/);
-  assert.match(html, /fill="#5e6ad2"><title>\$\{row\.fullLabel\}: collected/);
+  assert.match(html, /fill="#457b9d"><title>\$\{row\.fullLabel\}: collected/);
   assert.doesNotMatch(html, /url\(#barGradient\)|id="barGradient"/);
   assert.doesNotMatch(html, /hero-graphic|hero-car|hero-line|hero-chip|LIVE PORTFOLIO/);
 });
