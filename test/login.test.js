@@ -10,15 +10,15 @@ const end = source.indexOf('export default', start);
 const context = {};
 vm.runInNewContext(source.slice(start, end), context);
 
-test('login page uses the Linear light design system and one-click login', () => {
+test('login page uses the MiniMax light design system and one-click login', () => {
   const html = context.loginPage(false);
-  for (const color of ['#5e6ad2', '#828fff', '#5e69d1', '#ffffff', '#f5f6f6', '#f6f7f7', '#000000', '#62666d', '#8a8f98']) {
+  for (const color of ['#0a0a0a', '#222222', '#ff5530', '#ea5ec1', '#1456f0', '#3daeff', '#a855f7', '#ffffff', '#f7f8fa', '#e5e7eb']) {
     assert.match(html, new RegExp(color));
   }
   assert.doesNotMatch(html, /#010102|#0f1011|#141516|#18191a|#23252a|#34343a/);
   assert.doesNotMatch(html, /type="password"|name="password"|autocomplete="current-password"/);
   assert.match(html, /<button class="login-button" id="login" type="submit">/);
-  assert.match(html, /family=Roboto/);
+  assert.match(html, /family=DM\+Sans/);
   assert.match(html, /Material\+Symbols\+Rounded/);
   assert.match(html, /class="material-symbols-rounded"/);
   assert.match(html, /font-variation-settings:"FILL" 0,"wght" 400/);
@@ -27,7 +27,8 @@ test('login page uses the Linear light design system and one-click login', () =>
   assert.match(html, /class="window-bar"/);
   assert.match(html, /Miraziz Mirjalolov/);
   assert.match(html, /Neon connected/);
-  assert.doesNotMatch(html, /linear-gradient|radial-gradient/);
+  assert.doesNotMatch(html, /radial-gradient/);
+  assert.match(html, /linear-gradient\(90deg,var\(--coral\)/);
   assert.doesNotMatch(html, /finance-landing\.jpg|landing-art/);
   assert.doesNotMatch(html, /autofinance-3d-hero/);
   assert.doesNotMatch(html, /Password not recognized|workspace password/i);

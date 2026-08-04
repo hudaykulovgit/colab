@@ -6,7 +6,7 @@
   <meta name="color-scheme" content="light">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,300;0,400;0,500;0,700;1,400&amp;family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,300..700,0..1,-50..200&amp;display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400..700&amp;family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,300..700,0..1,-50..200&amp;display=swap" rel="stylesheet">
   <title>Autofinance — Portfolio Dashboard</title>
   <style>
     :root {
@@ -67,7 +67,7 @@
       margin: 0;
       color: var(--ink);
       background: var(--bg);
-      font: 14px/1.45 "Roboto", ui-sans-serif, system-ui, sans-serif;
+      font: 14px/1.5 "DM Sans", ui-sans-serif, system-ui, sans-serif;
       -webkit-font-smoothing: antialiased;
     }
     button, input, select, textarea { font: inherit; }
@@ -191,9 +191,9 @@
     .card-body { padding: 8px 19px 19px; }
     .chart-legend { display: flex; gap: 13px; flex-wrap: wrap; color: var(--muted); font-size: 10px; }
     .legend-key { display: inline-flex; align-items: center; gap: 5px; }
-    .legend-dot { width: 8px; height: 8px; border-radius: 2px; background: #4361ee; }
-    .legend-dot.plan { background: #4cc9f0; }
-    .legend-dot.current { background: #3f37c9; border: 1px solid rgba(63,55,201,.30); }
+    .legend-dot { width: 8px; height: 8px; border-radius: 2px; background: #1456f0; }
+    .legend-dot.plan { background: #3daeff; }
+    .legend-dot.current { background: #ff5530; border: 1px solid rgba(255,85,48,.30); }
     .legend-dot.risk { background: var(--amber); }
     .chart-wrap { width: 100%; min-height: 250px; }
     .chart-wrap svg { width: 100%; height: auto; overflow: visible; }
@@ -411,70 +411,80 @@
     .hero-actions { margin-top: 24px; }
     .overview-hero .hero-actions .btn:first-child { color: var(--ink); background: #fff; border-color: var(--line); }
 
-    /* Dashboard palette: navy navigation, white workspace, gray cards, restrained chart color. */
+    /* MiniMax-inspired finance system: editorial white canvas, black pills, precise color signals. */
+    :root {
+      --bg: #ffffff; --surface: #ffffff; --surface-2: #f7f8fa; --ink: #0a0a0a;
+      --muted: #45515e; --faint: #8e8e93; --line: #e5e7eb; --line-strong: #cfd3d8;
+      --accent: #0a0a0a; --accent-2: #222222; --danger: #ff5530; --danger-soft: rgba(255,85,48,.11);
+      --shadow: 0 1px 2px rgba(0,0,0,.04); --radius: 16px;
+    }
     body { background: #ffffff; }
-    :focus-visible { outline-color: rgba(29,53,87,.46); }
-    .sidebar { color: #ffffff; background: #1d3557; border-right-color: #1d3557; }
+    :focus-visible { outline-color: rgba(29,78,216,.52); }
+    .sidebar { color: #222222; background: #f7f8fa; border-right: 1px solid #e5e7eb; }
     .sidebar::after, .overview-hero::before, .kpi::after { display: none; }
-    .brand-mark { color: #1d3557; background: #ffffff; border-radius: 8px; box-shadow: none; }
-    .sidebar .brand-name { color: #ffffff; }
-    .sidebar .brand-name small, .nav-label { color: rgba(255,255,255,.58); }
-    .sidebar .nav-btn { color: rgba(255,255,255,.74); }
-    .sidebar .nav-btn:hover { color: #ffffff; background: rgba(255,255,255,.08); border-color: rgba(255,255,255,.10); }
-    .sidebar .nav-btn.active { color: #ffffff; background: rgba(255,255,255,.14); border-color: rgba(255,255,255,.14); box-shadow: none; }
-    .sidebar .nav-btn.active [data-icon] { color: #ffffff; }
-    .topbar { background: rgba(255,255,255,.94); border-bottom-color: var(--line); }
-    .global-search input, .icon-btn { box-shadow: none; }
-    .global-search input:focus, .field input:focus, .field select:focus, .field textarea:focus, .schedule-input:focus { border-color: #1d3557; box-shadow: 0 0 0 3px rgba(29,53,87,.12); }
-    .avatar { background: #1d3557; border-radius: 8px; box-shadow: none; }
-    .logout-btn { border-color: rgba(230,57,70,.18); border-radius: 8px; color: #e63946; background: rgba(230,57,70,.07); }
-    .logout-btn:hover { border-color: rgba(230,57,70,.32); background: rgba(230,57,70,.11); }
-    .btn { border-radius: 8px; }
-    .btn-primary { background: #1d3557; border-color: #1d3557; }
-    .btn-accent { background: #1d3557; border-color: #1d3557; box-shadow: none; }
-    .btn-accent:hover { background: #1d3557; border-color: #1d3557; }
+    .brand-mark { color: #ffffff; background: #0a0a0a; border-radius: 10px; box-shadow: none; }
+    .sidebar .brand-name { color: #0a0a0a; }
+    .sidebar .brand-name small, .nav-label { color: #8e8e93; }
+    .sidebar .nav-btn { color: #5f5f5f; border-radius: 8px; }
+    .sidebar .nav-btn:hover { color: #0a0a0a; background: #f2f3f5; border-color: #e5e7eb; }
+    .sidebar .nav-btn.active { color: #0a0a0a; background: #ffffff; border-color: #e5e7eb; box-shadow: 0 1px 2px rgba(0,0,0,.04); }
+    .sidebar .nav-btn.active [data-icon] { color: #1456f0; }
+    .topbar { background: rgba(255,255,255,.96); border-bottom-color: #eaecf0; }
+    .global-search input, .icon-btn { background: #f7f8fa; border-color: #e5e7eb; border-radius: 8px; box-shadow: none; }
+    .global-search input:focus, .field input:focus, .field select:focus, .field textarea:focus, .schedule-input:focus { border-color: #1d4ed8; box-shadow: 0 0 0 3px rgba(29,78,216,.11); }
+    .avatar { background: #0a0a0a; border-radius: 10px; box-shadow: none; }
+    .logout-btn { border-color: rgba(255,85,48,.22); border-radius: 999px; color: #d64122; background: rgba(255,85,48,.07); }
+    .logout-btn:hover { border-color: rgba(255,85,48,.38); background: rgba(255,85,48,.12); }
+    .btn { border-radius: 999px; background: #ffffff; }
+    .btn-primary, .btn-accent { color: #ffffff; background: #0a0a0a; border-color: #0a0a0a; box-shadow: none; }
+    .btn-primary:hover, .btn-accent:hover { background: #222222; border-color: #222222; }
     .btn:hover, .icon-btn:hover { transform: none; }
-    .card, .kpi { border-color: var(--line); border-radius: 12px; background: #f4f5f6; box-shadow: var(--shadow); }
-    .kpi-grid .kpi, .dashboard-grid .card, .analytics-grid .card, .table-card { background: #f4f5f6; }
-    .detail-primary, .detail-stat, .info-card { background: #f4f5f6; }
-    .kpi-neutral { background: #f4f5f6 !important; }
-    .kpi-info { background: rgba(67,97,238,.075) !important; border-color: rgba(67,97,238,.16); }
-    .kpi-positive { background: rgba(76,201,240,.11) !important; border-color: rgba(76,201,240,.22); }
-    .kpi-danger { background: rgba(247,37,133,.10) !important; border-color: rgba(247,37,133,.22); }
-    .kpi-risk { background: rgba(181,23,158,.075) !important; border-color: rgba(181,23,158,.18); }
-    .kpi .tone { height: 3px; background: #1d3557; }
-    .kpi-info .tone { background: #4361ee; }
-    .kpi-positive .tone { background: #4cc9f0; }
-    .kpi-danger .tone { background: #f72585; }
-    .kpi-risk .tone { background: #b5179e; }
-    .kpi-positive .kpi-value, .kpi-positive .kpi-label [data-icon] { color: #3f37c9; }
-    .kpi-danger .kpi-value, .kpi-danger .kpi-label [data-icon] { color: #f72585; }
-    .status-current { color: #2f7d4a; background: rgba(47,125,74,.11); }
-    .status-watch { color: #3a0ca3; background: rgba(58,12,163,.10); }
-    .status-at-risk { color: #b5179e; background: rgba(181,23,158,.10); }
-    .status-critical { color: #f72585; background: rgba(247,37,133,.11); }
-    .status-closed { color: #1d3557; background: rgba(241,250,238,.78); }
-    .risk-meter, .risk-stack, .bar-track { background: rgba(29,53,87,.08); }
-    .risk-meter i.medium { background: #b5179e; }
-    .risk-meter i.high { background: #f72585; }
-    .risk-score { color: #b5179e; background: rgba(181,23,158,.10); }
-    .risk-score.high { color: #f72585; background: rgba(247,37,133,.11); }
-    th, .info-card h3, .modal-foot { background: rgba(255,255,255,.72); }
-    tbody tr:hover { background: #ffffff; }
-    .segmented { background: #ffffff; }
-    .segmented button.active { box-shadow: none; border: 1px solid var(--line); }
-    dialog::backdrop { background: rgba(0,0,0,.34); backdrop-filter: blur(4px); }
-    .modal { border-color: var(--line); border-radius: 16px; box-shadow: 0 24px 80px rgba(0,0,0,.14); }
-    .modal-head { background: rgba(255,255,255,.96); }
-    .form-safety-note { border-color: rgba(29,53,87,.16); border-radius: 8px; color: #1d3557; background: #f1faee; }
-    .form-safety-note [data-icon] { color: #1d3557; }
-    .calc-preview { border-radius: 12px; }
-    .calc-item:nth-child(1), .calc-item:nth-child(2) { box-shadow: inset 0 3px #1d3557; }
-    .calc-item:nth-child(3), .calc-item:nth-child(4) { box-shadow: inset 0 3px #1d3557; }
-    .overview-hero { min-height: 250px; padding: 32px; border-color: var(--line); border-radius: 16px; background: #f4f5f6; box-shadow: none; }
-    .overview-hero .eyebrow { color: #1d3557; }
-    .overview-hero .hero-actions .btn:first-child { background: #ffffff; }
-    .notice { color: #1d3557; background: rgba(230,57,70,.07); border: 1px solid rgba(230,57,70,.16); border-radius: 8px; }
+    .card, .kpi { border-color: #e5e7eb; border-radius: 16px; background: #ffffff; box-shadow: 0 1px 2px rgba(0,0,0,.04); }
+    .kpi-grid .kpi, .dashboard-grid .card, .analytics-grid .card, .table-card { background: #ffffff; }
+    .detail-primary, .detail-stat, .info-card { background: #ffffff; }
+    .kpi-neutral { background: #f7f8fa !important; }
+    .kpi-info { background: rgba(20,86,240,.07) !important; border-color: rgba(20,86,240,.18); }
+    .kpi-positive { background: #e8ffea !important; border-color: rgba(27,166,115,.20); }
+    .kpi-danger { background: rgba(255,85,48,.09) !important; border-color: rgba(255,85,48,.22); }
+    .kpi-risk { background: rgba(234,94,193,.09) !important; border-color: rgba(234,94,193,.22); }
+    .kpi .tone { height: 4px; background: #0a0a0a; }
+    .kpi-info .tone { background: #1456f0; }
+    .kpi-positive .tone { background: #1ba673; }
+    .kpi-danger .tone { background: #ff5530; }
+    .kpi-risk .tone { background: #ea5ec1; }
+    .kpi-positive .kpi-value, .kpi-positive .kpi-label [data-icon] { color: #1ba673; }
+    .kpi-danger .kpi-value, .kpi-danger .kpi-label [data-icon] { color: #d64122; }
+    .status-current { color: #1ba673; background: #e8ffea; }
+    .status-watch { color: #7340b5; background: rgba(168,85,247,.12); }
+    .status-at-risk { color: #b33b91; background: rgba(234,94,193,.13); }
+    .status-critical { color: #d64122; background: rgba(255,85,48,.13); }
+    .status-closed { color: #5f5f5f; background: #f2f3f5; }
+    .risk-meter, .risk-stack, .bar-track { background: #eaecf0; }
+    .risk-meter i.medium { background: #ea5ec1; }
+    .risk-meter i.high { background: #ff5530; }
+    .risk-score { color: #b33b91; background: rgba(234,94,193,.13); }
+    .risk-score.high { color: #d64122; background: rgba(255,85,48,.13); }
+    th, .info-card h3, .modal-foot { background: #f7f8fa; }
+    tbody tr:hover { background: #f7f8fa; }
+    .segmented { background: #f2f3f5; }
+    .segmented button { border-radius: 999px; }
+    .segmented button.active { color: #ffffff; background: #0a0a0a; box-shadow: none; border: 1px solid #0a0a0a; }
+    dialog::backdrop { background: rgba(10,10,10,.36); backdrop-filter: blur(4px); }
+    .modal { border-color: #e5e7eb; border-radius: 20px; box-shadow: 0 12px 16px -4px rgba(36,36,36,.16); }
+    .modal-head { background: rgba(255,255,255,.97); }
+    .form-safety-note { border-color: rgba(27,166,115,.22); border-radius: 12px; color: #137b55; background: #e8ffea; }
+    .form-safety-note [data-icon] { color: #1ba673; }
+    .calc-preview { border-radius: 16px; }
+    .calc-item:nth-child(1) { box-shadow: inset 0 4px #ff5530; }
+    .calc-item:nth-child(2) { box-shadow: inset 0 4px #ea5ec1; }
+    .calc-item:nth-child(3) { box-shadow: inset 0 4px #1456f0; }
+    .calc-item:nth-child(4) { box-shadow: inset 0 4px #a855f7; }
+    .overview-hero { min-height: 270px; padding: 40px; border-color: #e5e7eb; border-radius: 24px; background: #f7f8fa; box-shadow: none; }
+    .overview-hero::after { content: ""; position: absolute; right: 40px; top: 40px; width: 184px; height: 10px; border-radius: 999px; background: linear-gradient(90deg,#ff5530 0 25%,#ea5ec1 25% 50%,#1456f0 50% 75%,#a855f7 75%); }
+    .overview-hero .eyebrow { color: #5f5f5f; }
+    .overview-hero h1 { font-size: clamp(42px,5vw,64px); font-weight: 600; line-height: 1.08; letter-spacing: -2px; }
+    .overview-hero .hero-actions .btn:first-child { background: #ffffff; border-color: #0a0a0a; }
+    .notice { color: #45515e; background: rgba(255,85,48,.07); border: 1px solid rgba(255,85,48,.18); border-radius: 12px; }
 
     @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; animation: none !important; } }
 
@@ -843,7 +853,7 @@
     }
     function statusLabel(status) { return t({Current:'status_current',Watch:'status_watch','At risk':'status_at_risk',Critical:'status_critical',Closed:'status_closed'}[status] || status); }
     function assetTypeLabel(type) { return t({Car:'asset_car','Commercial vehicle':'asset_commercial','Real estate':'asset_realestate',Other:'asset_other'}[type] || type); }
-    function assetTypeColor(type) { return {Car:'#4361ee','Commercial vehicle':'#4cc9f0','Real estate':'#7209b7',Other:'#3a0ca3'}[type] || '#480ca8'; }
+    function assetTypeColor(type) { return {Car:'#1456f0','Commercial vehicle':'#3daeff','Real estate':'#ea5ec1',Other:'#a855f7'}[type] || '#17437d'; }
     const ICONS = {
       grid: '<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>',
       file: '<path d="M6 2h8l4 4v16H6z"/><path d="M14 2v5h5M9 12h6M9 16h6"/>',
@@ -1084,7 +1094,7 @@
       rows.forEach((row, i) => {
         if (!row.isCurrent) return;
         const x = left + groupW * i + 3;
-        svg += `<rect x="${x}" y="${top-18}" width="${Math.max(0,groupW-6)}" height="${innerH+24}" rx="8" fill="rgba(63,55,201,.055)" stroke="rgba(63,55,201,.28)" stroke-dasharray="3 3"/><text x="${x+(groupW-6)/2}" y="${top-7}" text-anchor="middle" font-size="8" font-weight="800" fill="#3f37c9">${lang==='ru'?'СЕЙЧАС':'NOW'}</text>`;
+        svg += `<rect x="${x}" y="${top-18}" width="${Math.max(0,groupW-6)}" height="${innerH+24}" rx="8" fill="rgba(255,85,48,.055)" stroke="rgba(255,85,48,.30)" stroke-dasharray="3 3"/><text x="${x+(groupW-6)/2}" y="${top-7}" text-anchor="middle" font-size="8" font-weight="800" fill="#d64122">${lang==='ru'?'СЕЙЧАС':'NOW'}</text>`;
       });
       for (let i=0;i<=4;i++) {
         const y = top + innerH * i / 4, value = scaleMax * (1 - i / 4);
@@ -1094,12 +1104,12 @@
         const center = left + groupW * i + groupW / 2;
         const sh = row.scheduled / scaleMax * innerH, sy = top + innerH - sh;
         const planX = showActual ? center - barW - 2 : center - barW / 2;
-        svg += `<rect x="${planX}" y="${sy}" width="${barW}" height="${Math.max(0,sh)}" rx="4" fill="${row.isCurrent?'#3f37c9':'#4cc9f0'}"><title>${row.fullLabel}: scheduled ${money1.format(row.scheduled)}</title></rect>`;
+        svg += `<rect x="${planX}" y="${sy}" width="${barW}" height="${Math.max(0,sh)}" rx="4" fill="${row.isCurrent?'#ff5530':'#3daeff'}"><title>${row.fullLabel}: scheduled ${money1.format(row.scheduled)}</title></rect>`;
         if (showActual) {
           const ah = row.paid / scaleMax * innerH, ay = top + innerH - ah;
-          svg += `<rect x="${center+2}" y="${ay}" width="${barW}" height="${Math.max(0,ah)}" rx="4" fill="#4361ee"><title>${row.fullLabel}: collected ${money1.format(row.paid)}</title></rect>`;
+          svg += `<rect x="${center+2}" y="${ay}" width="${barW}" height="${Math.max(0,ah)}" rx="4" fill="#1456f0"><title>${row.fullLabel}: collected ${money1.format(row.paid)}</title></rect>`;
         }
-        svg += `<text class="chart-label" x="${center}" y="${height-14}" text-anchor="middle"${row.isCurrent?' font-weight="800" fill="#3f37c9"':''}>${row.label}</text>`;
+        svg += `<text class="chart-label" x="${center}" y="${height-14}" text-anchor="middle"${row.isCurrent?' font-weight="800" fill="#d64122"':''}>${row.label}</text>`;
       });
       svg += `</svg>`;
       document.getElementById(targetId).innerHTML = svg;
@@ -1107,10 +1117,10 @@
 
     function renderRiskDonut(m) {
       const buckets = [
-        {name:'Current', color:'#4895ef', rows:m.open.filter(c=>c.status==='Current')},
-        {name:'Watch', color:'#7209b7', rows:m.open.filter(c=>c.status==='Watch')},
-        {name:'At risk', color:'#b5179e', rows:m.open.filter(c=>c.status==='At risk')},
-        {name:'Critical', color:'#f72585', rows:m.open.filter(c=>c.status==='Critical')}
+        {name:'Current', color:'#1ba673', rows:m.open.filter(c=>c.status==='Current')},
+        {name:'Watch', color:'#a855f7', rows:m.open.filter(c=>c.status==='Watch')},
+        {name:'At risk', color:'#ea5ec1', rows:m.open.filter(c=>c.status==='At risk')},
+        {name:'Critical', color:'#ff5530', rows:m.open.filter(c=>c.status==='Critical')}
       ];
       const total = Math.max(1, sum(m.open,'outstanding'));
       const stack = buckets.filter(b=>b.rows.length).map(b=>`<i style="width:${Math.max(2,sum(b.rows,'outstanding')/total*100)}%;background:${b.color}"></i>`).join('');
