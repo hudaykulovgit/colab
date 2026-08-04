@@ -20,6 +20,15 @@ test('dashboard inline JavaScript parses', () => {
   assert.doesNotThrow(() => new vm.Script(inlineScript[1]));
 });
 
+test('dashboard uses Google Roboto and Material Symbols for interface icons', () => {
+  assert.match(html, /family=Roboto/);
+  assert.match(html, /Material\+Symbols\+Rounded/);
+  assert.match(html, /const MATERIAL_ICONS =/);
+  assert.match(html, /class="material-symbols-rounded"/);
+  assert.match(html, /font-variation-settings: "FILL" 0, "wght" 400/);
+  assert.doesNotMatch(functionSource('iconSvg', 'hydrateIcons'), /<svg/);
+});
+
 test('operational dates use today instead of the seed snapshot date', () => {
   assert.match(html, /const dataDate = new Date\(\)/);
   assert.match(html, /form\.contractDate\.value=currentDateISO/);

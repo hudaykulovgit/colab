@@ -18,6 +18,10 @@ http.createServer((req, res) => {
     return res.end(JSON.stringify({ error: 'API unavailable in static preview' }));
   }
   if (requestUrl.pathname === '/login') {
+    if (req.method === 'POST') {
+      res.writeHead(303, { Location: '/' });
+      return res.end();
+    }
     res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
     return res.end(loginContext.loginPage(false));
   }
