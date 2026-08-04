@@ -10,11 +10,12 @@ const end = source.indexOf('export default', start);
 const context = {};
 vm.runInNewContext(source.slice(start, end), context);
 
-test('login page uses the Linear design system and one-click login', () => {
+test('login page uses the Linear light design system and one-click login', () => {
   const html = context.loginPage(false);
-  for (const color of ['#5e6ad2', '#f7f8f8', '#010102', '#0f1011', '#23252a']) {
+  for (const color of ['#5e6ad2', '#828fff', '#5e69d1', '#ffffff', '#f5f6f6', '#f6f7f7', '#000000', '#62666d', '#8a8f98']) {
     assert.match(html, new RegExp(color));
   }
+  assert.doesNotMatch(html, /#010102|#0f1011|#141516|#18191a|#23252a|#34343a/);
   assert.doesNotMatch(html, /type="password"|name="password"|autocomplete="current-password"/);
   assert.match(html, /<button class="login-button" id="login" type="submit">/);
   assert.match(html, /family=Roboto/);

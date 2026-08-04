@@ -37,11 +37,20 @@ test('operational dates use today instead of the seed snapshot date', () => {
   assert.doesNotMatch(html, /getElementById\('paymentDate'\)\.value=SEED_DATA\.asOf/);
 });
 
-test('dashboard uses the requested light visual system without pitch black', () => {
-  for (const color of ['#ea526f', '#f7f7ff', '#23b5d3', '#279af1']) {
+test('dashboard uses the Linear light visual system', () => {
+  for (const color of ['#5e6ad2', '#828fff', '#5e69d1', '#ffffff', '#f5f6f6', '#f6f7f7', '#000000', '#62666d', '#8a8f98']) {
     assert.match(html, new RegExp(color));
   }
   assert.doesNotMatch(html, /#070600|--pitch-black/);
+  assert.match(html, /\/\* Linear light system: one accent, neutral surfaces, hairline depth\. \*\//);
+  assert.match(html, /function assetTypeColor\(type\) \{ return \{Car:'#5e6ad2','Commercial vehicle':'#7a7fad','Real estate':'#62666d',Other:'#8a8f98'\}/);
+  assert.match(html, /--tint-lavender: rgba\(94, 106, 210, \.075\)/);
+  assert.match(html, /--tint-secure: rgba\(122, 127, 173, \.085\)/);
+  assert.match(html, /--tint-neutral: rgba\(208, 214, 224, \.30\)/);
+  assert.match(html, /\.kpi-grid \.kpi:nth-child\(3n\+1\)/);
+  assert.match(html, /\.dashboard-grid \.card:nth-child\(odd\)/);
+  assert.match(html, /fill="#5e6ad2"><title>\$\{row\.fullLabel\}: collected/);
+  assert.doesNotMatch(html, /url\(#barGradient\)|id="barGradient"/);
   assert.doesNotMatch(html, /hero-graphic|hero-car|hero-line|hero-chip|LIVE PORTFOLIO/);
 });
 
