@@ -37,21 +37,37 @@ test('operational dates use today instead of the seed snapshot date', () => {
   assert.doesNotMatch(html, /getElementById\('paymentDate'\)\.value=SEED_DATA\.asOf/);
 });
 
-test('dashboard uses the requested punch, honeydew and blue visual system', () => {
-  for (const color of ['#e63946', '#f1faee', '#a8dadc', '#457b9d', '#1d3557']) {
+test('dashboard uses navy navigation, gray cards and restrained chart colors', () => {
+  for (const color of ['#1d3557', '#f4f5f6', '#ffffff', '#f72585', '#b5179e', '#7209b7', '#560bad', '#480ca8', '#3a0ca3', '#3f37c9', '#4361ee', '#4895ef', '#4cc9f0']) {
     assert.match(html, new RegExp(color));
   }
+  assert.doesNotMatch(html, /#a8dadc|--frosted-blue/);
   assert.doesNotMatch(html, /#070600|--pitch-black/);
-  assert.match(html, /Dashboard palette: honeydew canvas, frosted glass, cerulean actions, punch-red risk/);
-  assert.match(html, /function assetTypeColor\(type\) \{ return \{Car:'#457b9d','Commercial vehicle':'#a8dadc','Real estate':'#e63946',Other:'#1d3557'\}/);
-  assert.match(html, /--tint-frost: rgba\(168, 218, 220, \.34\)/);
-  assert.match(html, /--tint-cerulean: rgba\(69, 123, 157, \.085\)/);
-  assert.match(html, /--tint-honeydew: rgba\(241, 250, 238, \.72\)/);
-  assert.match(html, /\.kpi-grid \.kpi:nth-child\(3n\+1\)/);
-  assert.match(html, /\.dashboard-grid \.card:nth-child\(odd\)/);
-  assert.match(html, /fill="#457b9d"><title>\$\{row\.fullLabel\}: collected/);
+  assert.match(html, /Dashboard palette: navy navigation, white workspace, gray cards, restrained chart color/);
+  assert.match(html, /\.sidebar \{ color: #ffffff; background: #1d3557/);
+  assert.match(html, /\.sidebar \.nav-btn\.active \{ color: #ffffff/);
+  assert.match(html, /\.card, \.kpi \{[^}]*background: #f4f5f6/);
+  assert.match(html, /function assetTypeColor\(type\) \{ return \{Car:'#4361ee','Commercial vehicle':'#4cc9f0','Real estate':'#7209b7',Other:'#3a0ca3'\}/);
+  assert.match(html, /row\.isCurrent\?'#3f37c9':'#4cc9f0'/);
+  assert.match(html, /fill="#4361ee"><title>\$\{row\.fullLabel\}: collected/);
   assert.doesNotMatch(html, /url\(#barGradient\)|id="barGradient"/);
   assert.doesNotMatch(html, /hero-graphic|hero-car|hero-line|hero-chip|LIVE PORTFOLIO/);
+});
+
+test('dashboard KPI cards use semantic color variants', () => {
+  assert.match(html, /\.kpi-positive \{ background: rgba\(76,201,240,\.11\)/);
+  assert.match(html, /\.kpi-danger \{ background: rgba\(247,37,133,\.10\)/);
+  assert.match(html, /\.kpi-risk \{ background: rgba\(181,23,158,\.075\)/);
+  assert.match(html, /\.status-at-risk \{ color: #b5179e; background: rgba\(181,23,158,\.10\)/);
+  assert.match(html, /\.status-critical \{ color: #f72585; background: rgba\(247,37,133,\.11\)/);
+  assert.match(html, /\.status-current \{ color: #2f7d4a; background: rgba\(47,125,74,\.11\)/);
+  assert.match(html, /\.status-watch \{ color: #3a0ca3; background: rgba\(58,12,163,\.10\)/);
+  assert.match(html, /\{name:'At risk', color:'#b5179e'/);
+  assert.match(html, /\{name:'Critical', color:'#f72585'/);
+  assert.match(html, /class="kpi kpi-\$\{variant\}"/);
+  assert.match(html, /kpi_collection_rate[^\n]+\), 'positive', 'check'/);
+  assert.match(html, /kpi_overdue_now[^\n]+\), 'danger', 'clock'/);
+  assert.match(html, /kpi_atrisk[^\n]+\), 'risk', 'shield'/);
 });
 
 test('current month is included and highlighted in both cash-flow charts', () => {

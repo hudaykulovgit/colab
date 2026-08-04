@@ -12,44 +12,50 @@
     :root {
       --punch-red: #e63946;
       --honeydew: #f1faee;
-      --frosted-blue: #a8dadc;
       --cerulean: #457b9d;
       --oxford-navy: #1d3557;
+      --card-gray: #f4f5f6;
+      --neon-pink: #f72585;
+      --raspberry-plum: #b5179e;
+      --indigo-bloom: #7209b7;
+      --ultrasonic-blue: #560bad;
+      --true-azure: #480ca8;
+      --vivid-royal: #3a0ca3;
+      --bright-indigo: #3f37c9;
+      --electric-sapphire: #4361ee;
+      --blue-energy: #4895ef;
+      --sky-aqua: #4cc9f0;
       --bubblegum-pink: var(--punch-red);
       --slate: var(--oxford-navy);
       --ghost-white: var(--honeydew);
-      --turquoise-surf: var(--frosted-blue);
-      --blue-bell: var(--cerulean);
-      --bg: var(--honeydew);
+      --turquoise-surf: var(--honeydew);
+      --blue-bell: var(--oxford-navy);
+      --bg: #ffffff;
       --surface: #ffffff;
-      --surface-2: rgba(168, 218, 220, .24);
+      --surface-2: var(--honeydew);
       --ink: var(--oxford-navy);
-      --muted: #457b9d;
+      --muted: rgba(29, 53, 87, .72);
       --faint: rgba(29, 53, 87, .58);
       --line: rgba(29, 53, 87, .12);
       --line-strong: rgba(29, 53, 87, .22);
-      --nav: rgba(168, 218, 220, .24);
-      --nav-2: rgba(241, 250, 238, .92);
-      --nav-muted: #457b9d;
-      --accent: var(--cerulean);
-      --accent-2: var(--cerulean);
-      --accent-soft: rgba(168, 218, 220, .42);
+      --nav: #ffffff;
+      --nav-2: #ffffff;
+      --nav-muted: rgba(29, 53, 87, .72);
+      --accent: var(--oxford-navy);
+      --accent-2: var(--oxford-navy);
+      --accent-soft: rgba(29, 53, 87, .08);
       --amber: var(--punch-red);
       --amber-soft: rgba(230, 57, 70, .09);
       --orange: var(--punch-red);
       --orange-soft: rgba(230, 57, 70, .12);
       --danger: var(--punch-red);
       --danger-soft: rgba(230, 57, 70, .13);
-      --blue: var(--cerulean);
-      --blue-soft: rgba(168, 218, 220, .42);
-      --type-car: var(--cerulean);
-      --type-commercial: var(--frosted-blue);
+      --blue: var(--oxford-navy);
+      --blue-soft: rgba(29, 53, 87, .08);
+      --type-car: var(--oxford-navy);
+      --type-commercial: var(--oxford-navy);
       --type-realestate: var(--punch-red);
       --type-other: var(--oxford-navy);
-      --tint-frost: rgba(168, 218, 220, .34);
-      --tint-cerulean: rgba(69, 123, 157, .085);
-      --tint-honeydew: rgba(241, 250, 238, .72);
-      --glass-white: rgba(255, 255, 255, .78);
       --shadow: 0 1px 3px rgba(29, 53, 87, .05);
       --radius: 12px;
       --sidebar: 252px;
@@ -185,9 +191,9 @@
     .card-body { padding: 8px 19px 19px; }
     .chart-legend { display: flex; gap: 13px; flex-wrap: wrap; color: var(--muted); font-size: 10px; }
     .legend-key { display: inline-flex; align-items: center; gap: 5px; }
-    .legend-dot { width: 8px; height: 8px; border-radius: 2px; background: #457b9d; }
-    .legend-dot.plan { background: #a8dadc; }
-    .legend-dot.current { background: rgba(230,57,70,.10); border: 1px solid rgba(230,57,70,.48); }
+    .legend-dot { width: 8px; height: 8px; border-radius: 2px; background: #4361ee; }
+    .legend-dot.plan { background: #4cc9f0; }
+    .legend-dot.current { background: #3f37c9; border: 1px solid rgba(63,55,201,.30); }
     .legend-dot.risk { background: var(--amber); }
     .chart-wrap { width: 100%; min-height: 250px; }
     .chart-wrap svg { width: 100%; height: auto; overflow: visible; }
@@ -405,60 +411,68 @@
     .hero-actions { margin-top: 24px; }
     .overview-hero .hero-actions .btn:first-child { color: var(--ink); background: #fff; border-color: var(--line); }
 
-    /* Dashboard palette: honeydew canvas, frosted glass, cerulean actions, punch-red risk. */
-    body { background: #f1faee; }
-    :focus-visible { outline-color: rgba(69,123,157,.52); }
-    .sidebar { background: rgba(168,218,220,.28); border-right-color: var(--line); }
+    /* Dashboard palette: navy navigation, white workspace, gray cards, restrained chart color. */
+    body { background: #ffffff; }
+    :focus-visible { outline-color: rgba(29,53,87,.46); }
+    .sidebar { color: #ffffff; background: #1d3557; border-right-color: #1d3557; }
     .sidebar::after, .overview-hero::before, .kpi::after { display: none; }
-    .brand-mark { background: #457b9d; border-radius: 8px; box-shadow: none; }
-    .nav-label { color: rgba(29,53,87,.58); }
-    .nav-btn:hover { background: rgba(241,250,238,.72); border-color: var(--line); }
-    .nav-btn.active { color: #1d3557; background: rgba(255,255,255,.82); border-color: var(--line); box-shadow: none; }
-    .nav-btn.active [data-icon] { color: #457b9d; }
-    .topbar { background: rgba(241,250,238,.90); border-bottom-color: var(--line); }
+    .brand-mark { color: #1d3557; background: #ffffff; border-radius: 8px; box-shadow: none; }
+    .sidebar .brand-name { color: #ffffff; }
+    .sidebar .brand-name small, .nav-label { color: rgba(255,255,255,.58); }
+    .sidebar .nav-btn { color: rgba(255,255,255,.74); }
+    .sidebar .nav-btn:hover { color: #ffffff; background: rgba(255,255,255,.08); border-color: rgba(255,255,255,.10); }
+    .sidebar .nav-btn.active { color: #ffffff; background: rgba(255,255,255,.14); border-color: rgba(255,255,255,.14); box-shadow: none; }
+    .sidebar .nav-btn.active [data-icon] { color: #ffffff; }
+    .topbar { background: rgba(255,255,255,.94); border-bottom-color: var(--line); }
     .global-search input, .icon-btn { box-shadow: none; }
-    .global-search input:focus, .field input:focus, .field select:focus, .field textarea:focus, .schedule-input:focus { border-color: #457b9d; box-shadow: 0 0 0 3px rgba(69,123,157,.14); }
-    .avatar { background: #457b9d; border-radius: 8px; box-shadow: none; }
+    .global-search input:focus, .field input:focus, .field select:focus, .field textarea:focus, .schedule-input:focus { border-color: #1d3557; box-shadow: 0 0 0 3px rgba(29,53,87,.12); }
+    .avatar { background: #1d3557; border-radius: 8px; box-shadow: none; }
     .logout-btn { border-color: rgba(230,57,70,.18); border-radius: 8px; color: #e63946; background: rgba(230,57,70,.07); }
     .logout-btn:hover { border-color: rgba(230,57,70,.32); background: rgba(230,57,70,.11); }
     .btn { border-radius: 8px; }
     .btn-primary { background: #1d3557; border-color: #1d3557; }
-    .btn-accent { background: #457b9d; border-color: #457b9d; box-shadow: none; }
+    .btn-accent { background: #1d3557; border-color: #1d3557; box-shadow: none; }
     .btn-accent:hover { background: #1d3557; border-color: #1d3557; }
     .btn:hover, .icon-btn:hover { transform: none; }
-    .card, .kpi { border-color: var(--line); border-radius: 12px; box-shadow: var(--shadow); backdrop-filter: blur(10px); }
-    .card { background: var(--glass-white); }
-    .kpi-grid .kpi:nth-child(3n+1) { background: var(--tint-frost); }
-    .kpi-grid .kpi:nth-child(3n+2) { background: var(--tint-cerulean); }
-    .kpi-grid .kpi:nth-child(3n) { background: var(--tint-honeydew); }
-    .dashboard-grid .card:nth-child(odd), .analytics-grid .card:nth-child(3n+1) { background: var(--tint-frost); }
-    .dashboard-grid .card:nth-child(even), .analytics-grid .card:nth-child(3n+2) { background: var(--tint-honeydew); }
-    .analytics-grid .card:nth-child(3n) { background: var(--tint-cerulean); }
-    .table-card { background: var(--glass-white); }
-    .detail-primary { background: var(--tint-frost); }
-    .detail-stat:nth-child(even) { background: var(--tint-cerulean); }
-    .detail-stat:nth-child(odd), .info-card { background: var(--tint-honeydew); }
-    .kpi .tone, .tone.blue { height: 3px; background: #457b9d; }
-    .tone.amber, .tone.orange { height: 3px; background: #e63946; }
-    .status-current { color: #1d3557; background: rgba(168,218,220,.48); }
-    .status-watch { color: #457b9d; background: rgba(69,123,157,.10); }
-    .status-at-risk, .status-critical { color: #e63946; background: rgba(230,57,70,.11); }
-    .status-closed { color: #457b9d; background: rgba(241,250,238,.78); }
-    .risk-meter, .risk-stack, .bar-track { background: rgba(168,218,220,.30); }
-    th, .info-card h3, .modal-foot { background: rgba(168,218,220,.22); }
-    tbody tr:hover { background: rgba(168,218,220,.16); }
-    .segmented { background: rgba(168,218,220,.26); }
+    .card, .kpi { border-color: var(--line); border-radius: 12px; background: #f4f5f6; box-shadow: var(--shadow); }
+    .kpi-grid .kpi, .dashboard-grid .card, .analytics-grid .card, .table-card { background: #f4f5f6; }
+    .detail-primary, .detail-stat, .info-card { background: #f4f5f6; }
+    .kpi-neutral { background: #f4f5f6 !important; }
+    .kpi-info { background: rgba(67,97,238,.075) !important; border-color: rgba(67,97,238,.16); }
+    .kpi-positive { background: rgba(76,201,240,.11) !important; border-color: rgba(76,201,240,.22); }
+    .kpi-danger { background: rgba(247,37,133,.10) !important; border-color: rgba(247,37,133,.22); }
+    .kpi-risk { background: rgba(181,23,158,.075) !important; border-color: rgba(181,23,158,.18); }
+    .kpi .tone { height: 3px; background: #1d3557; }
+    .kpi-info .tone { background: #4361ee; }
+    .kpi-positive .tone { background: #4cc9f0; }
+    .kpi-danger .tone { background: #f72585; }
+    .kpi-risk .tone { background: #b5179e; }
+    .kpi-positive .kpi-value, .kpi-positive .kpi-label [data-icon] { color: #3f37c9; }
+    .kpi-danger .kpi-value, .kpi-danger .kpi-label [data-icon] { color: #f72585; }
+    .status-current { color: #2f7d4a; background: rgba(47,125,74,.11); }
+    .status-watch { color: #3a0ca3; background: rgba(58,12,163,.10); }
+    .status-at-risk { color: #b5179e; background: rgba(181,23,158,.10); }
+    .status-critical { color: #f72585; background: rgba(247,37,133,.11); }
+    .status-closed { color: #1d3557; background: rgba(241,250,238,.78); }
+    .risk-meter, .risk-stack, .bar-track { background: rgba(29,53,87,.08); }
+    .risk-meter i.medium { background: #b5179e; }
+    .risk-meter i.high { background: #f72585; }
+    .risk-score { color: #b5179e; background: rgba(181,23,158,.10); }
+    .risk-score.high { color: #f72585; background: rgba(247,37,133,.11); }
+    th, .info-card h3, .modal-foot { background: rgba(255,255,255,.72); }
+    tbody tr:hover { background: #ffffff; }
+    .segmented { background: #ffffff; }
     .segmented button.active { box-shadow: none; border: 1px solid var(--line); }
     dialog::backdrop { background: rgba(0,0,0,.34); backdrop-filter: blur(4px); }
     .modal { border-color: var(--line); border-radius: 16px; box-shadow: 0 24px 80px rgba(0,0,0,.14); }
     .modal-head { background: rgba(255,255,255,.96); }
-    .form-safety-note { border-color: rgba(69,123,157,.20); border-radius: 8px; color: #1d3557; background: rgba(168,218,220,.24); }
-    .form-safety-note [data-icon] { color: #457b9d; }
+    .form-safety-note { border-color: rgba(29,53,87,.16); border-radius: 8px; color: #1d3557; background: #f1faee; }
+    .form-safety-note [data-icon] { color: #1d3557; }
     .calc-preview { border-radius: 12px; }
-    .calc-item:nth-child(1), .calc-item:nth-child(2) { box-shadow: inset 0 3px #457b9d; }
-    .calc-item:nth-child(3), .calc-item:nth-child(4) { box-shadow: inset 0 3px #e63946; }
-    .overview-hero { min-height: 250px; padding: 32px; border-color: var(--line); border-radius: 16px; background: rgba(168,218,220,.24); box-shadow: none; }
-    .overview-hero .eyebrow { color: #457b9d; }
+    .calc-item:nth-child(1), .calc-item:nth-child(2) { box-shadow: inset 0 3px #1d3557; }
+    .calc-item:nth-child(3), .calc-item:nth-child(4) { box-shadow: inset 0 3px #1d3557; }
+    .overview-hero { min-height: 250px; padding: 32px; border-color: var(--line); border-radius: 16px; background: #f4f5f6; box-shadow: none; }
+    .overview-hero .eyebrow { color: #1d3557; }
     .overview-hero .hero-actions .btn:first-child { background: #ffffff; }
     .notice { color: #1d3557; background: rgba(230,57,70,.07); border: 1px solid rgba(230,57,70,.16); border-radius: 8px; }
 
@@ -829,7 +843,7 @@
     }
     function statusLabel(status) { return t({Current:'status_current',Watch:'status_watch','At risk':'status_at_risk',Critical:'status_critical',Closed:'status_closed'}[status] || status); }
     function assetTypeLabel(type) { return t({Car:'asset_car','Commercial vehicle':'asset_commercial','Real estate':'asset_realestate',Other:'asset_other'}[type] || type); }
-    function assetTypeColor(type) { return {Car:'#457b9d','Commercial vehicle':'#a8dadc','Real estate':'#e63946',Other:'#1d3557'}[type] || '#457b9d'; }
+    function assetTypeColor(type) { return {Car:'#4361ee','Commercial vehicle':'#4cc9f0','Real estate':'#7209b7',Other:'#3a0ca3'}[type] || '#480ca8'; }
     const ICONS = {
       grid: '<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>',
       file: '<path d="M6 2h8l4 4v16H6z"/><path d="M14 2v5h5M9 12h6M9 16h6"/>',
@@ -1020,7 +1034,8 @@
     }
 
     function kpiCard(label, value, foot, tone = '', icon = '') {
-      return `<article class="kpi"><i class="tone ${tone}"></i><div class="kpi-label">${icon ? iconSvg(icon,14) : ''}${escapeHtml(label)}</div><div class="kpi-value mono">${value}</div><div class="kpi-foot">${foot}</div></article>`;
+      const variant = ['positive','danger','risk','info'].includes(tone) ? tone : 'neutral';
+      return `<article class="kpi kpi-${variant}"><i class="tone"></i><div class="kpi-label">${icon ? iconSvg(icon,14) : ''}${escapeHtml(label)}</div><div class="kpi-value mono">${value}</div><div class="kpi-foot">${foot}</div></article>`;
     }
 
     function renderOverview() {
@@ -1028,11 +1043,11 @@
       document.getElementById('overviewSubtitle').textContent = t('overview_subtitle', { date: formatDate(currentDateISO), n: contracts.length });
       document.getElementById('kpiGrid').innerHTML = [
         kpiCard(t('kpi_outstanding'), compactMoney(m.outstanding), t('kpi_outstanding_foot', { n: m.activeCount }), '', 'wallet'),
-        kpiCard(t('kpi_collection_rate'), `${m.collectionRate.toFixed(1)}%`, t('kpi_collection_rate_foot', { paid: money.format(m.duePaid), due: money.format(m.dueScheduled) }), 'blue', 'check'),
-        kpiCard(t('kpi_overdue_now'), compactMoney(m.overdue), m.overdue ? `<span class="delta bad">${(m.overdue / m.outstanding * 100).toFixed(1)}%</span> ${t('of_open_receivables')}` : t('kpi_overdue_none'), 'amber', 'clock'),
-        kpiCard(t('kpi_atrisk'), compactMoney(m.atRiskExposure), t('kpi_atrisk_foot', { n: m.atRisk.length }), 'orange', 'shield'),
-        kpiCard(t('kpi_profit'), compactMoney(m.contractedProfit), t('kpi_profit_foot', { n: contracts.length }), 'blue', 'trend'),
-        kpiCard(t('kpi_roi'), `${m.roi.toFixed(1)}%`, t('kpi_roi_foot', { pct: m.weightedAnnualYield.toFixed(1) }), '', 'chart')
+        kpiCard(t('kpi_collection_rate'), `${m.collectionRate.toFixed(1)}%`, t('kpi_collection_rate_foot', { paid: money.format(m.duePaid), due: money.format(m.dueScheduled) }), 'positive', 'check'),
+        kpiCard(t('kpi_overdue_now'), compactMoney(m.overdue), m.overdue ? `<span class="delta bad">${(m.overdue / m.outstanding * 100).toFixed(1)}%</span> ${t('of_open_receivables')}` : t('kpi_overdue_none'), 'danger', 'clock'),
+        kpiCard(t('kpi_atrisk'), compactMoney(m.atRiskExposure), t('kpi_atrisk_foot', { n: m.atRisk.length }), 'risk', 'shield'),
+        kpiCard(t('kpi_profit'), compactMoney(m.contractedProfit), t('kpi_profit_foot', { n: contracts.length }), 'info', 'trend'),
+        kpiCard(t('kpi_roi'), `${m.roi.toFixed(1)}%`, t('kpi_roi_foot', { pct: m.weightedAnnualYield.toFixed(1) }), 'info', 'chart')
       ].join('');
       renderCashflowChart('cashflowChart', monthSeries(-11, 0), true);
       renderRiskDonut(m);
@@ -1069,7 +1084,7 @@
       rows.forEach((row, i) => {
         if (!row.isCurrent) return;
         const x = left + groupW * i + 3;
-        svg += `<rect x="${x}" y="${top-18}" width="${Math.max(0,groupW-6)}" height="${innerH+24}" rx="8" fill="rgba(230,57,70,.06)" stroke="rgba(230,57,70,.28)" stroke-dasharray="3 3"/><text x="${x+(groupW-6)/2}" y="${top-7}" text-anchor="middle" font-size="8" font-weight="800" fill="#e63946">${lang==='ru'?'СЕЙЧАС':'NOW'}</text>`;
+        svg += `<rect x="${x}" y="${top-18}" width="${Math.max(0,groupW-6)}" height="${innerH+24}" rx="8" fill="rgba(63,55,201,.055)" stroke="rgba(63,55,201,.28)" stroke-dasharray="3 3"/><text x="${x+(groupW-6)/2}" y="${top-7}" text-anchor="middle" font-size="8" font-weight="800" fill="#3f37c9">${lang==='ru'?'СЕЙЧАС':'NOW'}</text>`;
       });
       for (let i=0;i<=4;i++) {
         const y = top + innerH * i / 4, value = scaleMax * (1 - i / 4);
@@ -1079,12 +1094,12 @@
         const center = left + groupW * i + groupW / 2;
         const sh = row.scheduled / scaleMax * innerH, sy = top + innerH - sh;
         const planX = showActual ? center - barW - 2 : center - barW / 2;
-        svg += `<rect x="${planX}" y="${sy}" width="${barW}" height="${Math.max(0,sh)}" rx="4" fill="${row.isCurrent?'#e63946':'#a8dadc'}"><title>${row.fullLabel}: scheduled ${money1.format(row.scheduled)}</title></rect>`;
+        svg += `<rect x="${planX}" y="${sy}" width="${barW}" height="${Math.max(0,sh)}" rx="4" fill="${row.isCurrent?'#3f37c9':'#4cc9f0'}"><title>${row.fullLabel}: scheduled ${money1.format(row.scheduled)}</title></rect>`;
         if (showActual) {
           const ah = row.paid / scaleMax * innerH, ay = top + innerH - ah;
-          svg += `<rect x="${center+2}" y="${ay}" width="${barW}" height="${Math.max(0,ah)}" rx="4" fill="#457b9d"><title>${row.fullLabel}: collected ${money1.format(row.paid)}</title></rect>`;
+          svg += `<rect x="${center+2}" y="${ay}" width="${barW}" height="${Math.max(0,ah)}" rx="4" fill="#4361ee"><title>${row.fullLabel}: collected ${money1.format(row.paid)}</title></rect>`;
         }
-        svg += `<text class="chart-label" x="${center}" y="${height-14}" text-anchor="middle"${row.isCurrent?' font-weight="800" fill="#e63946"':''}>${row.label}</text>`;
+        svg += `<text class="chart-label" x="${center}" y="${height-14}" text-anchor="middle"${row.isCurrent?' font-weight="800" fill="#3f37c9"':''}>${row.label}</text>`;
       });
       svg += `</svg>`;
       document.getElementById(targetId).innerHTML = svg;
@@ -1092,10 +1107,10 @@
 
     function renderRiskDonut(m) {
       const buckets = [
-        {name:'Current', color:'#457b9d', rows:m.open.filter(c=>c.status==='Current')},
-        {name:'Watch', color:'#a8dadc', rows:m.open.filter(c=>c.status==='Watch')},
-        {name:'At risk', color:'#e63946', rows:m.open.filter(c=>c.status==='At risk')},
-        {name:'Critical', color:'#1d3557', rows:m.open.filter(c=>c.status==='Critical')}
+        {name:'Current', color:'#4895ef', rows:m.open.filter(c=>c.status==='Current')},
+        {name:'Watch', color:'#7209b7', rows:m.open.filter(c=>c.status==='Watch')},
+        {name:'At risk', color:'#b5179e', rows:m.open.filter(c=>c.status==='At risk')},
+        {name:'Critical', color:'#f72585', rows:m.open.filter(c=>c.status==='Critical')}
       ];
       const total = Math.max(1, sum(m.open,'outstanding'));
       const stack = buckets.filter(b=>b.rows.length).map(b=>`<i style="width:${Math.max(2,sum(b.rows,'outstanding')/total*100)}%;background:${b.color}"></i>`).join('');
@@ -1125,11 +1140,11 @@
       const next30 = addMonths(dataDate,1);
       const dueNext30 = contracts.flatMap(c => (c.schedule||[]).filter(r=>r.dueDate&&parseISO(r.dueDate)>dataDate&&parseISO(r.dueDate)<=next30).map(r=>({...r,contract:c}))) ;
       document.getElementById('paymentKpis').innerHTML = [
-        kpiCard(t('kpi_cash_collected'), compactMoney(m.collected), t('kpi_cash_collected_foot'), '', 'wallet'),
-        kpiCard(t('kpi_due_to_date'), compactMoney(m.dueScheduled), t('kpi_due_to_date_foot', { date: formatDate(currentDateISO) }), 'blue', 'clock'),
-        kpiCard(t('kpi_collection_rate'), `${m.collectionRate.toFixed(1)}%`, t('kpi_collection_rate2_foot', { paid: compactMoney(m.duePaid) }), '', 'check'),
-        kpiCard(t('kpi_next30'), compactMoney(sum(dueNext30,'scheduled')), t('kpi_next30_foot', { n: dueNext30.length }), 'blue', 'chart'),
-        kpiCard(t('kpi_overdue'), compactMoney(m.overdue), t('kpi_overdue_foot', { n: m.open.filter(c=>c.overdue>0).length }), 'amber', 'alert'),
+        kpiCard(t('kpi_cash_collected'), compactMoney(m.collected), t('kpi_cash_collected_foot'), 'positive', 'wallet'),
+        kpiCard(t('kpi_due_to_date'), compactMoney(m.dueScheduled), t('kpi_due_to_date_foot', { date: formatDate(currentDateISO) }), 'info', 'clock'),
+        kpiCard(t('kpi_collection_rate'), `${m.collectionRate.toFixed(1)}%`, t('kpi_collection_rate2_foot', { paid: compactMoney(m.duePaid) }), 'positive', 'check'),
+        kpiCard(t('kpi_next30'), compactMoney(sum(dueNext30,'scheduled')), t('kpi_next30_foot', { n: dueNext30.length }), 'info', 'chart'),
+        kpiCard(t('kpi_overdue'), compactMoney(m.overdue), t('kpi_overdue_foot', { n: m.open.filter(c=>c.overdue>0).length }), 'danger', 'alert'),
         kpiCard(t('kpi_avg_payment'), compactMoney(m.activeCount ? sum(m.open,'monthlyPayment')/m.activeCount : 0), t('kpi_avg_payment_foot'), '', 'trend')
       ].join('');
       renderCashflowChart('forecastChart', monthSeries(0,11), false);
@@ -1143,12 +1158,12 @@
       const m = portfolioMetrics(), overdueContracts = m.open.filter(c=>c.overdue>0), critical = m.open.filter(c=>c.status==='Critical');
       const avgDays = overdueContracts.length ? sum(overdueContracts,'daysLate')/overdueContracts.length : 0;
       document.getElementById('riskKpis').innerHTML = [
-        kpiCard(t('kpi_atrisk'), compactMoney(m.atRiskExposure), t('kpi_atrisk_foot', { n: m.atRisk.length }), 'orange', 'shield'),
-        kpiCard(t('kpi_critical'), String(critical.length), t('kpi_critical_foot', { amt: compactMoney(sum(critical,'outstanding')) }), 'orange', 'alert'),
-        kpiCard(t('kpi_total_overdue'), compactMoney(m.overdue), t('kpi_total_overdue_foot', { n: overdueContracts.length }), 'amber', 'clock'),
-        kpiCard(t('kpi_avg_days_late'), t('kpi_avg_days_late_val', { n: avgDays.toFixed(0) }), t('kpi_avg_days_late_foot'), 'amber', 'clock'),
-        kpiCard(t('kpi_largest_exposure'), compactMoney(Math.max(0,...m.open.map(c=>c.outstanding))), t('kpi_largest_exposure_foot'), 'blue', 'wallet'),
-        kpiCard(t('kpi_incomplete_data'), String(m.open.filter(c=>!c.licensePlate||!c.mileage).length), t('kpi_incomplete_data_foot'), 'blue', 'file')
+        kpiCard(t('kpi_atrisk'), compactMoney(m.atRiskExposure), t('kpi_atrisk_foot', { n: m.atRisk.length }), 'risk', 'shield'),
+        kpiCard(t('kpi_critical'), String(critical.length), t('kpi_critical_foot', { amt: compactMoney(sum(critical,'outstanding')) }), 'danger', 'alert'),
+        kpiCard(t('kpi_total_overdue'), compactMoney(m.overdue), t('kpi_total_overdue_foot', { n: overdueContracts.length }), 'danger', 'clock'),
+        kpiCard(t('kpi_avg_days_late'), t('kpi_avg_days_late_val', { n: avgDays.toFixed(0) }), t('kpi_avg_days_late_foot'), 'risk', 'clock'),
+        kpiCard(t('kpi_largest_exposure'), compactMoney(Math.max(0,...m.open.map(c=>c.outstanding))), t('kpi_largest_exposure_foot'), 'info', 'wallet'),
+        kpiCard(t('kpi_incomplete_data'), String(m.open.filter(c=>!c.licensePlate||!c.mileage).length), t('kpi_incomplete_data_foot'), 'info', 'file')
       ].join('');
       const risky = m.open.filter(c=>c.overdue>0||c.riskScore>=25).sort((a,b)=>b.riskScore-a.riskScore||b.overdue-a.overdue).slice(0,12);
       document.getElementById('riskContracts').innerHTML = risky.length ? risky.map(c=>`<div class="risk-contract"><div class="risk-contract-main"><div class="risk-score ${c.riskScore>=75?'high':''}">${c.riskScore}</div><div><h3>${escapeHtml(c.assetName)} <span class="status ${statusClass(c.status)}">${statusLabel(c.status)}</span></h3><small>${escapeHtml(c.borrower)} · ${c.daysLate} ${t('days_suffix')} · ${c.id}</small><div class="risk-meter" style="margin-top:7px"><i class="${c.riskScore>=75?'high':c.riskScore>=40?'medium':''}" style="width:${c.riskScore}%"></i></div></div></div><div class="risk-amount"><strong>${money.format(c.outstanding)}</strong><small>${money.format(c.overdue)} ${t('overdue_suffix')}</small><br><button class="table-action" onclick="openDetail('${c.id}')">${t('btn_review')}</button></div></div>`).join('') : `<div class="empty">${t('empty_risk')}</div>`;
@@ -1163,12 +1178,12 @@
     function renderAnalytics() {
       const m=portfolioMetrics(), closed=contracts.filter(c=>c.status==='Closed'), avgTerm=contracts.length?sum(contracts,'termMonths')/contracts.length:0;
       document.getElementById('analyticsKpis').innerHTML = [
-        kpiCard(t('kpi_originated'), compactMoney(m.originated), t('kpi_originated_foot', { n: contracts.length }), 'blue', 'wallet'),
-        kpiCard(t('kpi_profit'), compactMoney(m.contractedProfit), t('kpi_contracted_profit_foot'), '', 'trend'),
-        kpiCard(t('kpi_weighted_roi'), `${m.roi.toFixed(1)}%`, t('kpi_weighted_roi_foot'), '', 'chart'),
-        kpiCard(t('kpi_open_yield'), `${m.weightedAnnualYield.toFixed(1)}%`, t('kpi_open_yield_foot'), 'blue', 'trend'),
-        kpiCard(t('kpi_closed'), `${closed.length}`, t('kpi_closed_foot', { pct: (closed.length/contracts.length*100).toFixed(0) }), '', 'check'),
-        kpiCard(t('kpi_avg_duration'), t('kpi_avg_duration_val', { n: avgTerm.toFixed(1) }), t('kpi_avg_duration_foot'), 'blue', 'clock')
+        kpiCard(t('kpi_originated'), compactMoney(m.originated), t('kpi_originated_foot', { n: contracts.length }), 'info', 'wallet'),
+        kpiCard(t('kpi_profit'), compactMoney(m.contractedProfit), t('kpi_contracted_profit_foot'), 'positive', 'trend'),
+        kpiCard(t('kpi_weighted_roi'), `${m.roi.toFixed(1)}%`, t('kpi_weighted_roi_foot'), 'positive', 'chart'),
+        kpiCard(t('kpi_open_yield'), `${m.weightedAnnualYield.toFixed(1)}%`, t('kpi_open_yield_foot'), 'positive', 'trend'),
+        kpiCard(t('kpi_closed'), `${closed.length}`, t('kpi_closed_foot', { pct: (closed.length/contracts.length*100).toFixed(0) }), 'info', 'check'),
+        kpiCard(t('kpi_avg_duration'), t('kpi_avg_duration_val', { n: avgTerm.toFixed(1) }), t('kpi_avg_duration_foot'), '', 'clock')
       ].join('');
       const groups=groupByType(), maxRoi=Math.max(1,...groups.map(g=>g.roi)), maxPrincipal=Math.max(1,...groups.map(g=>g.principal));
       document.getElementById('roiBars').innerHTML=groups.map(g=>`<div class="bar-row"><i style="background:${assetTypeColor(g.type)};color:${assetTypeColor(g.type)}"></i><span>${escapeHtml(assetTypeLabel(g.type))}</span><div class="bar-track"><i style="width:${g.roi/maxRoi*100}%;background:${assetTypeColor(g.type)}"></i></div><strong>${g.roi.toFixed(1)}%</strong></div>`).join('');
