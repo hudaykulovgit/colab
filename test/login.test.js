@@ -10,25 +10,23 @@ const end = source.indexOf('export default', start);
 const context = {};
 vm.runInNewContext(source.slice(start, end), context);
 
-test('login page uses the requested Autofinance palette and one-click login', () => {
+test('login page uses the Linear design system and one-click login', () => {
   const html = context.loginPage(false);
-  for (const color of ['#ea526f', '#f7f7ff', '#23b5d3', '#279af1', '#1d3342']) {
+  for (const color of ['#5e6ad2', '#f7f8f8', '#010102', '#0f1011', '#23252a']) {
     assert.match(html, new RegExp(color));
   }
-  assert.doesNotMatch(html, /#070600/);
   assert.doesNotMatch(html, /type="password"|name="password"|autocomplete="current-password"/);
   assert.match(html, /<button class="login-button" id="login" type="submit">/);
   assert.match(html, /family=Roboto/);
   assert.match(html, /Material\+Symbols\+Rounded/);
   assert.match(html, /class="material-symbols-rounded"/);
   assert.match(html, /font-variation-settings:"FILL" 0,"wght" 400/);
-  assert.doesNotMatch(html, /Iowan Old Style|Baskerville|Georgia/);
-  assert.match(html, /The next era of/);
-  assert.match(html, /<em>Auto<\/em> Finance/);
-  assert.match(html, /class="deck"/);
-  assert.match(html, /class="mini-card quick"/);
-  assert.match(html, /class="mini-card balance"/);
-  assert.match(html, /class="mini-card forecast"/);
+  assert.match(html, /Your entire auto finance portfolio, in focus/);
+  assert.match(html, /class="product-wrap"/);
+  assert.match(html, /class="window-bar"/);
+  assert.match(html, /Miraziz Mirjalolov/);
+  assert.match(html, /Neon connected/);
+  assert.doesNotMatch(html, /linear-gradient|radial-gradient/);
   assert.doesNotMatch(html, /finance-landing\.jpg|landing-art/);
   assert.doesNotMatch(html, /autofinance-3d-hero/);
   assert.doesNotMatch(html, /Password not recognized|workspace password/i);
