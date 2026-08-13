@@ -81,6 +81,12 @@ test('finance owner identity is Miraziz Mirjalolov', () => {
   assert.match(html, /<div class="avatar">MM<\/div>/);
 });
 
+test('profile status control has a direct toggle and excludes closed contracts', () => {
+  assert.match(html, /onclick="toggleProfileStatus\(event\)"/);
+  assert.match(html, /function toggleProfileStatus\(event\)/);
+  assert.match(html, /function setProfileStatusOpen\(isOpen\)/);
+  assert.match(html, /contracts\.filter\(c => c\.status !== 'Closed'\)/);
+});
 test('sidebar snapshot badge is removed and a logout control is visible', () => {
   assert.doesNotMatch(html, /id="sidebarSource"/);
   assert.doesNotMatch(html, /Загружен снимок Excel/);

@@ -149,7 +149,11 @@
     .profile-status-bar i { min-width: 3px; height: 100%; }
     .profile-status-list { display: grid; gap: 7px; max-height: 270px; overflow: auto; padding-right: 2px; }
     .profile-status-item { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 9px 10px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface-2); }
+    .profile-status-item { width: 100%; color: inherit; font: inherit; text-align: left; cursor: pointer; }
+    .profile-status-item:hover { border-color: var(--line-strong); background: var(--surface); }
     .profile-status-item strong { display: block; font-size: 11px; color: var(--ink); }
+    .profile-caret { display: grid; place-items: center; color: var(--muted); transition: transform .16s ease; }
+    .profile[aria-expanded="true"] .profile-caret { transform: rotate(180deg); }
     .avatar { width: 36px; height: 36px; display: grid; place-items: center; color: #fff; background: var(--accent); border-radius: 50%; font-size: 12px; font-weight: 750; }
     .profile strong { display: block; font-size: 12px; }
     .profile span { color: var(--muted); font-size: 10px; }
@@ -617,10 +621,7 @@
           <button class="icon-btn" id="exportBtn" data-i18n-title="export_title" title="Export portfolio data"><span data-icon="download"></span></button>
           <button class="icon-btn" id="quickPaymentBtn" data-i18n-title="record_payment_title" title="Record a payment"><span data-icon="plus"></span></button>
           <div class="profile-menu">
-            <button class="profile" id="profileStatusToggle" type="button" aria-expanded="false" aria-controls="profileStatusPopover">
-            <div class="avatar">MM</div>
-            <div><strong data-i18n="profile_name">Miraziz Mirjalolov</strong><span data-i18n="profile_role">Finance Owner · Administrator</span></div>
-            </button>
+            <button class="profile" id="profileStatusToggle" type="button" aria-expanded="false" aria-controls="profileStatusPopover" onclick="toggleProfileStatus(event)"><div class="avatar">MM</div><div><strong data-i18n="profile_name">Miraziz Mirjalolov</strong><span data-i18n="profile_role">Finance Owner · Administrator</span></div><span class="profile-caret" data-icon="chevron"></span></button>
             <div class="profile-status-popover" id="profileStatusPopover" role="dialog" aria-modal="false">
               <div id="profileStatusContent"></div>
             </div>
@@ -902,7 +903,7 @@
       grid:'dashboard', file:'description', wallet:'account_balance_wallet', shield:'shield', chart:'monitoring',
       search:'search', download:'download', upload:'upload_file', trash:'delete', logout:'logout', plus:'add', x:'close',
       car:'directions_car', home:'home', box:'inventory_2', truck:'local_shipping', print:'print', edit:'edit',
-      trend:'trending_up', clock:'schedule', alert:'warning', check:'check_circle'
+      trend:'trending_up', clock:'schedule', alert:'warning', check:'check_circle', chevron:'expand_more'
     };
     function iconSvg(name, size = 18) {
       return `<span class="material-symbols-rounded" style="font-size:${size}px" aria-hidden="true">${MATERIAL_ICONS[name] || MATERIAL_ICONS.box}</span>`;
@@ -1064,6 +1065,19 @@
       };
     }
 
+    function setProfileStatusOpen(isOpen) {
+      const toggle = document.getElementById('profileStatusToggle');
+      const popover = document.getElementById('profileStatusPopover');
+      if (!toggle || !popover) return;
+      popover.classList.toggle('is-open', isOpen);
+      toggle.setAttribute('aria-expanded', String(isOpen));
+    }
+
+    function toggleProfileStatus(event) {
+      event?.stopPropagation();
+      const popover = document.getElementById('profileStatusPopover');
+      setProfileStatusOpen(!popover?.classList.contains('is-open'));
+    }
     function renderProfileStatus() {
       const container = document.getElementById('profileStatusContent');
       if (!container) return;
@@ -1453,19 +1467,10 @@
         showToast(t('toast_delete_failed',{error:err.message}));
       }
     });
-    const profileStatusToggle = document.getElementById('profileStatusToggle');
-    const profileStatusPopover = document.getElementById('profileStatusPopover');
-    profileStatusToggle.addEventListener('click', () => {
-      const open = profileStatusPopover.classList.toggle('is-open');
-      profileStatusToggle.setAttribute('aria-expanded', String(open));
-    });
     document.addEventListener('click', event => {
-      if (!event.target.closest('.profile-menu')) {
-        profileStatusPopover.classList.remove('is-open');
-        profileStatusToggle.setAttribute('aria-expanded', 'false');
-      }
+      if (!event.target.closest('.profile-menu')) setProfileStatusOpen(false);
     });
-    document.addEventListener('keydown', event => { if (event.key === 'Escape') { profileStatusPopover.classList.remove('is-open'); profileStatusToggle.setAttribute('aria-expanded', 'false'); } });
+    document.addEventListener('keydown', event => { if (event.key === 'Escape') setProfileStatusOpen(false); });
     document.getElementById('importExcelBtn')?.addEventListener('click',()=>document.getElementById('excelImportInput').click());
     document.getElementById('excelImportInput')?.addEventListener('change',async event=>{
       const file=event.target.files[0]; event.target.value='';
