@@ -81,6 +81,12 @@ test('finance owner identity is Miraziz Mirjalolov', () => {
   assert.match(html, /<div class="avatar">MM<\/div>/);
 });
 
+test('topbar markup stays balanced so page content remains directly below it', () => {
+  const topbar = html.match(/<header class="topbar">([\s\S]*?)<\/header>/)?.[1] || '';
+  assert.ok(topbar, 'topbar markup should exist');
+  assert.equal((topbar.match(/<div(?:\s|>)/g) || []).length, (topbar.match(/<\/div>/g) || []).length);
+  assert.match(topbar, /<div class="topbar-actions">[\s\S]*<form class="logout-form"/);
+});
 test('portfolio status categories expand details while the profile stays static', () => {
   assert.doesNotMatch(html, /profileStatusToggle|profile-status-popover|toggleProfileStatus/);
   assert.match(html, /<details class="risk-category">/);
