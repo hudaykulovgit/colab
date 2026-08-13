@@ -136,7 +136,20 @@
       background: var(--surface); cursor: pointer; transition: .18s ease;
     }
     .icon-btn:hover { border-color: var(--line-strong); transform: translateY(-1px); }
-    .profile { display: flex; align-items: center; gap: 10px; padding-left: 6px; }
+    .profile-menu { position: relative; }
+    .profile { display: flex; align-items: center; gap: 10px; padding-left: 6px; border: 0; background: transparent; color: inherit; cursor: pointer; text-align: left; font: inherit; }
+    .profile:hover strong { color: var(--accent); }
+    .profile:focus-visible { outline: 3px solid rgba(59,130,246,.24); border-radius: 12px; }
+    .profile-status-popover { display: none; position: absolute; z-index: 80; top: calc(100% + 10px); right: 0; width: min(360px, calc(100vw - 28px)); padding: 16px; border: 1px solid var(--line-strong); border-radius: 15px; background: var(--surface); box-shadow: 0 18px 48px rgba(15,23,42,.18); }
+    .profile-status-popover.is-open { display: block; animation: fadeIn .18s ease; }
+    .profile-status-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+    .profile-status-head h3 { margin: 0; font-size: 14px; color: var(--ink); }
+    .profile-status-head p { margin: 4px 0 0; font-size: 11px; color: var(--muted); }
+    .profile-status-bar { display: flex; gap: 3px; height: 9px; overflow: hidden; border-radius: 999px; margin: 15px 0 12px; background: var(--surface-2); }
+    .profile-status-bar i { min-width: 3px; height: 100%; }
+    .profile-status-list { display: grid; gap: 7px; max-height: 270px; overflow: auto; padding-right: 2px; }
+    .profile-status-item { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 9px 10px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface-2); }
+    .profile-status-item strong { display: block; font-size: 11px; color: var(--ink); }
     .avatar { width: 36px; height: 36px; display: grid; place-items: center; color: #fff; background: var(--accent); border-radius: 50%; font-size: 12px; font-weight: 750; }
     .profile strong { display: block; font-size: 12px; }
     .profile span { color: var(--muted); font-size: 10px; }
@@ -603,9 +616,14 @@
           </div>
           <button class="icon-btn" id="exportBtn" data-i18n-title="export_title" title="Export portfolio data"><span data-icon="download"></span></button>
           <button class="icon-btn" id="quickPaymentBtn" data-i18n-title="record_payment_title" title="Record a payment"><span data-icon="plus"></span></button>
-          <div class="profile">
+          <div class="profile-menu">
+            <button class="profile" id="profileStatusToggle" type="button" aria-expanded="false" aria-controls="profileStatusPopover">
             <div class="avatar">MM</div>
             <div><strong data-i18n="profile_name">Miraziz Mirjalolov</strong><span data-i18n="profile_role">Finance Owner · Administrator</span></div>
+            </button>
+            <div class="profile-status-popover" id="profileStatusPopover" role="dialog" aria-modal="false">
+              <div id="profileStatusContent"></div>
+            </div>
           </div>
           <form class="logout-form" method="post" action="/logout"><button class="logout-btn" type="submit" data-i18n-title="logout_title" title="Log out"><span data-icon="logout"></span><span data-i18n="btn_logout">Log out</span></button></form>
         </div>
@@ -1021,26 +1039,58 @@
 
     function portfolioMetrics() {
       const open = contracts.filter(c => c.status !== 'Closed');
+      const currentContracts = open;
       const atRisk = open.filter(c => c.riskScore >= 50);
-      const dueScheduled = sum(contracts, 'dueScheduled');
-      const duePaid = sum(contracts, 'duePaid');
-      const principal = sum(contracts, 'principal');
-      const markup = sum(contracts, 'markup');
+      const dueScheduled = sum(currentContracts, 'dueScheduled');
+      const duePaid = sum(currentContracts, 'duePaid');
+      const principal = sum(currentContracts, 'principal');
+      const markup = sum(currentContracts, 'markup');
       const openPrincipal = sum(open, 'principal');
       const weightedAnnualYield = openPrincipal ? open.reduce((t,c) => t + c.annualYield * c.principal, 0) / openPrincipal : 0;
       return {
-        open, atRisk, activeCount: open.length,
+        open: currentContracts, atRisk, activeCount: currentContracts.length,
+
         originated: principal,
         outstanding: sum(open, 'outstanding'),
         overdue: sum(open, 'overdue'),
         atRiskExposure: sum(atRisk, 'outstanding'),
-        collected: sum(contracts, 'paidTotal'),
+        collected: sum(currentContracts, 'paidTotal'),
         contractedProfit: markup,
         roi: principal ? markup / principal * 100 : 0,
         collectionRate: dueScheduled ? duePaid / dueScheduled * 100 : 0,
         weightedAnnualYield,
         dueScheduled, duePaid
       };
+    }
+
+    function renderProfileStatus() {
+      const container = document.getElementById('profileStatusContent');
+      if (!container) return;
+      const open = contracts.filter(c => c.status !== 'Closed');
+      const buckets = [
+        { name: 'Current', color: '#1ba673' },
+        { name: 'Watch', color: '#a855f7' },
+        { name: 'At risk', color: '#ea5ec1' },
+        { name: 'Critical', color: '#ff5530' }
+      ].map(bucket => ({ ...bucket, rows: open.filter(c => c.status === bucket.name) }));
+      const total = Math.max(1, sum(open, 'outstanding'));
+      const title = lang === 'ru' ? '\u0421\u0442\u0430\u0442\u0443\u0441 \u0442\u0435\u043a\u0443\u0449\u0438\u0445 \u0434\u043e\u0433\u043e\u0432\u043e\u0440\u043e\u0432' : 'Current contract status';
+      const subtitle = lang === 'ru' ? '\u0417\u0430\u043a\u0440\u044b\u0442\u044b\u0435 \u0434\u043e\u0433\u043e\u0432\u043e\u0440\u044b \u0438\u0441\u043a\u043b\u044e\u0447\u0435\u043d\u044b' : 'Closed contracts are excluded';
+      const empty = lang === 'ru' ? '\u041d\u0435\u0442 \u0442\u0435\u043a\u0443\u0449\u0438\u0445 \u0434\u043e\u0433\u043e\u0432\u043e\u0440\u043e\u0432' : 'No current contracts';
+      const segments = buckets.filter(b => b.rows.length).map(b => `<i title="${escapeHtml(statusLabel(b.name))}: ${b.rows.length}" style="width:${Math.max(3, sum(b.rows, 'outstanding') / total * 100)}%;background:${b.color}"></i>`).join('');
+      const priority = { Current: 0, Watch: 1, 'At risk': 2, Critical: 3 };
+      const rows = [...open].sort((a, b) => priority[b.status] - priority[a.status] || b.outstanding - a.outstanding);
+      container.innerHTML = `
+        <div class="profile-status-head">
+          <div><h3>${title}</h3><p>${open.length} ${lang === 'ru' ? '\u043d\u0435\u0437\u0430\u043a\u0440\u044b\u0442\u044b\u0445 \u0434\u043e\u0433\u043e\u0432\u043e\u0440\u043e\u0432' : 'open contracts'} &middot; ${compactMoney(sum(open, 'outstanding'))}</p></div>
+        </div>
+        <div class="profile-status-bar" aria-label="${subtitle}">${segments}</div>
+        <div class="profile-status-list">${rows.length ? rows.map(c => `
+          <button type="button" class="profile-status-item" onclick="openDetail('${c.id}')">
+            <span><strong>${escapeHtml(c.id)} &middot; ${escapeHtml(c.assetName)}</strong><small>${escapeHtml(c.borrower)} &middot; ${money.format(c.outstanding)}</small></span>
+            <span class="status ${statusClass(c.status)}">${statusLabel(c.status)}</span>
+          </button>`).join('') : `<div class="empty">${empty}</div>`}
+        </div>`;
     }
 
     function kpiCard(label, value, foot, tone = '', icon = '') {
@@ -1050,13 +1100,13 @@
 
     function renderOverview() {
       const m = portfolioMetrics();
-      document.getElementById('overviewSubtitle').textContent = t('overview_subtitle', { date: formatDate(currentDateISO), n: contracts.length });
+      document.getElementById('overviewSubtitle').textContent = t('overview_subtitle', { date: formatDate(currentDateISO), n: m.activeCount });
       document.getElementById('kpiGrid').innerHTML = [
         kpiCard(t('kpi_outstanding'), compactMoney(m.outstanding), t('kpi_outstanding_foot', { n: m.activeCount }), '', 'wallet'),
         kpiCard(t('kpi_collection_rate'), `${m.collectionRate.toFixed(1)}%`, t('kpi_collection_rate_foot', { paid: money.format(m.duePaid), due: money.format(m.dueScheduled) }), 'positive', 'check'),
         kpiCard(t('kpi_overdue_now'), compactMoney(m.overdue), m.overdue ? `<span class="delta bad">${(m.overdue / m.outstanding * 100).toFixed(1)}%</span> ${t('of_open_receivables')}` : t('kpi_overdue_none'), 'danger', 'clock'),
         kpiCard(t('kpi_atrisk'), compactMoney(m.atRiskExposure), t('kpi_atrisk_foot', { n: m.atRisk.length }), 'risk', 'shield'),
-        kpiCard(t('kpi_profit'), compactMoney(m.contractedProfit), t('kpi_profit_foot', { n: contracts.length }), 'info', 'trend'),
+        kpiCard(t('kpi_profit'), compactMoney(m.contractedProfit), t('kpi_profit_foot', { n: m.activeCount }), 'info', 'trend'),
         kpiCard(t('kpi_roi'), `${m.roi.toFixed(1)}%`, t('kpi_roi_foot', { pct: m.weightedAnnualYield.toFixed(1) }), 'info', 'chart')
       ].join('');
       renderCashflowChart('cashflowChart', monthSeries(-11, 0), true);
@@ -1069,13 +1119,13 @@
         <td class="mono">${number.format(c.daysLate)}</td><td><span class="status ${statusClass(c.status)}">${statusLabel(c.status)}</span></td><td><button class="table-action" onclick="openDetail('${c.id}')">${t('btn_review')}</button></td></tr>`).join('') : `<tr><td colspan="7" class="empty">${t('empty_attention')}</td></tr>`;
     }
 
-    function monthSeries(startOffset, endOffset) {
+    function monthSeries(startOffset, endOffset, contractRows = contracts.filter(c => c.status !== 'Closed')) {
       const rows = [];
       for (let offset = startOffset; offset <= endOffset; offset++) {
         const start = new Date(dataDate.getFullYear(), dataDate.getMonth() + offset, 1, 12);
         const end = new Date(start.getFullYear(), start.getMonth() + 1, 0, 12);
         let scheduled = 0, paid = 0;
-        contracts.forEach(c => (c.schedule || []).forEach(row => {
+        contractRows.forEach(c => (c.schedule || []).forEach(row => {
           const due = parseISO(row.dueDate);
           if (due && due >= start && due <= end) { scheduled += +row.scheduled || 0; paid += +row.paid || 0; }
         }));
@@ -1136,7 +1186,8 @@
       const type = document.getElementById('typeFilter').value;
       const filtered = contracts.filter(c => {
         const haystack = [c.id,c.assetName,c.borrower,c.licensePlate,c.sourceSheet].join(' ').toLowerCase();
-        return (!query || haystack.includes(query)) && (status==='all'||c.status===status) && (type==='all'||c.assetType===type);
+        const matchesStatus = status === 'all' || (status === 'Current' ? c.status !== 'Closed' : c.status === status);
+        return (!query || haystack.includes(query)) && matchesStatus && (type === 'all' || c.assetType === type);
       }).sort((a,b) => (a.status==='Closed') - (b.status==='Closed') || b.outstanding - a.outstanding);
       document.getElementById('contractResultCount').textContent = `${filtered.length} ${lang==='ru'?'из':'of'} ${contracts.length}`;
       document.getElementById('contractsTable').innerHTML = filtered.length ? filtered.map(c => `<tr>
@@ -1208,7 +1259,7 @@
       ].join('');
     }
 
-    function renderAll() { contracts.forEach(recalculate); renderOverview(); renderContracts(); renderPayments(); renderRisk(); renderAnalytics(); hydrateIcons(); }
+    function renderAll() { contracts.forEach(recalculate); renderOverview(); renderContracts(); renderPayments(); renderRisk(); renderAnalytics(); renderProfileStatus(); hydrateIcons(); }
 
     function switchView(view) {
       currentView=view;
@@ -1401,7 +1452,19 @@
         showToast(t('toast_delete_failed',{error:err.message}));
       }
     });
-    document.getElementById('exportBtn').addEventListener('click',exportData);
+    const profileStatusToggle = document.getElementById('profileStatusToggle');
+    const profileStatusPopover = document.getElementById('profileStatusPopover');
+    profileStatusToggle.addEventListener('click', () => {
+      const open = profileStatusPopover.classList.toggle('is-open');
+      profileStatusToggle.setAttribute('aria-expanded', String(open));
+    });
+    document.addEventListener('click', event => {
+      if (!event.target.closest('.profile-menu')) {
+        profileStatusPopover.classList.remove('is-open');
+        profileStatusToggle.setAttribute('aria-expanded', 'false');
+      }
+    });
+    document.addEventListener('keydown', event => { if (event.key === 'Escape') { profileStatusPopover.classList.remove('is-open'); profileStatusToggle.setAttribute('aria-expanded', 'false'); } });
     document.getElementById('importExcelBtn')?.addEventListener('click',()=>document.getElementById('excelImportInput').click());
     document.getElementById('excelImportInput')?.addEventListener('change',async event=>{
       const file=event.target.files[0]; event.target.value='';
