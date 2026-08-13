@@ -10,33 +10,29 @@ const end = source.indexOf('export default', start);
 const context = {};
 vm.runInNewContext(source.slice(start, end), context);
 
-test('login page uses the MiniMax light design system and one-click login', () => {
+test('login page provides Russian password entry with a language switcher', () => {
   const html = context.loginPage(false);
-  for (const color of ['#0a0a0a', '#222222', '#ff5530', '#ea5ec1', '#1456f0', '#3daeff', '#a855f7', '#ffffff', '#f7f8fa', '#e5e7eb']) {
-    assert.match(html, new RegExp(color));
-  }
-  assert.doesNotMatch(html, /#010102|#0f1011|#141516|#18191a|#23252a|#34343a/);
-  assert.doesNotMatch(html, /type="password"|name="password"|autocomplete="current-password"/);
-  assert.match(html, /<button class="login-button" id="login" type="submit">/);
+  assert.match(html, /<html lang="ru">/);
+  assert.match(html, /Вход в панель управления/);
+  assert.match(html, /type="password" name="password"/);
+  assert.match(html, /autocomplete="current-password"/);
+  assert.match(html, /data-lang="ru"/);
+  assert.match(html, /data-lang="en"/);
+  assert.match(html, /autofinance-lang/);
   assert.match(html, /family=DM\+Sans/);
   assert.match(html, /Material\+Symbols\+Rounded/);
-  assert.match(html, /class="material-symbols-rounded"/);
-  assert.match(html, /font-variation-settings:"FILL" 0,"wght" 400/);
-  assert.match(html, /Your entire auto finance portfolio, in focus/);
-  assert.match(html, /class="product-wrap"/);
-  assert.match(html, /class="window-bar"/);
-  assert.match(html, /Miraziz Mirjalolov/);
-  assert.match(html, /Neon connected/);
-  assert.doesNotMatch(html, /radial-gradient/);
   assert.match(html, /linear-gradient\(90deg,var\(--coral\)/);
-  assert.doesNotMatch(html, /finance-landing\.jpg|landing-art/);
-  assert.doesNotMatch(html, /autofinance-3d-hero/);
-  assert.doesNotMatch(html, /Password not recognized|workspace password/i);
+  assert.doesNotMatch(html, /finance-landing\.jpg|landing-art|autofinance-3d-hero/);
+  assert.match(context.loginPage(true), /role="alert"/);
 });
 
-test('login route creates a session without a password challenge', () => {
-  assert.doesNotMatch(source.slice(source.indexOf('export default')), /form\.get\('password'\)/);
-  assert.match(source, /Set-Cookie/);
+test('login route validates the submitted password before creating a session', () => {
+  const middleware = source.slice(source.indexOf('export default'));
+  assert.match(middleware, /await request\.formData\(\)/);
+  assert.match(middleware, /form\.get\('password'\)/);
+  assert.match(middleware, /submittedHash !== expectedHash/);
+  assert.match(middleware, /status: 401/);
+  assert.match(middleware, /Set-Cookie/);
 });
 
 test('logout route expires the authentication cookie', () => {

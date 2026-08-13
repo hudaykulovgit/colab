@@ -863,7 +863,8 @@
         toast_contract_updated: 'Данные договора сохранены в Neon.', toast_contract_created: 'Договор {id} сохранён в Neon.', toast_payment_recorded: '{amount} по договору {name} сохранено в Neon.', toast_export: 'Данные портфеля экспортированы.', toast_schedule_updated: 'График платежей для {name} сохранён в Neon.', mobile_nav_aria: 'Мобильная навигация', default_lender: 'Владелец компании', manual_entry: 'Ручной ввод', toast_sync_failed: 'Не сохранено. Neon Postgres не подтвердил изменение: {error}', btn_import_excel: 'Импорт из Excel', toast_import_summary: 'В Neon импортировано: {n} договоров и {p} платежей.{skipped}', toast_import_skipped: ' Пропущено строк: {n}.', toast_import_error: 'Ошибка импорта; неподтверждённые строки не добавлены: {error}', btn_delete_contract: 'Удалить договор', confirm_delete_contract: 'Удалить {name} ({id}) навсегда? Вся история платежей будет удалена без возможности восстановления.', toast_contract_deleted: '{name} удалён.', toast_delete_failed: 'Не удалось удалить: {error}', draft_protection: 'Черновик защищён — форма закрывается только через «Отмена» или «Сохранить».', confirm_discard_changes: 'Отменить несохранённые изменения?', confirm_ai_import: 'Использовать ИИ-нормализацию? Строки договоров будут отправлены в настроенный сервис Groq. Нажмите «Отмена», чтобы использовать локальную обработку.',
       }
     };
-    let lang = localStorage.getItem(LANG_KEY) === 'ru' ? 'ru' : 'en';
+    const savedLang = localStorage.getItem(LANG_KEY);
+    let lang = savedLang === 'en' ? 'en' : 'ru';
     function t(key, vars) {
       let str = (I18N[lang] && I18N[lang][key]) ?? I18N.en[key] ?? key;
       if (vars) Object.keys(vars).forEach(k => { str = str.replace(new RegExp(`\\{${k}\\}`, 'g'), vars[k]); });
