@@ -85,6 +85,7 @@ test('profile status control has a direct toggle and excludes closed contracts',
   assert.match(html, /onclick="toggleProfileStatus\(event\)"/);
   assert.match(html, /function toggleProfileStatus\(event\)/);
   assert.match(html, /function setProfileStatusOpen\(isOpen\)/);
+  assert.match(html, /\.profile-menu:focus-within \.profile-status-popover/);
   assert.match(html, /contracts\.filter\(c => c\.status !== 'Closed'\)/);
 });
 test('sidebar snapshot badge is removed and a logout control is visible', () => {

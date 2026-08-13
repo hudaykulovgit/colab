@@ -141,7 +141,8 @@
     .profile:hover strong { color: var(--accent); }
     .profile:focus-visible { outline: 3px solid rgba(59,130,246,.24); border-radius: 12px; }
     .profile-status-popover { display: none; position: absolute; z-index: 80; top: calc(100% + 10px); right: 0; width: min(360px, calc(100vw - 28px)); padding: 16px; border: 1px solid var(--line-strong); border-radius: 15px; background: var(--surface); box-shadow: 0 18px 48px rgba(15,23,42,.18); }
-    .profile-status-popover.is-open { display: block; animation: fadeIn .18s ease; }
+    .profile-status-popover.is-open,
+    .profile-menu:focus-within .profile-status-popover { display: block; animation: fadeIn .18s ease; }
     .profile-status-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
     .profile-status-head h3 { margin: 0; font-size: 14px; color: var(--ink); }
     .profile-status-head p { margin: 4px 0 0; font-size: 11px; color: var(--muted); }
@@ -621,7 +622,7 @@
           <button class="icon-btn" id="exportBtn" data-i18n-title="export_title" title="Export portfolio data"><span data-icon="download"></span></button>
           <button class="icon-btn" id="quickPaymentBtn" data-i18n-title="record_payment_title" title="Record a payment"><span data-icon="plus"></span></button>
           <div class="profile-menu">
-            <button class="profile" id="profileStatusToggle" type="button" aria-expanded="false" aria-controls="profileStatusPopover" onclick="toggleProfileStatus(event)"><div class="avatar">MM</div><div><strong data-i18n="profile_name">Miraziz Mirjalolov</strong><span data-i18n="profile_role">Finance Owner · Administrator</span></div><span class="profile-caret" data-icon="chevron"></span></button>
+            <button class="profile" id="profileStatusToggle" type="button" aria-expanded="false" aria-controls="profileStatusPopover" title="Показать статусы договоров" onclick="toggleProfileStatus(event)"><div class="avatar">MM</div><div><strong data-i18n="profile_name">Miraziz Mirjalolov</strong><span data-i18n="profile_role">Finance Owner · Administrator</span></div><span class="profile-caret" data-icon="chevron"></span></button>
             <div class="profile-status-popover" id="profileStatusPopover" role="dialog" aria-modal="false">
               <div id="profileStatusContent"></div>
             </div>
